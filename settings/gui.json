@@ -1,0 +1,84 @@
+{
+    "windows": [
+      {
+        "label": "Render",
+        "tag": "render",
+        "no_close": true,
+        "width": 625,
+        "height": 475,
+        "position": [0, 0],
+        "content": "window_render"
+      },
+      {
+        "label": "Process",
+        "tag": "process",
+        "no_close": true,
+        "width": 625,
+        "height": 175,
+        "position": [0, 475],
+        "content": "window_process"
+      },
+
+      {
+        "label": "Parameters",
+        "tag": "parameters",
+        "no_close": true,
+        "width": 600,
+        "height": 285,
+        "position": [625, 0],
+        "content": "window_parameters"
+      },
+      {
+        "label": "User defined density",
+        "modal": false,
+        "show": false,
+        "tag": "user_defined_density",
+        "no_title_bar": false,
+        "position": [625, 285],
+        "width": 600,
+        "height": 365,
+        "content": "window_user_defined_density"
+      },
+      {
+        "label": "User defined collisions",
+        "modal": false,
+        "show": false,
+        "tag": "user_defined_collisions",
+        "no_title_bar": false,
+        "position": [625, 285],
+        "width": 600,
+        "height": 365,
+        "content": "window_user_defined_collisions"
+      },
+      {
+        "label": "User defined emitter",
+        "modal": false,
+        "show": false,
+        "tag": "user_defined_emitter",
+        "no_title_bar": false,
+        "position": [625, 285],
+        "width": 600,
+        "height": 365,
+        "content": "window_user_defined_emitter"
+      },
+      {
+        "label": "User defined sensor",
+        "modal": false,
+        "show": false,
+        "tag": "user_defined_sensor",
+        "no_title_bar": false,
+        "position": [625, 285],
+        "width": 600,
+        "height": 365,
+        "content": "window_user_defined_sensor"
+      }
+    ],
+    "viewport": {
+      "width": 1225,
+      "height": 650,
+      "title": "Emitter Optimizer",
+      "min_width": 300,
+      "min_height": 300
+    }
+}
+  
