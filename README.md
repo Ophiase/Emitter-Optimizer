@@ -64,7 +64,7 @@ You can try to optimize emitters using the following density map and colliders m
     - Visualisation of loss function
 - Features
     - Save emitters position (as json)
-    - Optionale optimizer
+    - Optional optimizer
     - Find the optimal number of sensors
     - Collision map
         - as a string of segments
