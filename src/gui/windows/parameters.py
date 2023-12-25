@@ -17,13 +17,6 @@ class WindowParameters :
         self.config = config
 
     def process(self, window_tag) -> None:
-        itms_to_hide = [
-            "user_defined_density", 
-            "user_defined_collisions", 
-            'user_defined_emitter', 
-            'user_defined_sensor'
-            ]
-
         with dpg.group(horizontal=True):
             with dpg.group(horizontal=False):
                 dpg.add_text("Map scale : ")
@@ -41,24 +34,24 @@ class WindowParameters :
 
         with dpg.group(horizontal=True) :
             dpg.add_button(label="Manage density map", callback=lambda:DpgUtils.show_item(
-                'user_defined_density', items_to_hide=itms_to_hide))
+                'user_defined_density', items_to_hide=self.config.ITEMS_TO_HIDE))
             dpg.add_button(label="Manage collisions map", callback=lambda:DpgUtils.show_item(
-                'user_defined_collisions', items_to_hide=itms_to_hide))
+                'user_defined_collisions', items_to_hide=self.config.ITEMS_TO_HIDE))
         
         DpgUtils.separator()
 
         with dpg.group(horizontal=True) :
             dpg.add_button(label="Edit the emitter function", callback=lambda:DpgUtils.show_item(
-                "user_defined_emitter", items_to_hide=itms_to_hide))
+                "user_defined_emitter", items_to_hide=self.config.ITEMS_TO_HIDE))
             dpg.add_button(label="Edit the sensor function", callback=lambda:DpgUtils.show_item(
-                "user_defined_sensor", items_to_hide=itms_to_hide))
+                "user_defined_sensor", items_to_hide=self.config.ITEMS_TO_HIDE))
         DpgUtils.separator()
         
         with dpg.group(horizontal=True) :
             with dpg.group(horizontal=False):
-                dpg.add_text(default_value="Range of emitters (optional)")
+                #dpg.add_text(default_value="Range of emitters (optional)")
                 dpg.add_text(default_value="Number of emitters")
             with dpg.group(horizontal=False) :
-                dpg.add_input_intx(size=2, default_value=(2,5), width=100)
+                #dpg.add_input_intx(size=2, default_value=(2,5), width=100)
                 dpg.add_input_int(min_value=1, default_value=self.config.n_emitters, width=140,
                     callback=lambda _, data: setattr(self.config, "n_emitters", data))

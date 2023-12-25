@@ -12,6 +12,14 @@ from settings import DEFAULT_EMITTER_FUNCTION, DEFAULT_SENSOR_FUNCTION
 class GuiConfig:
     DEFAULT_EMITTER_FUNCTION = DEFAULT_EMITTER_FUNCTION
     DEFAULT_SENSOR_FUNCTION = DEFAULT_SENSOR_FUNCTION
+    
+    ITEMS_TO_HIDE = ["user_defined_density", 
+            "user_defined_collisions", 
+            'user_defined_emitter', 
+            'user_defined_sensor',
+            "loss"
+            ]
+
 
     @staticmethod
     def load_file(file : str) -> str : 
@@ -41,7 +49,7 @@ class GuiConfig:
             GuiConfig.load_file(GuiConfig.DEFAULT_SENSOR_FUNCTION))
         
         self.update_callback = update_callback
-        self.update_rate = 30
+        self.update_rate = 5
 
         self.update_solver()
         

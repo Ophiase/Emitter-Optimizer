@@ -7,19 +7,16 @@ import cv2
 from .configuration import GuiConfig
 from .dpg_utils import DpgUtils
 
-from engine.solver import Solver
-from engine.map_type import MapType
-from engine.density_map import DensityMap
-from engine.collision_map import CollisionMap
-
 from gui.windows.parameters import WindowParameters
 from gui.windows.process import WindowProcess
 from gui.windows.render import WindowRender
 
+from gui.windows.loss import WindowLoss
+
 from gui.windows.user_defined_collisions import WindowUserDefinedCollisions
 from gui.windows.user_defined_density import WindowUserDefinedDensity
-
 from gui.windows.user_defined_function import WindowUserDefinedFunction
+
 
 from settings import DEFAULT_GUI_FONT, DEFAULT_GUI_JSON
 
@@ -33,6 +30,8 @@ class Application:
         self.config = GuiConfig()
 
         # windows
+
+        self.window_loss = WindowLoss(self.config).process
 
         self.window_parameters = WindowParameters(self.config).process
         self.window_process = WindowProcess(self.config).process

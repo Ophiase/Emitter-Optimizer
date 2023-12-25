@@ -59,15 +59,12 @@ You can try to optimize emitters using the following density map and colliders m
 - User defined collision map $C$
 
 ## Todo list
-- GUI
-    - Visualisation of loss function
-        - Switch off/on window
 - Features
     - Save emitters position (as json)
     - Optional optimizer
-    - Find the optimal number of sensors
     - Collision map
         - as a string of segments
+    - Find the optimal number of sensors
 - Misc
     - Every functions used in the loss function can be approximated by a piecewise linear function on a relevant finite interval. It means that the loss function can be approximated by the integral of a piecewise linear function. Which can be very fast to calculate using parallelization.
     - Use a "compilation" optimizer for python.

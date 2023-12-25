@@ -71,6 +71,17 @@
         "width": 600,
         "height": 365,
         "content": "window_user_defined_sensor"
+      },
+      {
+        "label": "Loss",
+        "modal": false,
+        "show": false,
+        "tag": "loss",
+        "no_title_bar": false,
+        "position": [625, 285],
+        "width": 600,
+        "height": 365,
+        "content": "window_loss"
       }
     ],
     "viewport": {

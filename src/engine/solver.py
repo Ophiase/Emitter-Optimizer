@@ -197,8 +197,9 @@ class Solver :
 
     def solve(self) -> None:
         if self.is_working : return
+
         self.is_working = True
-        
+        print("Solver is working ..")
         result = self.train()
 
         if result is None:
@@ -208,11 +209,11 @@ class Solver :
         
         x, history = result
         self.emitters_positions = x
-        self.history += history
+        self.history = history
 
         self.is_working = False
+        self.update_callback(x, self.history)
         print("Finished working")
-        self.update_callback()
 
     def abort(self) -> None:
         if self.is_aborting or not self.is_working : return
@@ -222,11 +223,12 @@ class Solver :
     def train(self) -> Optional[Tuple[tf.Variable, np.ndarray]]:
         x = tf.Variable(tf.identity(self.emitters_positions), trainable=True)
         
-        history = []
+        history = self.history.copy()
         optimizer = tf.keras.optimizers.Nadam(learning_rate=self.epsilon)
         
         for i in range(self.n_iteration) :
             if self.is_aborting :
+                self.is_aborting = False
                 return x, history
             
             with tf.GradientTape() as tape:
@@ -239,7 +241,7 @@ class Solver :
             history.append(error.numpy())
 
             if i % self.update_rate == 0:
-                self.update_callback(x)
+                self.update_callback(x, history)
 
         return x, history
     

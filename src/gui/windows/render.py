@@ -27,9 +27,16 @@ class WindowRender:
         plt.close(fig)
         return texture
 
-    def update_callback(self, emitters_positions=None) -> None:
+    def update_callback(self, 
+            emitters_positions=None, history=None) -> None:
+        
         dpg.set_value("simulation_text", self.simulation_state_str())
         dpg.set_value("render_texture_tag", self.get_texture(emitters_positions))
+        
+        if history is None:
+            history = []
+        
+        dpg.set_value("history_plot_tag", history)
 
     def process(self, window_tag) -> None:
         with dpg.texture_registry(show=False):
