@@ -16,30 +16,30 @@ class WindowUserDefinedCollisions:
     def __init__(self, config : GuiConfig):
         self.config = config
 
+    def load_collision_map(self):
+        path = dpg.get_value("input_text_collision_map")
+        
+        input_types = [MapType.GRID]
+        input_type = input_types[
+            int(dpg.get_value("collision_input_radio"))]
+
+        storage_types = [MapType.SEGMENTS]
+        storage_type = storage_types[
+            int(dpg.get_value("collision_storage_radio"))]
+
+        data = cv2.imread(path)
+        
+        if data is not None:
+            self.config.collision_map = CollisionMap(
+                data, input_type, storage_type)
+            return
+        
+        DpgUtils.show_info('Unreadable image', 'Warning')
+
+    def remove_collision_map(self):
+        self.config.collision_map = None
+
     def process(self, window_tag) -> None:
-        def load_collision_map():
-            path = dpg.get_value("input_text_collision_map")
-            
-            input_types = [MapType.GRID]
-            input_type = input_types[
-                int(dpg.get_value("collision_input_radio"))]
-
-            storage_types = [MapType.SEGMENTS]
-            storage_type = storage_types[
-                int(dpg.get_value("collision_storage_radio"))]
-
-            data = cv2.imread(path)
-            
-            if data is not None:
-                self.config.collision_map = CollisionMap(
-                    data, input_type, storage_type)
-                return
-            
-
-            DpgUtils.show_info('Unreadable image', 'Warning')
-
-        def remove_collision_map():
-            self.config.collision_map = None
 
         with dpg.group(horizontal=True) :
             dpg.add_text("Collision map")
@@ -57,8 +57,10 @@ class WindowUserDefinedCollisions:
 
         with dpg.group(horizontal=True) :
             with dpg.group(horizontal=False):
-                dpg.add_button(label = "Load", callback=load_collision_map)
-                dpg.add_button(label = "Remove", callback=remove_collision_map)
+                dpg.add_button(label = "Load", callback=self.load_collision_map)
+                dpg.add_button(label = "Remove", callback=self.remove_collision_map)
             with dpg.group(horizontal=False) :
                 with dpg.group(horizontal=True): input_radio()
                 with dpg.group(horizontal=True): storage_radio()
+
+        
