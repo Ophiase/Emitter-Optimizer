@@ -8,20 +8,18 @@ class DensityMap:
             ):
         
         self.storage_type = storage_type
-        self.data_format = data_format
 
         if (copy_constructor) :
-            self.data = data
+            self.data = data.copy()
             return
         
         match(data_format, storage_type) :
             case MapType.GRID, MapType.GRID:
                 self.data = data
-
             case _  :
                 raise NotImplementedError()
     
     def copy(self):
-        return DensityMap(self.data.copy(), 
-                     self.data_format, 
-                     self.storage_type, True)
+        return DensityMap(self.data,  
+                    storage_type=self.storage_type, 
+                    copy_constructor=True)

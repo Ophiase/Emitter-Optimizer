@@ -60,7 +60,6 @@ You can try to optimize emitters using the following density map and colliders m
 
 ## Todo list
 - GUI
-    - Visualisation of density/collision map
     - Visualisation of loss function
         - Switch off/on window
 - Features

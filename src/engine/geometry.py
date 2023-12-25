@@ -177,5 +177,4 @@ class Geometry :
     @staticmethod
     def adjust_map(image, size) -> tf.constant:
         image = cv2.resize(image, size)
-        image = np.mean(image, axis=2)/255.0
         return tf.constant(image, dtype=tf.float32)

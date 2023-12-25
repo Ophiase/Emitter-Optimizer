@@ -11,14 +11,13 @@ class CollisionMap:
     def __init__(self, data, 
             data_format : MapType = MapType.GRID,
             storage_type : MapType = MapType.SEGMENTS,
-            copy_constructor=False
+            copy_constructor = False
             ):
         
         self.storage_type = storage_type
-        self.data_format = data_format
 
-        if (copy_constructor) :
-            self.data = data
+        if copy_constructor :
+            self.data = data.copy()
             return
 
         match(data_format, storage_type) :
@@ -59,6 +58,6 @@ class CollisionMap:
         return np.array(segments)
     
     def copy(self):
-        return CollisionMap(self.data.copy(), 
-                     self.data_format, 
-                     self.storage_type, True)
+        return CollisionMap(self.data, 
+                            storage_type=self.storage_type, 
+                            copy_constructor=True)

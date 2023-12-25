@@ -12,6 +12,8 @@ from engine.map_type import MapType
 from engine.density_map import DensityMap
 from engine.collision_map import CollisionMap
 
+TEXTURE_SIZE = (200, 200)
+
 class WindowUserDefinedCollisions:
     def __init__(self, config : GuiConfig):
         self.config = config
@@ -32,12 +34,30 @@ class WindowUserDefinedCollisions:
         if data is not None:
             self.config.collision_map = CollisionMap(
                 data, input_type, storage_type)
+            dpg.set_value("collision_texture_tag", self.get_texture())
             return
         
         DpgUtils.show_info('Unreadable image', 'Warning')
 
     def remove_collision_map(self):
         self.config.collision_map = None
+        dpg.set_value("collision_texture_tag", self.get_texture())
+
+    def get_texture(self) :
+        if self.config.collision_map is None :
+            return [1.0 for i in range(
+                TEXTURE_SIZE[0]*TEXTURE_SIZE[1]*4
+                )]
+
+        match self.config.collision_map.storage_type :
+            case MapType.SEGMENTS :
+                image = DpgUtils.draw_segments_on_image(
+                    self.config.collision_map.data, TEXTURE_SIZE)
+                print(image.shape)
+                return DpgUtils.np_image_to_dpg_texture(image)
+            
+            case _ :
+                raise NotImplementedError()
 
     def process(self, window_tag) -> None:
 
@@ -63,4 +83,9 @@ class WindowUserDefinedCollisions:
                 with dpg.group(horizontal=True): input_radio()
                 with dpg.group(horizontal=True): storage_radio()
 
+        with dpg.texture_registry(show=False):
+            dpg.add_dynamic_texture(width=TEXTURE_SIZE[0], height=TEXTURE_SIZE[1], 
+                default_value=self.get_texture(), tag="collision_texture_tag")
+        dpg.add_image("collision_texture_tag", 
+                        width=TEXTURE_SIZE[0], height=TEXTURE_SIZE[1])
         

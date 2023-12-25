@@ -76,8 +76,9 @@ class Solver :
             self.update_callback = lambda x = None : x
         else :
             self.update_callback = update_callback
-        self.update_callback()
 
+        self.update_callback()
+        
         self.update_rate = update_rate
 
         # -----------------------------------

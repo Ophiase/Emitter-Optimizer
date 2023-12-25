@@ -114,7 +114,37 @@ class DpgUtils:
         image = Image.open(buf)
         texture = np.frombuffer(image.tobytes(), dtype=np.uint8)
         return texture / 255.0, image.size
+    
+    @staticmethod
+    def np_image_to_dpg_texture(image : np.array, res=None, grayscale=True):
+        if not grayscale :
+            raise NotImplementedError()
+        
+        if res is None :
+            res = image.shape
+        else :
+            image = cv2.resize(image, res)
+
+        texture = []
+        for x in range(res[0]):
+            for y in range(res[1]):
+                for _ in range(3):
+                    texture.append(image[x][y])
+                texture.append(1)
+
+        return texture
 
     @staticmethod
     def cv2_to_dpg_texture(image, width, height):
-        pass
+        raise NotImplementedError()
+    
+    @staticmethod
+    def draw_segments_on_image(segments, image_size):
+        image = np.zeros((image_size[0], image_size[1]), dtype=np.uint8)
+
+        segment_coords = (segments * np.array(image_size)).astype(int)
+
+        for segment in segment_coords:
+            cv2.line(image, tuple(segment[0]), tuple(segment[1]), (1.0, 1.0, 1.0), 1)
+
+        return image
