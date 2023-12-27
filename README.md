@@ -62,12 +62,21 @@ You can try to optimize emitters using the following density map and colliders m
 ```
 - manual install of the dependencies :
 ```sh
-pip install numpy tensorflow dearpygui
+pip install numpy tensorflow dearpygui opencv-python
 ```
 - condas install of the dependencies :
 ```sh
 conda env create -f environment.yml
 ```
+
+#### Technologies Used
+
+- **Dear PyGui:** Used to design and create the graphical user interface (GUI) for an intuitive and user-friendly application.
+
+- **TensorFlow:** Used to optimize the gain function using automatic gradient computation and gradient descent techniques.
+
+- **OpenCV (cv2):** Employed for computer vision tasks. Specifically, used to detect contour segments on the collision map.
+
 
 ### Run
 ```sh
