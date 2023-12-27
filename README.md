@@ -50,7 +50,7 @@ You can try to optimize emitters using the following density map and colliders m
     - For instance, you can modify the sensor/emitter function
         - <img src="https://raw.githubusercontent.com/Ophiase/Emitter-Optimizer/main/resources/demo/user_defined_sensor.png" width=300> <img src="https://raw.githubusercontent.com/Ophiase/Emitter-Optimizer/main/resources/demo/user_defined_emitter.png" width=300>
 - ### Update the parameters and start the solver
-    - Before/After solving. : </br> <img src=https://raw.githubusercontent.com/Ophiase/Emitter-Optimizer/main/resources/demo/render_000.png width=300> <img src=/resources/demo/render_199.png width=300>
+    - Before/After solving. : </br> <img src=https://raw.githubusercontent.com/Ophiase/Emitter-Optimizer/main/resources/demo/render_000.png width=300> <img src=https://raw.githubusercontent.com/Ophiase/Emitter-Optimizer/main/resources/demo/render_199.png width=300>
 
 
 ## Setup
