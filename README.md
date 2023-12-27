@@ -39,8 +39,8 @@ Optimizing signal coverage with emitters on a map involves maximizing a function
 ### Demo
 ---
 You can try to optimize emitters using the following density map and colliders map.
-- ![](resources/map/value_001.png) : ``resources/map/value_001.png``
-- ![](resources/map/collide_001.png) : ``resources/map/collide_001.png``
+- ![value_001](resources/map/value_001.png) : ``resources/map/value_001.png``
+- ![collide_001](resources/map/collide_001.png) : ``resources/map/collide_001.png``
     - Image $\to$ segments might make too much segments. \
     Use the approximation ``resources/map/collide_001.numpy``
     - Note that solving wihout using colliders might be sufficient.
