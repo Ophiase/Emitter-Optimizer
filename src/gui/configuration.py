@@ -12,6 +12,7 @@ from settings import DEFAULT_EMITTER_FUNCTION, DEFAULT_SENSOR_FUNCTION
 class GuiConfig:
     DEFAULT_EMITTER_FUNCTION = DEFAULT_EMITTER_FUNCTION
     DEFAULT_SENSOR_FUNCTION = DEFAULT_SENSOR_FUNCTION
+    DEFAULT_SAVE_PATH = "./save/emitters_positions.save"
     
     ITEMS_TO_HIDE = ["user_defined_density", 
             "user_defined_collisions", 

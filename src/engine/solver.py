@@ -129,7 +129,6 @@ class Solver :
                 return self.density_map.data[coord[1]][coord[0]]
             case _ : raise NotImplementedError()
 
-
     @tf.function
     def value_xy(self, position, emitter_positions):
         '''
@@ -191,7 +190,6 @@ class Solver :
         ax.grid(True)
 
         return fig
-
 
     # -----------------------------------
 

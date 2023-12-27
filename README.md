@@ -57,13 +57,13 @@ You can try to optimize emitters using the following density map and colliders m
 - User defined sensors activation function $\psi$
 - User defined density map $\mu$
 - User defined collision map $C$
+- Save emitters positions
 
 ## Todo list
 - Features
-    - Save emitters position (as json)
-    - Optional optimizer
     - Collision map
         - as a string of segments
+    - Optional optimizer
     - Find the optimal number of sensors
 - Misc
     - Every functions used in the loss function can be approximated by a piecewise linear function on a relevant finite interval. It means that the loss function can be approximated by the integral of a piecewise linear function. Which can be very fast to calculate using parallelization.

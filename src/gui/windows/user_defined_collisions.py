@@ -29,15 +29,23 @@ class WindowUserDefinedCollisions:
         storage_type = storage_types[
             int(dpg.get_value("collision_storage_radio"))]
 
-        data = cv2.imread(path)
+        match (input_type) :
+            case MapType.GRID :
+                data = cv2.imread(path)
+                
+                if data is None:
+                    DpgUtils.show_info('Unreadable image', 'Warning')
+                    return
+                else :
+                    self.config.collision_map = CollisionMap(
+                        data, input_type, storage_type)
+                    dpg.set_value("collision_texture_tag", self.get_texture())
+                    return
+            case MapType.SEGMENTS :
+                raise NotImplementedError() # TODO
+            case _ :
+                raise NotImplementedError()
         
-        if data is not None:
-            self.config.collision_map = CollisionMap(
-                data, input_type, storage_type)
-            dpg.set_value("collision_texture_tag", self.get_texture())
-            return
-        
-        DpgUtils.show_info('Unreadable image', 'Warning')
 
     def remove_collision_map(self):
         self.config.collision_map = None

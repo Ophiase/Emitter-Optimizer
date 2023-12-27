@@ -3,6 +3,8 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 from threading import Thread
 import cv2
+import numpy as np
+import os
 
 from gui.configuration import GuiConfig
 from gui.dpg_utils import DpgUtils
@@ -70,6 +72,19 @@ class WindowProcess :
         self.config.update_rate = value
         self.config.solver.update_rate = value
 
+    def save(self, sender, value):
+        path = self.config.DEFAULT_SAVE_PATH
+        
+        folder = os.path.dirname(path)
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+
+        np.savetxt(
+            path, 
+            self.config.solver.emitters_positions, 
+            header='Emitter\'s positions', 
+            comments='# ')
+
     def process(self, window_tag) -> None:
         with dpg.group(horizontal=True):
             with dpg.group(horizontal=False, width=200):
@@ -96,6 +111,10 @@ class WindowProcess :
             dpg.add_button(label="Update parameters", callback=self.set_solver)
             dpg.add_button(label="Process", callback=self.simulation_start)
             dpg.add_button(label="Stop", callback=self.simulation_stop)
-            dpg.add_button(label="Save", callback=lambda _:DpgUtils.show_not_implemented())
+            dpg.add_button(label="Save", callback=self.save, tag="save_button")
+
+            with dpg.tooltip("save_button") :
+                dpg.add_text(
+                    f"Save emitters positions. (by default : {self.config.DEFAULT_SAVE_PATH})")
 
         #dpg.add_button(label="Search with optimal number of sensors", callback=lambda _:DpgUtils.show_not_implemented())
