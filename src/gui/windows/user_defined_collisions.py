@@ -3,6 +3,7 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 from threading import Thread
 import cv2
+import numpy as np
 
 from gui.configuration import GuiConfig
 from gui.dpg_utils import DpgUtils
@@ -21,30 +22,29 @@ class WindowUserDefinedCollisions:
     def load_collision_map(self):
         path = dpg.get_value("input_text_collision_map")
         
-        input_types = [MapType.GRID]
-        input_type = input_types[
-            int(dpg.get_value("collision_input_radio"))]
+        input_type = MapType.from_string(
+            dpg.get_value("collision_input_radio"))
+        storage_type = MapType.from_string(
+            dpg.get_value("collision_storage_radio"))
 
-        storage_types = [MapType.SEGMENTS]
-        storage_type = storage_types[
-            int(dpg.get_value("collision_storage_radio"))]
-
+        data = None
         match (input_type) :
             case MapType.GRID :
                 data = cv2.imread(path)
                 
-                if data is None:
-                    DpgUtils.show_info('Unreadable image', 'Warning')
-                    return
-                else :
-                    self.config.collision_map = CollisionMap(
-                        data, input_type, storage_type)
-                    dpg.set_value("collision_texture_tag", self.get_texture())
-                    return
-            case MapType.SEGMENTS :
-                raise NotImplementedError() # TODO
+            case MapType.SEGMENTS : # shape = (n, 2, 2)
+                data = np.loadtxt(path).reshape(-1, 2, 2)
+
             case _ :
                 raise NotImplementedError()
+            
+        if data is None:
+            DpgUtils.show_info('Unreadable image', 'Warning')
+        else :
+            self.config.collision_map = CollisionMap(
+                data, input_type, storage_type)
+            
+        dpg.set_value("collision_texture_tag", self.get_texture())
         
 
     def remove_collision_map(self):
@@ -61,7 +61,6 @@ class WindowUserDefinedCollisions:
             case MapType.SEGMENTS :
                 image = DpgUtils.draw_segments_on_image(
                     self.config.collision_map.data, TEXTURE_SIZE)
-                print(image.shape)
                 return DpgUtils.np_image_to_dpg_texture(image)
             
             case _ :
@@ -78,10 +77,10 @@ class WindowUserDefinedCollisions:
         
         def input_radio():
             dpg.add_text("Input data type :")
-            dpg.add_radio_button(tag="collision_input_radio", items=['Grid'], default_value=0)
+            dpg.add_radio_button(tag="collision_input_radio", items=['Grid', 'Segments'], default_value='Grid')
         def storage_radio():
             dpg.add_text("Algorithmic data type : ")
-            dpg.add_radio_button(tag="collision_storage_radio", items=['Segments'], default_value=0)
+            dpg.add_radio_button(tag="collision_storage_radio", items=['Segments'], default_value='Segments')
 
         with dpg.group(horizontal=True) :
             with dpg.group(horizontal=False):

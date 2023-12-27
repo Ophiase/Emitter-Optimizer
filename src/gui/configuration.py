@@ -34,15 +34,15 @@ class GuiConfig:
         return namespace["eval"]
 
     def __init__(self, update_callback : Callable = None) -> None:
-        self.n_iteration : int = 400
+        self.n_iteration : int = 200
         self.learning_step : float = 1.0
 
-        self.n_emitters : int = 20
+        self.n_emitters : int = 15
         self.density_map : Optional[DensityMap] = None
         self.collision_map : Optional[CollisionMap] = None
 
         self.map_scale = [100.0, 100.0] # unit x unit
-        self.grid_size = [20, 20]
+        self.grid_size = [32, 32]
  
         self.emitter_function = GuiConfig.load_function(
             GuiConfig.load_file(GuiConfig.DEFAULT_EMITTER_FUNCTION))

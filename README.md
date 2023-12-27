@@ -41,14 +41,16 @@ Optimizing signal coverage with emitters on a map involves maximizing a function
 You can try to optimize emitters using the following density map and colliders map.
 - ![](resources/map/value_001.png) : ``resources/map/value_001.png``
 - ![](resources/map/collide_001.png) : ``resources/map/collide_001.png``
-    - Using collision has an higher cost than just density, try without first.
+    - Image $\to$ segments might make too much segments. \
+    Use the approximation ``resources/map/collide_001.numpy``
+    - Note that solving wihout using colliders might be sufficient.
 
 - ### Adjust the parameters
-    - <img src="resources/demo/interface.png">
-    - For instance, you can modify the gain function
-        - <img src="resources/demo/user_defined_sensor.png" width=300>
+    - <img src="resources/demo/interface_002.png" width=500>
+    - For instance, you can modify the sensor/emitter function
+        - <img src="resources/demo/user_defined_sensor.png" width=300> <img src="resources/demo/user_defined_emitter.png" width=300>
 - ### Update the parameters and start the solver
-    - Result after few iterations : </br> <img src=resources/demo/render.png width=300>
+    - Before/After solving. : </br> <img src=resources/demo/render_000.png width=300> <img src=resources/demo/render_199.png width=300>
 
 
 ## Setup
@@ -79,13 +81,14 @@ python3 src/main.py # second method
 - User defined sensors activation function $\psi$
 - User defined density map $\mu$
 - User defined collision map $C$
+    - As a grayscale map (that will be converted to segment)
+    - As a numpy array of relatives positions.
 - Save emitters positions
 
 ## Future Development
 - Features
-    - Collision Map
-        - Represented as a string of segments.
-    - Optional optimizer
+    - Optional optimizer (After multiples tests, we currently use Nadam by default)
+        - <img src="resources/demo/optimizer.png" width=300>
     - Finding the optimal number of sensors
 - Misc
     - For a large number of emitters on a high-dimensional map, we can consider the following approximations of $\mathcal G$.
@@ -99,4 +102,8 @@ python3 src/main.py # second method
             - $\psi \approx l_2$, a piecewise linear function.
             - $\mu \approx \int l_3 \, d\lambda_2$, where $\lambda_2$ is Lebesgue's measure over $\mathbb{R}^2$.
             - $\mathcal{G}_P \approx \int_E l_1 \circ (\sum_y l_2(\text{dist}(\cdot, y)) \times \text{pass}_C(\cdot, y)) \, l_3 \, d\lambda_2$.
+    - Manifold distance.
+        - If the map $E$ is a chart over a manifold, we might want to use the distance over the manifold surface.
+        - Example :
+            - If we want to place emitters over Earth's continents. Our grid will be a chart  over the manifold $S^2$ and the distance will not be the euclidean distance.
     - Use a "compilation" optimizer for Python.

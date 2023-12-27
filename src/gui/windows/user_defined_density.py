@@ -22,13 +22,11 @@ class WindowUserDefinedDensity:
     def load_density_map(self):
         path = dpg.get_value("input_text_density_map")
         
-        input_types = [MapType.GRID]
-        input_type = input_types[
-            int(dpg.get_value("density_input_radio"))]
+        input_type = MapType.from_string(
+            dpg.get_value("density_input_radio"))
+        storage_type = MapType.from_string(
+            dpg.get_value("density_storage_radio"))
 
-        storage_types = [MapType.GRID]
-        storage_type = storage_types[
-            int(dpg.get_value("density_storage_radio"))]
 
         data = cv2.imread(path)
         if data is not None:
@@ -47,11 +45,11 @@ class WindowUserDefinedDensity:
     def input_radio(self):
         dpg.add_text("Input data type :")
         dpg.add_radio_button(tag="density_input_radio", 
-                             items=['Grid'], default_value=0)
+                             items=['Grid'], default_value='Grid')
     def storage_radio(self):
         dpg.add_text("Algorithmic data type : ")
         dpg.add_radio_button(tag="density_storage_radio", 
-                             items=['Grid'], default_value=0)
+                             items=['Grid'], default_value='Grid')
 
     def get_texture(self) :
         if self.config.density_map is None :

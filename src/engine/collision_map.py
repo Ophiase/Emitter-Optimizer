@@ -23,6 +23,8 @@ class CollisionMap:
         match(data_format, storage_type) :
             case MapType.GRID, MapType.SEGMENTS:
                 self.data = self.grid_to_segment(data)
+            case MapType.SEGMENTS, MapType.SEGMENTS:
+                self.data = data
             case _  :
                 raise NotImplementedError()
             
