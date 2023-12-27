@@ -39,18 +39,18 @@ Optimizing signal coverage with emitters on a map involves maximizing a function
 ### Demo
 ---
 You can try to optimize emitters using the following density map and colliders map.
-- ![value_001](resources/map/value_001.png) : ``resources/map/value_001.png``
-- ![collide_001](resources/map/collide_001.png) : ``resources/map/collide_001.png``
+- ![](/resources/map/value_001.png) : ``resources/map/value_001.png``
+- ![](/resources/map/collide_001.png) : ``resources/map/collide_001.png``
     - Image $\to$ segments might make too much segments. \
     Use the approximation ``resources/map/collide_001.numpy``
     - Note that solving wihout using colliders might be sufficient.
 
 - ### Adjust the parameters
-    - <img src="resources/demo/interface_002.png" width=500>
+    - <img src="/resources/demo/interface_002.png" width=500>
     - For instance, you can modify the sensor/emitter function
-        - <img src="resources/demo/user_defined_sensor.png" width=300> <img src="resources/demo/user_defined_emitter.png" width=300>
+        - <img src="/resources/demo/user_defined_sensor.png" width=300> <img src="/resources/demo/user_defined_emitter.png" width=300>
 - ### Update the parameters and start the solver
-    - Before/After solving. : </br> <img src=resources/demo/render_000.png width=300> <img src=resources/demo/render_199.png width=300>
+    - Before/After solving. : </br> <img src=/resources/demo/render_000.png width=300> <img src=/resources/demo/render_199.png width=300>
 
 
 ## Setup
@@ -88,7 +88,7 @@ python3 src/main.py # second method
 ## Future Development
 - Features
     - Optional optimizer (After multiples tests, we currently use Nadam by default)
-        - <img src="resources/demo/optimizer.png" width=300>
+        - <img src="/resources/demo/optimizer.png" width=300>
     - Finding the optimal number of sensors
 - Misc
     - For a large number of emitters on a high-dimensional map, we can consider the following approximations of $\mathcal G$.
