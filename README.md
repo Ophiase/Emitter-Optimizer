@@ -17,20 +17,24 @@ Find the optimal emitters positions on a map using user defined emitter.
 ## Introduction
 ### Model
 ---
-- Emitter function $\varphi : \Bbb R^+ \to \Bbb R$ 
-    - Takes distance from the emitter as a parameter and returns the amount of signal that can be perceived at this distance.
-- Sensor function $\psi : \Bbb R \to \Bbb R$
+
+Optimizing signal coverage with emitters on a map involves maximizing a function $\mathcal G$ over emitter positions $U$, defined as follows:
+
+- Emitter function $\varphi : \mathbb{R}^+ \to \mathbb{R}$ 
+    - Takes the distance from the emitter as a parameter and returns the amount of signal perceived at this distance.
+- Sensor function $\psi : \mathbb{R} \to \mathbb{R}$
     - Takes the sum of signals received at a given position and returns a score for the sensor.  
-- Parameters $P := (E, U, \mu, C)$
-    - $E$ : A squared map.
-    - $U$ : the position of emitters.
-    - $\mu$ : a measure density over $E$.
-    - $C$ : a list of segment that block the signal.
-- $pass_C : x, y \to 1 - \mathbb \Pi_{s \in C} 1_{[x;y] \cap s}$
-    - Returns 0 if the segment $[x;y]$ collide with a segment inside $C$, 1 otherwise.
-- $dist : x, y \to || x - y ||_2$ 
-- Received signal $r_{U, C} : x \to \sum_{y \in U}\varphi \big( dist(x, y) \big) \cdot pass_C(x,y)$
-- Gain function $\mathcal G : P \to \int_E \psi \circ r_{U,C}(x) \, d\mu(x)$
+- $U$: the positions of emitters.
+- Parameters $P := (E, \mu, C)$
+    - $E$: A square map.
+    - $\mu$: a density measure over $E$.
+    - $C$: a list of segments that block the signal.
+- $pass_C : (x, y) \to 1 - \prod_{s \in C} (1 - \mathbb{1}_{[x; y] \cap s})$
+    - Returns 0 if the segment $[x; y]$ collides with a segment inside $C$, 1 otherwise.
+- $dist : (x, y) \to || x - y ||_2$ 
+- Received signal $r_{U, C} : x \to \sum_{y \in U}\varphi \big( dist(x, y) \big) \cdot pass_C(x, y)$
+- Gain function $\mathcal G_P : U \to \int_E \psi \circ r_{U, C}(x) \, d\mu(x)$
+
 
 ### Demo
 ---
@@ -94,5 +98,5 @@ python3 src/main.py # second method
             - $\varphi \approx l_1$, a piecewise linear function.
             - $\psi \approx l_2$, a piecewise linear function.
             - $\mu \approx \int l_3 \, d\lambda_2$, where $\lambda_2$ is Lebesgue's measure over $\mathbb{R}^2$.
-            - $\mathcal{G} \approx \int_E l_1 \circ (\sum_y l_2(\text{dist}(\cdot, y)) \times \text{pass}_C(\cdot, y)) \, l_3 \, d\lambda_2$.
+            - $\mathcal{G}_P \approx \int_E l_1 \circ (\sum_y l_2(\text{dist}(\cdot, y)) \times \text{pass}_C(\cdot, y)) \, l_3 \, d\lambda_2$.
     - Use a "compilation" optimizer for Python.
