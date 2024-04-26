@@ -7,3 +7,4 @@ dependencies:
   - tensorflow
   - dearpygui
   - opencv-python
+  - matplotlib
