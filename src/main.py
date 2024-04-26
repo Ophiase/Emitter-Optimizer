@@ -9,8 +9,11 @@ import dearpygui.dearpygui as dpg
 import engine.solver as solver
 from gui.application import Application
 
-def main() :
+def lower_tf_warning():
     tf.get_logger().setLevel("ERROR")
+
+def main() :
+    lower_tf_warning()
     matplotlib.use('Agg')
     app = Application()
 

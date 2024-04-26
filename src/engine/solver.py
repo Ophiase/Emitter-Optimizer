@@ -73,7 +73,7 @@ class Solver :
 
 
         if update_callback is None:
-            self.update_callback = lambda x = None : x
+            self.update_callback = lambda x = None, history = None : x
         else :
             self.update_callback = update_callback
 
