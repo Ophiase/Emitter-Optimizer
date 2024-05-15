@@ -1,7 +1,7 @@
 import tensorflow as tf
 
-# Be careful, tensorflow autograph, 
-# don't work at run time.
+# Be careful, tensorflow autograph
+# doesn't work at run time.
 # Use tf.cond instead of if/else statements, 
 # tf.while_loop instead of loops.
 
