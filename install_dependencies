@@ -1,9 +1,8 @@
 #!/bin/bash
 
-read -p "Do you want to install dependencies? (y/n): " answer
-if [ "$answer" != "${answer#[Yy]}" ]; then
-    # Installer les dépendances
-    pip install numpy tensorflow dearpygui opencv-python
-else
-    echo "Installation des dépendances annulée."
-fi
+# read -p "Do you want to install the following dependencies ? (y/n): " answer
+# if [ "$answer" != "${answer#[Yy]}" ]; then
+pip install numpy tensorflow dearpygui opencv-python matplotlib
+# else
+    # echo "Aborted"
+# fi
