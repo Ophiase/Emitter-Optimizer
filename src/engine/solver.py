@@ -41,7 +41,7 @@ class Solver :
             )
         else :
             self.density_map = density_map.copy()
-            match (self.density_map.storage_type):
+            match (self.density_map.storage_type) :
                 case MapType.GRID: density_grid_decoding()
                 case _ : raise NotImplementedError()
 

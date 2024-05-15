@@ -47,7 +47,7 @@ You can try to optimize emitters using the following density map and colliders m
 - ### Adjust the parameters
     - <img src="https://raw.githubusercontent.com/Ophiase/Emitter-Optimizer/main/resources/demo/interface_002.png" width=500>
     - For instance, you can modify the sensor/emitter function
-        - <img src="https://raw.githubusercontent.com/Ophiase/Emitter-Optimizer/main/resources/demo/user_defined_sensor.png" width=300> <img src="https://raw.githubusercontent.com/Ophiase/Emitter-Optimizer/main/resources/demo/user_defined_emitter.png" width=300>
+        - <img src="resources/demo/user_defined_sensor_screenshot.png" width=300> <img src="resources/demo/user_defined_emitter_screenshot.png" width=300>
 - ### Update the parameters and start the solver
     - Before solving : </br> <img src=https://raw.githubusercontent.com/Ophiase/Emitter-Optimizer/main/resources/demo/render_000.png height=150> 
     - After solving : <br> <img src=https://raw.githubusercontent.com/Ophiase/Emitter-Optimizer/main/resources/demo/render_199.png height=150><img src=https://raw.githubusercontent.com/Ophiase/Emitter-Optimizer/main/resources/demo/loss.png height=150>
@@ -63,7 +63,7 @@ You can try to optimize emitters using the following density map and colliders m
 ```sh
 pip install numpy tensorflow dearpygui opencv-python matplotlib
 ```
-- condas install of the dependencies :
+- conda install of the dependencies :
 ```sh
 conda env create -f environment.yml
 ```
