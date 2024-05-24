@@ -1,4 +1,4 @@
-# Emitter Optimizer
+# Emitter Optimizer 📡
 An application with a parametric interface designed to optimize the positions of emitters. It caters to various emitter types specified by the user, including electromagnetic signals, water irrigation and optimal business placements – ensuring strategic positioning of stores to maximize customer coverage.
 
 ## Table of Contents
