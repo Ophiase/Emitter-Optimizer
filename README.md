@@ -55,17 +55,17 @@ You can try to optimize emitters using the following density map and colliders m
 
 ## Setup
 ### Installation
+- conda install of the dependencies :
+```sh
+conda env create -f environment.yml
+```
 - automatic install of dependencies :
 ```sh
 ./install_dependencies
 ```
 - manual install of the dependencies :
 ```sh
-pip install numpy tensorflow dearpygui opencv-python matplotlib
-```
-- conda install of the dependencies :
-```sh
-conda env create -f environment.yml
+pip install numpy tensorflow==2.14 dearpygui==1.10.0 opencv-python matplotlib
 ```
 
 #### Technologies Used
