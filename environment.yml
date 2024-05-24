@@ -1,13 +1,12 @@
 name: emitter
 channels:
   - defaults
-  - conda-forge
 dependencies:
-  - python=3.10
+  - python=3.11
   - numpy
   - opencv
   - matplotlib
   - pip
   - pip:
-    - dearpygui
-    - tensorflow
+    - dearpygui==1.10.0
+    - tensorflow==2.14

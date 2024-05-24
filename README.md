@@ -65,7 +65,7 @@ conda env create -f environment.yml
 ```
 - manual install of the dependencies :
 ```sh
-pip install numpy tensorflow dearpygui opencv-python matplotlib
+pip install numpy tensorflow==2.14 dearpygui==1.10.0 opencv-python matplotlib
 ```
 
 #### Technologies Used
