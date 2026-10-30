@@ -1,5 +1,3 @@
-"""The gain and its gradient over a map: density, obstacles, two laws."""
-
 from dataclasses import dataclass
 
 import numpy as np

@@ -1,5 +1,3 @@
-"""Conversions between the grid and the world, and the path a signal takes."""
-
 import cv2
 import numpy as np
 

@@ -1,5 +1,3 @@
-"""The mutable state of one map: what the service answers about."""
-
 import io
 import threading
 from dataclasses import dataclass, field
@@ -26,8 +24,6 @@ from emitter_optimizer.service.models import (
 
 @dataclass
 class Session:
-    """One map, its solver, and the emitters currently placed on it."""
-
     map_scale: tuple[float, float] = (100.0, 100.0)
     grid_size: tuple[int, int] = (32, 32)
     density: DensityMap | None = None

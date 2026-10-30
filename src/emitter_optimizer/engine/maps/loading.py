@@ -1,5 +1,3 @@
-"""Reading a map from a file: an image or a CSV of segments."""
-
 from pathlib import Path
 
 import cv2

@@ -1,5 +1,3 @@
-"""The published benchmark: fixed situations, a generated table."""
-
 import sys
 import time
 from dataclasses import dataclass

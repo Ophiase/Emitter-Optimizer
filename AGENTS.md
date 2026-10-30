@@ -54,7 +54,8 @@ seven entries per folder, two hundred lines per file
 
 ## Python
 
-Follow [.agents/portable/rules/python.md](.agents/portable/rules/python.md):
+Follow [.agents/portable/rules/python.md](.agents/portable/rules/python.md)
+and this project's [.agents/rules/python.md](.agents/rules/python.md):
 type annotations everywhere, names that say what a value means, short
 functions, one concern per file, dataclasses for internal data and pydantic
 only at a boundary. A comment records a **why** the code cannot express

@@ -1,5 +1,3 @@
-"""Small helpers shared by the Dear PyGui windows."""
-
 import io
 from collections.abc import Sequence
 

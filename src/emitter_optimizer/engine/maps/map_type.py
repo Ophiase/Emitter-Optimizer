@@ -2,8 +2,6 @@ from enum import StrEnum
 
 
 class MapType(StrEnum):
-    """How a map is stored: as a grid of values or as a set of segments."""
-
     GRID = "grid"
     SEGMENTS = "segments"
 

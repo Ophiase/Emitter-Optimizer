@@ -1,5 +1,3 @@
-"""A window that edits one of the two functions the solver applies."""
-
 from pathlib import Path
 
 import dearpygui.dearpygui as dpg

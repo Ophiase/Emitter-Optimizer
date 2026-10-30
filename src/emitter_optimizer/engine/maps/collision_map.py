@@ -11,8 +11,6 @@ CANNY_APERTURE = 3
 
 @dataclass(eq=False)
 class CollisionMap:
-    """The segments that block a signal, as (start, end) points of the unit square."""
-
     data: np.ndarray
     storage_type: MapType = MapType.SEGMENTS
 

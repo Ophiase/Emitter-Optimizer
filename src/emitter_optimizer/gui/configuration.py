@@ -1,5 +1,3 @@
-"""The parameters the window edits, and the solver built from them."""
-
 from pathlib import Path
 from typing import ClassVar
 

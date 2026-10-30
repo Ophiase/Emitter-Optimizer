@@ -1,5 +1,3 @@
-"""The HTTP adapter: read a request, ask the router, write the answer."""
-
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 from emitter_optimizer.service.router import EMPTY_BODY, Response, Router, routes_for

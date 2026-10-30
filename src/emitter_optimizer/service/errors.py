@@ -1,5 +1,3 @@
-"""The errors the service knows how to answer, and the status each one gets."""
-
 from http import HTTPStatus
 
 

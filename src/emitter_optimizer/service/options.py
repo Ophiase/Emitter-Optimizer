@@ -1,5 +1,3 @@
-"""Everything a map needs, read once from the command line."""
-
 import argparse
 from dataclasses import dataclass
 from pathlib import Path
@@ -24,8 +22,6 @@ DEFAULT_SEED = 0
 
 @dataclass(frozen=True)
 class MapOptions:
-    """A map, its laws and the descent parameters, typed once."""
-
     density: DensityMap | None
     collisions: CollisionMap | None
     map_scale: tuple[float, float]

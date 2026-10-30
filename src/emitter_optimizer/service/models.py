@@ -1,5 +1,3 @@
-"""The JSON shapes of the service: what it accepts and what it answers."""
-
 from typing import Annotated
 
 from pydantic import BaseModel, Field
@@ -9,8 +7,6 @@ MAXIMUM_ITERATIONS = 100_000
 
 
 class State(BaseModel):
-    """The current map, its emitters, and the gain they reach."""
-
     map_scale: tuple[float, float]
     grid_size: tuple[int, int]
     emitters: Annotated[int, Field(ge=0)]
@@ -29,8 +25,6 @@ class RunRequest(BaseModel):
 
 
 class PlaceRequest(BaseModel):
-    """Put emitters somewhere: explicit positions, a count and a seed, or both."""
-
     positions: tuple[tuple[float, float], ...] | None = None
     emitters: Annotated[int, Field(ge=1)] | None = None
     seed: Annotated[int, Field(ge=0)] | None = None

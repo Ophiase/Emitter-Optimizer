@@ -1,5 +1,3 @@
-"""Command line: optimize a map, serve it to an agent, or open the window."""
-
 import argparse
 import json
 from pathlib import Path

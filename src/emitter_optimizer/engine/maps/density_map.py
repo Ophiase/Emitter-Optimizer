@@ -7,8 +7,6 @@ from emitter_optimizer.engine.maps.map_type import MapType
 
 @dataclass(eq=False)
 class DensityMap:
-    """How much each point of the map is worth, stored as a grid of weights."""
-
     data: np.ndarray
     storage_type: MapType = MapType.GRID
 

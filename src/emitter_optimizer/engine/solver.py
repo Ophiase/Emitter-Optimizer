@@ -1,5 +1,3 @@
-"""Gradient descent on the emitter positions: Adam with a projection."""
-
 from collections.abc import Callable
 
 import numpy as np
@@ -22,8 +20,6 @@ def _ignore_update(*_: object) -> None:
 
 
 class Solver:
-    """Maximize the gain of a set of emitters over a field."""
-
     def __init__(
         self,
         n_emitters: int,

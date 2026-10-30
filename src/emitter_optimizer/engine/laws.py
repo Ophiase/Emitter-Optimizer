@@ -1,5 +1,3 @@
-"""The vocabulary of a law, and the loader of the two a person edits."""
-
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
@@ -19,8 +17,6 @@ DERIVATIVE = "derivative"
 
 @dataclass(frozen=True, slots=True)
 class Law:
-    """A user function and, when it exists, its derivative."""
-
     value: SignalFunction
     derivative: Derivative | None = None
 
@@ -29,7 +25,6 @@ class Law:
         return cls(function)
 
     def slope(self, points: FloatArray) -> FloatArray:
-        """The derivative at `points`, exact or by central difference."""
         if self.derivative is not None:
             return self.derivative(points)
         step = FINITE_DIFFERENCE_STEP * (1.0 + np.abs(points))

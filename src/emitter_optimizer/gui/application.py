@@ -1,5 +1,3 @@
-"""The Dear PyGui face: build the windows from the layout, then run."""
-
 import json
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -31,8 +29,6 @@ WindowContent = Callable[[str], None]
 
 @dataclass(frozen=True)
 class WindowSpec:
-    """One window of the layout file, typed."""
-
     label: str
     tag: str
     width: int
@@ -63,8 +59,6 @@ class WindowSpec:
 
 @dataclass(frozen=True)
 class ViewportSpec:
-    """The window the application opens into."""
-
     width: int
     height: int
     title: str
@@ -84,8 +78,6 @@ class ViewportSpec:
 
 @dataclass(frozen=True)
 class GuiLayout:
-    """Every window of the application and the viewport that holds them."""
-
     windows: tuple[WindowSpec, ...]
     viewport: ViewportSpec
 

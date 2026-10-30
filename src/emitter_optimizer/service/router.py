@@ -1,5 +1,3 @@
-"""The routes of the service, and the mapping from an error to an answer."""
-
 import json
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -19,8 +17,6 @@ Route = Callable[[bytes], "Response"]
 
 @dataclass(frozen=True)
 class Response:
-    """A status, a content type and a body: what the transport has to write."""
-
     status: HTTPStatus
     content_type: str
     body: bytes
