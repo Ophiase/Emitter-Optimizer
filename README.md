@@ -1,4 +1,7 @@
 # Emitter Optimizer 📡
+
+[![The Kanon](https://img.shields.io/badge/%3C%3E-Kanon-6f42c1)](.agents/kanon.md)
+
 An application with a parametric interface designed to optimize the positions of emitters. It caters to various emitter types specified by the user, including electromagnetic signals, water irrigation and optimal business placements – ensuring strategic positioning of stores to maximize customer coverage.
 
 ## Table of Contents
@@ -10,6 +13,7 @@ An application with a parametric interface designed to optimize the positions of
 - Setup
     - [Installation](#installation)
     - [Run](#run)
+    - [Technologies Used](#technologies-used)
 - Future Development
     - [Future Development](#future-development)
 
@@ -55,34 +59,28 @@ You can try to optimize emitters using the following density map and colliders m
 
 ## Setup
 ### Installation
-- conda install of the dependencies :
+
+Python 3.14 and [uv](https://docs.astral.sh/uv/) are the only prerequisites;
+`just` is the entry point.
+
 ```sh
-conda env create -f environment.yml
+just install   # uv sync: the environment and every dependency
 ```
-- automatic install of dependencies :
-```sh
-./install_dependencies
-```
-- manual install of the dependencies :
-```sh
-pip install numpy tensorflow==2.14 dearpygui==1.10.0 opencv-python matplotlib
-```
-
-#### Technologies Used
-
-- **Dear PyGui:** Used to design and create the graphical user interface (GUI) for an intuitive and user-friendly application.
-
-- **TensorFlow:** Used to optimize the gain function using automatic gradient computation and gradient descent techniques.
-
-- **OpenCV (cv2):** Employed for computer vision tasks. Specifically, used to detect contour segments on the collision map.
-
 
 ### Run
+
 ```sh
-./run # first method
-python3 src/main.py # second method
-make run # third method
+just run       # start the window
 ```
+
+`just` alone lists every recipe. The checks are `just lint` (ruff and ty),
+`just test` and `just check`; `just agent gate` is the whole gate.
+
+### Technologies Used
+
+- **Dear PyGui** draws the interface.
+- **TensorFlow** follows the gradient of the gain, **Keras** supplies Nadam.
+- **OpenCV** finds the contour segments of a collision map.
 
 ## Features
 - Basic simulation : Gradient climbing of the gain function $\mathcal G$
