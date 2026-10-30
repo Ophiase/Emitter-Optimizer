@@ -1,0 +1,16 @@
+line-length = 88
+preview = true
+target-version = "py314"
+
+# The portable layer is copied as is from the author's other repositories.
+extend-exclude = [".agents"]
+
+[lint]
+extend-select = ["unused-async"]
+fixable = ["ALL"]
+select = ["E", "F", "UP", "B", "I", "SIM", "S", "RUF", "PTH", "C4", "ARG", "G"]
+
+[lint.per-file-ignores]
+"tests/**/*.py" = ["assert"]
+# The GUI loads the emitter and sensor functions the user typed.
+"src/emitter_optimizer/gui/configuration.py" = ["exec-builtin"]

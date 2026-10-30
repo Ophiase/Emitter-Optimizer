@@ -1,3 +1,16 @@
+# Paths of the reference projects on this machine, see .agents/local.example.yaml
+/.agents/local/
+
+.venv/
+.pytest_cache/
+.ruff_cache/
+.rumdl_cache/
+
+# Saved emitter positions, written by the Save button
+/save/
+
+# Byte-compiled / optimized / DLL files
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

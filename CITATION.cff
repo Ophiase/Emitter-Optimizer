@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: If you use this software, cite it as below.
+title: Emitter Optimizer
+abstract: Optimize the positions of emitters over a weighted, obstructed map.
+authors:
+  - name: Ophiase
+repository-code: https://github.com/Ophiase/Emitter-Optimizer
+license: Apache-2.0
+version: 2.0.0
+date-released: 2026-10-30

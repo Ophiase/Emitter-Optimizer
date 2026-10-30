@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Keep Cursor working while a project check fails, and hand it the report.
+set -uo pipefail
+
+cat >/dev/null
+root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
+cd "$root" || exit 0
+command -v just >/dev/null || { printf '{}\n'; exit 0; }
+
+status=0
+report=$(just guards 2>&1) || status=$?
+if ((status == 0)); then
+  printf '{}\n'
+  exit 0
+fi
+
+if command -v jq >/dev/null; then
+  printf '%s' "$report" | jq -Rs '{followup_message: .}'
+else
+  printf '%s\n' "$report" >&2
+  printf '{"followup_message":"Project checks failed; see the hook report on stderr."}\n'
+fi

@@ -1,0 +1,27 @@
+spec: 1
+
+identity:
+  name: emitter-optimizer
+  author: Ophiase
+  holder: Ophiase
+  nature: open-source
+  visibility: public
+
+audience:
+  - people placing radio, irrigation or retail sites
+  - computer-vision and optimization engineers
+
+lifecycle:
+  stage: personal
+  registries:
+    pypi: not-yet
+  ci:
+    mode: manual
+    activation: consent
+
+agent:
+  autonomy:
+    commit: dev-branch
+    push: never
+    version-bump: allowed
+    commit-when: gate-passes

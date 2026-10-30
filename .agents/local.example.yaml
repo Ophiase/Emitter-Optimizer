@@ -1,0 +1,14 @@
+projects:
+  sibling-rust:
+    path: /path/to/sibling
+    why: what its newest conventions teach, and what not to copy
+  research:
+    example:
+      path: /path/to/research
+      why: the method it teaches, never its content
+  industrial-example:
+    path: /path/to/industrial
+    why: the tooling and decisions it shares, never its code
+  founding-case:
+    path: /path/to/private-record
+    why: the need it records, read locally only, never copied

@@ -1,0 +1,16 @@
+[global]
+
+exclude = [
+  ".git",
+  "target",
+  ".venv",
+]
+
+respect_gitignore = true
+
+disable = [
+  "MD033",
+]
+
+[per-file-ignores]
+"README.md" = ["MD013"]
