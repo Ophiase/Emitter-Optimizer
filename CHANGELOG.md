@@ -4,6 +4,10 @@ Milestones of the whole project; the version is in `VERSION`.
 
 ## Unreleased
 
+- **A command line**: `emitter-optimizer run` takes a density, a collision
+  map, the laws, a seed and the parameters, and writes `positions.csv`,
+  `history.csv`, `figure.png` and `summary.json`. `just demo` runs it on the
+  demo map; `emitter-optimizer window` opens the window.
 - **The engine is NumPy.** The gain, its value map and its gradient are
   arrays; the descent is a projected Adam step with a best-seen safeguard.
   TensorFlow and Keras are gone, with 600 MB and a release candidate.

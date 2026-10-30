@@ -1,3 +1,3 @@
-from emitter_optimizer.main import main
+from emitter_optimizer.cli import main
 
 raise SystemExit(main())

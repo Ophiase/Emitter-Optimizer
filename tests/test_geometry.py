@@ -27,13 +27,15 @@ def test_world_coordinates_are_the_cells_scaled() -> None:
 
 def test_a_segment_hides_what_lies_behind_it() -> None:
     cells = np.array([[0.0, 0.0], [2.0, 0.0]])
-    emitters = np.array([[0.0, 2.0]])
+    emitters = np.array([[0.0, 2.0], [3.0, 2.0]])
     obstacles = np.array([[[-1.0, 1.0], [0.5, 1.0]]])
 
     mask = visibility(cells, emitters, obstacles)
 
     assert not mask[0, 0]
     assert mask[1, 0]
+    assert mask[0, 1]
+    assert mask[1, 1]
 
 
 def test_generated_points_stay_on_the_map() -> None:

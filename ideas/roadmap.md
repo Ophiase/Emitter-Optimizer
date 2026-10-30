@@ -40,10 +40,10 @@ Done on 2026-10-30, in `dev/engine-numpy`; 1.6 and 1.7 remain.
   ascent direction, the best positions kept so the gain never drops, `abort`
   and the update callback. *Restarts are not done*; multi-start is a later
   step.
-- [ ] **1.6 A headless command.** `emitter-optimizer run --map ... --density
-  ... --emitters 12 --seed 0 --iterations 200 --out out/` writes
-  `positions.csv`, `history.csv` and `figure.png`, and prints a JSON summary.
-  *Accepts*: a person reproduces the README figure with one command.
+- [x] **1.6 A headless command.** (2026-10-30) `emitter-optimizer run` takes a
+  density, a collision map, the laws, a seed and the parameters, and writes
+  `positions.csv`, `history.csv`, `figure.png` and `summary.json`; `just demo`
+  runs it on the demo map. `emitter-optimizer window` opens the window.
 - [ ] **1.7 A benchmark.** `just bench` runs fixed situations (no map, a
   density, a density with walls, a non-square grid) and writes
   `docs/benchmark/results.md`, sorted, with timings.

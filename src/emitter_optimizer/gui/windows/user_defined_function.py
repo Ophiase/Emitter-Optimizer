@@ -45,7 +45,7 @@ class WindowUserDefinedFunction:
         return f"plot_{self.name}_range"
 
     def _function(self) -> SignalFunction:
-        return getattr(self.config, self.attribute)
+        return getattr(self.config, self.attribute).value
 
     def _resize(self, window_tag: str) -> None:
         width, height = dpg.get_item_rect_size(window_tag)

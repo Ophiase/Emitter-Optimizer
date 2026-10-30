@@ -11,7 +11,12 @@ install:
 [group("user")]
 [doc("Start the optimizer window")]
 run:
-    uv run python -m emitter_optimizer
+    uv run emitter-optimizer window
+
+[group("user")]
+[doc("Optimize the demo map and write out/demo: positions, history, figure, summary")]
+demo:
+    uv run emitter-optimizer run --density resources/map/value_001.png --collisions resources/map/collide_001.png --emitters 15 --iterations 200 --seed 0 --out out/demo
 
 [group("dev")]
 [doc("Rewrite the code with ruff, then type-check it with ty")]

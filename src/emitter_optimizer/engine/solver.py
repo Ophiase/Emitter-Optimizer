@@ -2,7 +2,6 @@
 
 from collections.abc import Callable
 
-import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.figure import Figure
 
@@ -85,6 +84,8 @@ class Solver:
         emitters: Positions | None = None,
         figsize: tuple[float, float] = FIGURE_SIZE,
     ) -> Figure:
+        import matplotlib.pyplot as plt
+
         positions = self.emitters_positions if emitters is None else emitters
         values = self.field.value_map(positions)
         figure, axes = plt.subplots(figsize=figsize)

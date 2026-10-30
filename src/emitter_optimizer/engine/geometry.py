@@ -61,9 +61,10 @@ def visibility(
     """True where the segment from a cell to an emitter crosses no obstacle."""
     start = cells[:, None, :]
     end = emitters[None, :, :]
+    shape = (len(cells), len(emitters))
     if obstacles is None or len(obstacles) == 0:
-        return np.ones(start.shape[:2], dtype=bool)
-    blocked = np.zeros(start.shape[:2], dtype=bool)
+        return np.ones(shape, dtype=bool)
+    blocked = np.zeros(shape, dtype=bool)
     for obstacle in obstacles:
         blocked |= crosses(start, end, obstacle)
     return ~blocked

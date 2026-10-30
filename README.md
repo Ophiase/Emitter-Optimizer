@@ -32,13 +32,23 @@ questions live in [ideas/](ideas/README.md).
 
 ```sh
 just install   # uv sync: Python 3.14 and the dependencies
-just run       # open the window
+just demo      # optimize the demo map into out/demo/
+just run       # open the window instead
 ```
 
-Load `resources/map/value_001.png` as the density, optionally
+The command writes `positions.csv`, `history.csv`, `figure.png` and
+`summary.json` into `out/demo/`. Its options are the map, the density, the
+obstacles, the number of emitters, the step, the seed and the two laws:
+
+```sh
+uv run emitter-optimizer run --density my-map.png --collisions walls.png \
+    --emitters 12 --iterations 200 --seed 0 --out out/my-plan
+```
+
+In the window, load `resources/map/value_001.png` as the density, optionally
 `resources/map/collide_001.png` as the collision map, choose the number of
-emitters, press **Process**. The window shows the value map, the emitters and
-the gain curve; **Save** writes the positions.
+emitters, press **Process**. It shows the value map, the emitters and the gain
+curve; **Save** writes the positions.
 
 `just` alone lists every recipe. `just lint`, `just test` and `just check` are
 the local checks; `just agent gate` is the whole gate.

@@ -1,11 +1,12 @@
 """The parameters the window edits, and the solver built from them."""
 
 from pathlib import Path
-from typing import Any, ClassVar, cast
+from typing import ClassVar
 
+from emitter_optimizer.engine.laws import load_law
 from emitter_optimizer.engine.maps import CollisionMap, DensityMap
 from emitter_optimizer.engine.solver import Solver, UpdateCallback
-from emitter_optimizer.engine.types import Derivative, Law, SignalFunction
+from emitter_optimizer.engine.types import Law
 from emitter_optimizer.paths import (
     DEFAULT_EMITTER_FUNCTION,
     DEFAULT_SAVE_PATH,
@@ -18,8 +19,6 @@ DEFAULT_EMITTERS = 15
 DEFAULT_MAP_SCALE = (100.0, 100.0)
 DEFAULT_GRID_SIZE = (32, 32)
 DEFAULT_UPDATE_RATE = 5
-FUNCTION_ENTRY = "eval"
-FUNCTION_DERIVATIVE = "derivative"
 
 
 class GuiConfig:
@@ -64,11 +63,7 @@ class GuiConfig:
 
     @staticmethod
     def load_function(source: str) -> Law:
-        namespace: dict[str, Any] = {}
-        exec(source, namespace)
-        value = cast(SignalFunction, namespace[FUNCTION_ENTRY])
-        derivative = cast(Derivative | None, namespace.get(FUNCTION_DERIVATIVE))
-        return Law(value, derivative)
+        return load_law(source)
 
     def update_solver(self) -> None:
         self.solver = self.to_solver()
