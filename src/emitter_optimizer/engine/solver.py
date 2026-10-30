@@ -85,11 +85,10 @@ class Solver:
         emitters: Positions | None = None,
         figsize: tuple[float, float] = FIGURE_SIZE,
     ) -> Figure:
-        import matplotlib.pyplot as plt
-
         positions = self.emitters_positions if emitters is None else emitters
         values = self.field.value_map(positions)
-        figure, axes = plt.subplots(figsize=figsize)
+        figure = Figure(figsize=figsize)
+        axes = figure.add_subplot(1, 1, 1)
         axes.scatter(positions[:, 0], positions[:, 1])
         axes.set_xlim(0, self.map_scale[0])
         axes.set_ylim(self.map_scale[1], 0)

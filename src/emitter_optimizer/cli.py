@@ -4,7 +4,6 @@ import argparse
 import json
 from pathlib import Path
 
-import matplotlib
 import numpy as np
 
 from emitter_optimizer.engine.solver import Solver
@@ -18,8 +17,6 @@ from emitter_optimizer.service.options import (
     DEFAULT_RUN_ITERATIONS,
     DEFAULT_SEED,
 )
-
-matplotlib.use("Agg")
 
 
 def _add_map_arguments(command: argparse.ArgumentParser) -> None:

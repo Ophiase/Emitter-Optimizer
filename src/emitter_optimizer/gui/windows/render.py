@@ -1,5 +1,4 @@
 import dearpygui.dearpygui as dpg
-import matplotlib.pyplot as plt
 
 from emitter_optimizer.engine.solver import Positions
 from emitter_optimizer.gui.configuration import GuiConfig
@@ -20,9 +19,7 @@ class WindowRender:
 
     def get_texture(self, emitters: Positions | None = None) -> list[float]:
         figure = self.config.solver.make_fig(emitters, FIGURE_SIZE)
-        texture = DpgUtils.fig_to_dpg_texture(figure)
-        plt.close(figure)
-        return texture
+        return DpgUtils.fig_to_dpg_texture(figure)
 
     def update(
         self,

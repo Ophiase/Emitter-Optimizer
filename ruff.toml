@@ -12,5 +12,5 @@ select = ["E", "F", "UP", "B", "I", "SIM", "S", "RUF", "PTH", "C4", "ARG", "G"]
 
 [lint.per-file-ignores]
 "tests/**/*.py" = ["assert"]
-# The GUI loads the emitter and sensor functions the user typed.
-"src/emitter_optimizer/gui/configuration.py" = ["exec-builtin"]
+# A law is arbitrary code the person writes and the loader runs: that is the feature.
+"src/emitter_optimizer/engine/laws.py" = ["exec-builtin"]

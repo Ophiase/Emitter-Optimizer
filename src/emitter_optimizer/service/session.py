@@ -5,12 +5,7 @@ import threading
 from dataclasses import dataclass, field
 from pathlib import Path
 
-import matplotlib
 import numpy as np
-
-matplotlib.use("Agg")
-
-import matplotlib.pyplot as plt
 
 from emitter_optimizer.engine.geometry import generate_points
 from emitter_optimizer.engine.laws import load_law_file
@@ -116,7 +111,6 @@ class Session:
         figure = self.solver().make_fig(self.positions)
         buffer = io.BytesIO()
         figure.savefig(buffer, format="png")
-        plt.close(figure)
         return buffer.getvalue()
 
     def _build(self) -> Solver:

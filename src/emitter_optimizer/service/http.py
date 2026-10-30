@@ -18,8 +18,9 @@ class _SessionHandler(BaseHTTPRequestHandler):
     def do_POST(self) -> None:
         self._answer("POST")
 
-    def log_message(self, format: str, *args: object) -> None:  # ruff: ignore[unused-method-argument]
-        return None
+    def log_message(self, format: str, *args: object) -> None:
+        """Silence the access log: the router already answers every request."""
+        del format, args
 
     def _answer(self, method: str) -> None:
         self._write(self.router.dispatch(method, self.path, self._body()))

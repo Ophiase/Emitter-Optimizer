@@ -38,7 +38,7 @@ class Law:
 
 def load_law(source: str) -> Law:
     namespace: dict[str, Any] = {}
-    exec(source, namespace)  # ruff: ignore[exec-builtin]
+    exec(source, namespace)
     value = cast(SignalFunction, namespace[ENTRY])
     derivative = cast(Derivative | None, namespace.get(DERIVATIVE))
     return Law(value, derivative)
