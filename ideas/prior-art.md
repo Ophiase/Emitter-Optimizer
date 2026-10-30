@@ -26,6 +26,22 @@
 - **Straight-through estimators**: a candidate when only the sign of a test
   is differentiable, as with hard visibility.
 
+## Manifolds, lattices, constraints
+
+- **Riemannian optimization**: gradient descent on a manifold, with a
+  retraction and a projection; the reference is the matrix-manifold
+  literature. Our constraint case is a small instance of it.
+- **Ewald summation**: the standard way to sum a periodic interaction; the
+  crystal case needs it or a justified truncation.
+- **Geodesic distance on meshes**: heat method, exact polyhedral methods,
+  graph distances. The choice sets the error of the surface case.
+- **VLSI placement**: quadratic placement, force-directed spreading,
+  analytical placement (ePlace and relatives). The circuit case is a
+  mature field with strong baselines; **[to check]** how much of it applies
+  to a pairwise interference term rather than a wirelength.
+- **Antenna arrays and beamforming**: anisotropic emitters and interference
+  are standard there; **[to check]** which objective they optimize.
+
 ## What is ours
 
 **[sketch]** The combination, not the pieces: a user-defined emitter law and
@@ -41,3 +57,7 @@ is *one engine for many physics*, measured against the classical baselines.
   how they compare on a continuous map.
 - **[to check]** Any public implementation of differentiable visibility in a
   placement problem, to avoid claiming novelty.
+- **[to check]** Riemannian optimization libraries (PyManopt, ROPTLIB) and
+  whether one is worth a dependency for the constraint case.
+- **[to check]** Whether analytical VLSI placement already covers the
+  circuit case, which would make it a demo rather than a contribution.

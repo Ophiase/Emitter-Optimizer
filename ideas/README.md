@@ -45,7 +45,8 @@ drive** as easily as a person.
 - **architecture/**: [README](architecture/README.md) —
   [stack](architecture/stack.md) · [layers](architecture/layers.md) ·
   [agent-interop](architecture/agent-interop.md) ·
-  [zero-telemetry](architecture/zero-telemetry.md)
+  [zero-telemetry](architecture/zero-telemetry.md) ·
+  [language](architecture/language.md)
 - **engine/**: [README](engine/README.md) —
   [gain](engine/gain.md) · [occlusion](engine/occlusion.md) ·
   [map](engine/map.md) · [distance](engine/distance.md) ·
@@ -55,7 +56,12 @@ drive** as easily as a person.
   [emitter-count](model/emitter-count.md) ·
   [baselines](model/baselines.md) ·
   [piecewise-linear](model/piecewise-linear.md) ·
-  [physics](model/physics.md)
+  [physics](model/physics.md) ·
+  [three-dimensional](model/three-dimensional.md) ·
+  [manifolds](model/manifolds.md) ·
+  [constraints](model/constraints.md) ·
+  [crystals](model/crystals.md) ·
+  [circuits](model/circuits.md)
 
 ## Where the code stands (v2.0, 2026-10-30)
 

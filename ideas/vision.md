@@ -38,3 +38,8 @@ and open enough for an agent to drive.
   requirement; a DL framework only enters as an optional autodiff backend.
 - **[sketch]** Not a UI-first product. The window exists to make the engine
   legible, not the other way around.
+
+**[sketch]** The map is a rectangle *today*. A volume, a surface, a
+periodic cell, or a metric that is not the plane are one generalization of
+the same gain ([manifolds](model/manifolds.md)). The default window stays
+the simple case; the engine does not have to.

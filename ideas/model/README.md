@@ -11,6 +11,11 @@ baselines to prove the result is good.
 - [piecewise-linear.md](piecewise-linear.md) — the fast path of the original
   Future Development.
 - [physics.md](physics.md) — anisotropy, path loss, noise floor, surfaces.
+- [three-dimensional.md](three-dimensional.md) — a volume, a surface, a mesh.
+- [manifolds.md](manifolds.md) — a metric, a periodic cell, a quotient.
+- [constraints.md](constraints.md) — rigid bodies, torsions, lattice sites.
+- [crystals.md](crystals.md) — a periodic cell, atoms as emitters.
+- [circuits.md](circuits.md) — pairs, interference, layouts.
 
 ## The order
 

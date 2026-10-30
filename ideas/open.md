@@ -16,6 +16,17 @@
    greedy maximum coverage, or a facility-location solver from `scipy`.
 6. **[question] Is a paper the goal, or a tool?** It changes how much of
    [model/](model/README.md) is measured versus shipped.
+7. **[question] Is the 3D, manifold and constraint path worth it?** It is
+   the only direction that makes the project different from a coverage demo
+   ([manifolds](model/manifolds.md), [constraints](model/constraints.md)); it
+   is also the most expensive.
+8. **[question] What is maximized in the crystal case?** A diffraction
+   signal, a stability, a defect arrangement? Without a physical quantity the
+   case stays a toy ([crystals](model/crystals.md)).
+9. **[question] Is the circuit case the same project?** A pairwise term and
+   complex phases make a different model ([circuits](model/circuits.md)).
+10. **[question] Python or a Rust kernel?** The arguments and the triggers
+    are in [language](architecture/language.md); none is true today.
 
 ## Technical
 
@@ -31,6 +42,12 @@
    in map units, or both with a switch?
 6. **[to check]** Does the density need interpolation between cells, or is the
    nearest cell enough at 32×32?
+7. **[to check]** Which library for a mesh geodesic: heat method, exact
+   polyhedral, or a chart the user provides?
+8. **[to check]** Ewald summation against a truncated lattice sum: at which
+   range do they agree, and at what cost?
+9. **[to check]** Where does a 3D density come from: a voxel image, a point
+   cloud, a mesh with a per-vertex weight?
 
 ## Scientific
 

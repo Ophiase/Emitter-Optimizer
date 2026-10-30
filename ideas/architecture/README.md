@@ -11,3 +11,4 @@ core, a local protocol, a thin face.
   for the window.
 - [zero-telemetry.md](zero-telemetry.md) — nothing leaves the machine
   without a yes.
+- [language.md](language.md) — Python stays; Rust only behind a benchmark.

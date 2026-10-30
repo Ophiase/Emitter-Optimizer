@@ -107,6 +107,37 @@ Dependencies: 1.2 before 1.3; 1.3 and 1.5 before 1.6; 1.6 before 1.7.
 - [ ] **4.2 Or a reduced DearPyGui window** that only draws the state the
   service serves. Decide in [open.md](open.md) before writing it.
 
+## Phase 5 — `dev/manifold`: the cases that justify the project
+
+**[sketch]** After M3, and only if [open](open.md) says the direction is
+worth it. Each step is a strategy behind the same gain, not a fork.
+
+- [ ] **5.1 A `Domain` protocol.** `Plane` is the first implementation; the
+  sum, the laws and the optimizer call it and nothing else
+  ([manifolds](model/manifolds.md)).
+  *Accepts*: the plane benchmark gives the same numbers as before.
+- [ ] **5.2 A volume.** A 3D grid, a voxel density, 3D walls; a figure is a
+  slice ([three-dimensional](model/three-dimensional.md)).
+  *Accepts*: a 64³ situation runs in the benchmark, with its time.
+- [ ] **5.3 A surface.** A mesh, a geodesic distance, emitters on vertices
+  ([distance](engine/distance.md)).
+  *Accepts*: the distance error is measured against a fine reference.
+- [ ] **5.4 A periodic cell.** A lattice, a truncated or Ewald lattice sum
+  ([crystals](model/crystals.md)).
+  *Accepts*: the truncated sum converges to the resummed one as the range
+  grows.
+- [ ] **5.5 Constraints.** A rigid body, then torsions; a projection or a
+  parameterization ([constraints](model/constraints.md)).
+  *Accepts*: the gain is invariant to the choice of parameterization for
+  the same physical position.
+- [ ] **5.6 A pairwise term.** Repulsion or interference, `O(E²)`, with a
+  cutoff ([circuits](model/circuits.md)).
+  *Accepts*: two emitters pushed apart stay apart, and the gain matches a
+  hand-computed case.
+- [ ] **5.7 One real case.** A crystal question from the crystallography
+  project, or a circuit layout, measured; the other stays a sketch.
+  *Accepts*: a figure and a table a physicist or an engineer can read.
+
 ## Later
 
 - Distance strategies: Euclidean, then geodesic on a chart

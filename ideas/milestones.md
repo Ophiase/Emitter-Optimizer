@@ -43,6 +43,16 @@ A thin local page, or a reduced DearPyGui window, showing the map, the
 emitters, the gain history and the proposals of an agent. Done when a person
 understands the result in the first ten seconds.
 
+## M5 — A manifold, a constraint, a real case
+
+**[sketch]** The engine learns a metric that is not the plane, emitters that
+are not free points, and one real physical or industrial question. This is
+the milestone that makes the project different from a coverage demo
+([three-dimensional](model/three-dimensional.md),
+[manifolds](model/manifolds.md), [constraints](model/constraints.md)).
+Done when one case — a crystal, a circuit, a part — is measured and drawn,
+and the other stays a documented sketch.
+
 ## Order and cost
 
 | Milestone | Branch | Rough cost |
@@ -51,3 +61,4 @@ understands the result in the first ten seconds.
 | M2 | `dev/agent` | a few days |
 | M3 | `dev/model` | weeks |
 | M4 | `dev/ui` | a few days, after M2 |
+| M5 | `dev/manifold` | weeks, after M3 |
