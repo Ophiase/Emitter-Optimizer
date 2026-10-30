@@ -38,6 +38,11 @@ test:
     uv run pytest
 
 [group("dev")]
+[doc("Run the published benchmark into docs/benchmark/results.md")]
+bench:
+    uv run python -m emitter_optimizer.bench
+
+[group("dev")]
 [doc("Everything that must pass before declaring work done")]
 check: lint test rumdl
 

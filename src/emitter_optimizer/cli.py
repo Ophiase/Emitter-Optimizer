@@ -4,12 +4,15 @@ import argparse
 import json
 from pathlib import Path
 
+import matplotlib
 import numpy as np
 
 from emitter_optimizer.engine.laws import load_law_file
 from emitter_optimizer.engine.maps import load_collisions, load_density
 from emitter_optimizer.engine.solver import Solver
 from emitter_optimizer.paths import DEFAULT_EMITTER_FUNCTION, DEFAULT_SENSOR_FUNCTION
+
+matplotlib.use("Agg")
 
 DEFAULT_MAP_SCALE = (100.0, 100.0)
 DEFAULT_GRID_SIZE = (32, 32)
@@ -117,8 +120,12 @@ def _write(
 def main(arguments: list[str] | None = None) -> int:
     parsed = build_parser().parse_args(arguments)
     if parsed.command == "window":
-        from emitter_optimizer.main import main as open_window
-
-        open_window()
+        _open_window()
         return 0
     return run_optimization(parsed)
+
+
+def _open_window() -> None:
+    from emitter_optimizer.gui.application import Application
+
+    Application()

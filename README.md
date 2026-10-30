@@ -106,6 +106,14 @@ steps, in order, are in [ideas/roadmap.md](ideas/roadmap.md): a command line,
 a benchmark, an agent protocol, a richer objective, then the 3D, manifold and
 constrained cases.
 
+## Benchmark
+
+`just bench` regenerates [docs/benchmark/results.md](docs/benchmark/results.md):
+four fixed situations, the initial and the final gain, the time. On the
+author's machine the wall situation is twenty times slower than the same
+map without walls — the obstacle test dominates the cost, and the smooth
+occlusion of the roadmap is what attacks it.
+
 ## Credits
 
 The project was started in 2023 by **Ophiase**, by hand, as a personal

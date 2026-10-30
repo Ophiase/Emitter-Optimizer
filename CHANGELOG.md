@@ -4,6 +4,10 @@ Milestones of the whole project; the version is in `VERSION`.
 
 ## Unreleased
 
+- **A published benchmark**: `just bench` writes
+  `docs/benchmark/results.md` from four fixed situations, with the initial
+  and final gain, the improvement and the time. The wall situation is the
+  measured hot spot.
 - **A command line**: `emitter-optimizer run` takes a density, a collision
   map, the laws, a seed and the parameters, and writes `positions.csv`,
   `history.csv`, `figure.png` and `summary.json`. `just demo` runs it on the
