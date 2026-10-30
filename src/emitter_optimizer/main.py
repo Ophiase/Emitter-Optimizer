@@ -1,21 +1,16 @@
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
-import tensorflow as tf
 
-import json
+os.environ.setdefault("TF_CPP_MIN_LOG_LEVEL", "3")
+
 import matplotlib
 
-import dearpygui.dearpygui as dpg
-import engine.solver as solver
-from gui.application import Application
+matplotlib.use("Agg")
 
-def lower_tf_warning():
+import tensorflow as tf
+
+from emitter_optimizer.gui.application import Application
+
+
+def main() -> None:
     tf.get_logger().setLevel("ERROR")
-
-def main() :
-    lower_tf_warning()
-    matplotlib.use('Agg')
-    app = Application()
-
-if __name__ == '__main__':
-    main()
+    Application()

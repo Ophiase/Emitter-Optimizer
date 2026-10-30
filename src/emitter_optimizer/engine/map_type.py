@@ -1,18 +1,19 @@
-from enum import Enum
+from enum import StrEnum
 
-'''
-    Storage representation of map data
-'''
-class MapType(Enum):
-    GRID = 0,
-    SEGMENTS = 1
-    FUNCTION = 2
+
+class MapType(StrEnum):
+    """How a map is stored: as a grid of values or as a set of segments."""
+
+    GRID = "grid"
+    SEGMENTS = "segments"
 
     @classmethod
-    def from_string(cls, map_type_str):
-        match (map_type_str.upper()):
-            case 'GRID': return cls.GRID
-            case 'SEGMENT' | 'SEGMENTS': return cls.SEGMENTS
-            case 'FUNCTION': return cls.FUNCTION
-            case _ :
-                return ValueError("Invalid MapType string {}".format(map_type_str))
+    def from_string(cls, text: str) -> MapType:
+        match text.strip().upper():
+            case "GRID":
+                return cls.GRID
+            case "SEGMENT" | "SEGMENTS":
+                return cls.SEGMENTS
+            case _:
+                message = f"unknown map type: {text}"
+                raise ValueError(message)

@@ -1,70 +1,87 @@
-import tensorflow as tf
-from engine.solver import Solver
-import dearpygui.dearpygui as dpg
-from typing import Callable, Optional
+"""The parameters the window edits, and the solver built from them."""
 
-from engine.collision_map import CollisionMap
-from engine.density_map import DensityMap
-from engine.map_type import MapType
+from pathlib import Path
+from typing import Any, ClassVar, cast
 
-from settings import DEFAULT_EMITTER_FUNCTION, DEFAULT_SENSOR_FUNCTION
+from emitter_optimizer.engine.collision_map import CollisionMap
+from emitter_optimizer.engine.density_map import DensityMap
+from emitter_optimizer.engine.field import SignalFunction
+from emitter_optimizer.engine.solver import Solver, UpdateCallback
+from emitter_optimizer.paths import (
+    DEFAULT_EMITTER_FUNCTION,
+    DEFAULT_SAVE_PATH,
+    DEFAULT_SENSOR_FUNCTION,
+)
+
+DEFAULT_ITERATIONS = 200
+DEFAULT_LEARNING_STEP = 1.0
+DEFAULT_EMITTERS = 15
+DEFAULT_MAP_SCALE = (100.0, 100.0)
+DEFAULT_GRID_SIZE = (32, 32)
+DEFAULT_UPDATE_RATE = 5
+FUNCTION_ENTRY = "eval"
+
 
 class GuiConfig:
-    DEFAULT_EMITTER_FUNCTION = DEFAULT_EMITTER_FUNCTION
-    DEFAULT_SENSOR_FUNCTION = DEFAULT_SENSOR_FUNCTION
-    DEFAULT_SAVE_PATH = "./save/emitters_positions.save"
-    
-    ITEMS_TO_HIDE = ["user_defined_density", 
-            "user_defined_collisions", 
-            'user_defined_emitter', 
-            'user_defined_sensor',
-            "loss"
-            ]
+    DEFAULT_EMITTER_FUNCTION: ClassVar[Path] = DEFAULT_EMITTER_FUNCTION
+    DEFAULT_SENSOR_FUNCTION: ClassVar[Path] = DEFAULT_SENSOR_FUNCTION
+    DEFAULT_SAVE_PATH: ClassVar[Path] = DEFAULT_SAVE_PATH
 
+    ITEMS_TO_HIDE: ClassVar[tuple[str, ...]] = (
+        "user_defined_density",
+        "user_defined_collisions",
+        "user_defined_emitter",
+        "user_defined_sensor",
+        "loss",
+    )
 
-    @staticmethod
-    def load_file(file : str) -> str : 
-        with open(file, 'r') as f :
-            return f.read()
+    def __init__(self, update_callback: UpdateCallback | None = None) -> None:
+        self.n_iteration = DEFAULT_ITERATIONS
+        self.learning_step = DEFAULT_LEARNING_STEP
 
-    @staticmethod
-    def load_function(user_input : str) :
-        namespace = {}
-        exec(user_input, namespace)
-        return namespace["eval"]
+        self.n_emitters = DEFAULT_EMITTERS
+        self.density_map: DensityMap | None = None
+        self.collision_map: CollisionMap | None = None
 
-    def __init__(self, update_callback : Callable = None) -> None:
-        self.n_iteration : int = 200
-        self.learning_step : float = 1.0
+        self.map_scale = DEFAULT_MAP_SCALE
+        self.grid_size = DEFAULT_GRID_SIZE
 
-        self.n_emitters : int = 15
-        self.density_map : Optional[DensityMap] = None
-        self.collision_map : Optional[CollisionMap] = None
+        self.emitter_function = self.load_function(
+            self.load_file(self.DEFAULT_EMITTER_FUNCTION)
+        )
+        self.sensor_function = self.load_function(
+            self.load_file(self.DEFAULT_SENSOR_FUNCTION)
+        )
 
-        self.map_scale = [100.0, 100.0] # unit x unit
-        self.grid_size = [32, 32]
- 
-        self.emitter_function = GuiConfig.load_function(
-            GuiConfig.load_file(GuiConfig.DEFAULT_EMITTER_FUNCTION))
-        self.sensor_function = GuiConfig.load_function(
-            GuiConfig.load_file(GuiConfig.DEFAULT_SENSOR_FUNCTION))
-        
         self.update_callback = update_callback
-        self.update_rate = 5
+        self.update_rate = DEFAULT_UPDATE_RATE
 
         self.update_solver()
-        
-    def update_solver(self):
+
+    @staticmethod
+    def load_file(path: Path) -> str:
+        return path.read_text(encoding="utf-8")
+
+    @staticmethod
+    def load_function(source: str) -> SignalFunction:
+        namespace: dict[str, Any] = {}
+        exec(source, namespace)
+        return cast(SignalFunction, namespace[FUNCTION_ENTRY])
+
+    def update_solver(self) -> None:
         self.solver = self.to_solver()
 
     def to_solver(self) -> Solver:
         return Solver(
-            self.n_emitters, 
-            self.density_map, self.collision_map,
-
-            self.map_scale, self.grid_size,
-            self.emitter_function, self.sensor_function,
-
-            self.n_iteration, self.learning_step,
-            self.update_callback, self.update_rate
+            n_emitters=self.n_emitters,
+            density_map=self.density_map,
+            collision_map=self.collision_map,
+            map_scale=self.map_scale,
+            grid_size=self.grid_size,
+            emitter_function=self.emitter_function,
+            sensor_function=self.sensor_function,
+            n_iteration=self.n_iteration,
+            epsilon=self.learning_step,
+            update_callback=self.update_callback,
+            update_rate=self.update_rate,
         )

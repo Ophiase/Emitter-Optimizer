@@ -1,25 +1,25 @@
-from .map_type import MapType
+from dataclasses import dataclass
 
+import numpy as np
+
+from emitter_optimizer.engine.map_type import MapType
+
+
+@dataclass(eq=False)
 class DensityMap:
-    def __init__(self, data, 
-            data_format : MapType = MapType.GRID,
-            storage_type : MapType = MapType.GRID,
-            copy_constructor = False
-            ):
-        
-        self.storage_type = storage_type
+    """How much each point of the map is worth, stored as a grid of weights."""
 
-        if (copy_constructor) :
-            self.data = data.copy()
-            return
-        
-        match(data_format, storage_type) :
-            case MapType.GRID, MapType.GRID:
-                self.data = data
-            case _  :
-                raise NotImplementedError()
-    
-    def copy(self):
-        return DensityMap(self.data,  
-                    storage_type=self.storage_type, 
-                    copy_constructor=True)
+    data: np.ndarray
+    storage_type: MapType = MapType.GRID
+
+    @classmethod
+    def from_data(
+        cls,
+        data: np.ndarray,
+        data_format: MapType,
+        storage_type: MapType,
+    ) -> DensityMap:
+        if data_format is MapType.GRID and storage_type is MapType.GRID:
+            return cls(data, storage_type)
+        message = f"cannot read a {data_format} map as {storage_type}"
+        raise NotImplementedError(message)
