@@ -4,6 +4,11 @@ Milestones of the whole project; the version is in `VERSION`.
 
 ## Unreleased
 
+- **The README is rewritten in the shape of the author's other projects**:
+  badges, a start-here table, the problem in plain words, the model in one
+  screen with its symbols, the gradient and its meaning, the commands, the
+  what-you-can-change table, the status, the repository, the prior art, the
+  roadmap, and the agent's name.
 - **The 3D case gets a direction**: an implicit energy, sampled instead of
   voxelized, with a quasi-Monte Carlo domain and a fixed seed; the analytic
   gradient stays, and JAX is a seam, not a dependency
