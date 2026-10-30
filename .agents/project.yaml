@@ -6,13 +6,14 @@ identity:
   holder: Ophiase
   nature: open-source
   visibility: public
+  since: 2023
 
 audience:
   - people placing radio, irrigation or retail sites
   - computer-vision and optimization engineers
 
 lifecycle:
-  stage: personal
+  stage: alpha
   registries:
     pypi: not-yet
   ci:

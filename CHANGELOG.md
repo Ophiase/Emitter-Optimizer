@@ -4,6 +4,12 @@ Milestones of the whole project; the version is in `VERSION`.
 
 ## Unreleased
 
+- **The project has a face**: `CONTRIBUTORS.md` records that it started in
+  2023 by hand and was modernized in 2026 with an agent; the README says who
+  it is for, what the baseline model is, and how to try it in two
+  commands.
+- **The 2023 model stays the baseline**: newer models are compared against
+  it, never silently replace it ([ideas/model](ideas/model/README.md)).
 - **`ideas/` is the core again**: the thesis, the vision, the origin, the
   architecture, the engine, the model, the milestones and the roadmap, one
   concept per file. `AGENTS.md` reads it first.

@@ -6,123 +6,102 @@
 [![uv](https://img.shields.io/badge/uv-managed-blueviolet.svg)](https://github.com/astral-sh/uv)
 [![The Kanon](https://img.shields.io/badge/%3C%3E-Kanon-6f42c1)](.agents/kanon.md)
 
-The plan and the open questions live in [ideas/](ideas/README.md).
+**Where do I put my emitters?** Antennas on a building, drippers on a farm, a
+shop that captures a neighbourhood, sensors in a room: anything that covers a
+map around itself and loses reach with distance. Give the tool a map, a weight
+per place, obstacles, and the law of your emitter; it returns the positions
+that capture the most.
 
-An application with a parametric interface designed to optimize the positions of emitters. It caters to various emitter types specified by the user, including electromagnetic signals, water irrigation and optimal business placements – ensuring strategic positioning of stores to maximize customer coverage.
+The model has been the same since 2023: a **differentiable gain**, climbed by
+gradient descent, with the emitter law and the sensor law written by the user.
+It is the baseline every newer model is compared against. The plan and the open
+questions live in [ideas/](ideas/README.md).
 
-## Table of Contents
+## Who it is for
 
-- Introduction
-  - [Model](#model)
-  - [Demo](#demo)
-- Functionality
-  - [Features](#features)
-- Setup
-  - [Installation](#installation)
-  - [Run](#run)
-  - [Technologies Used](#technologies-used)
-- Future Development
-  - [Future Development](#future-development)
+- **Field engineering**: irrigation, lighting, sensors, Wi-Fi, radio — a
+  density of need, a budget of devices, walls in between.
+- **Retail and logistics**: where a set of points captures the most demand.
+- **Research and teaching**: a differentiable placement problem with arbitrary
+  user functions, not a black box.
+- **Agents**: the engine is headless and speaks JSON, so an assistant can
+  propose a layout, weigh candidates and show a figure
+  ([ideas/architecture/agent-interop.md](ideas/architecture/agent-interop.md)).
 
-## Introduction
+## Quick start
 
-### Model
+```sh
+just install   # uv sync: Python 3.14 and the dependencies
+just run       # open the window
+```
 
----
+Load `resources/map/value_001.png` as the density, optionally
+`resources/map/collide_001.png` as the collision map, choose the number of
+emitters, press **Process**. The window shows the value map, the emitters and
+the gain curve; **Save** writes the positions.
 
-Optimizing signal coverage with emitters on a map involves maximizing a function $\mathcal G$ over emitter positions $U$, defined as follows:
+`just` alone lists every recipe. `just lint`, `just test` and `just check` are
+the local checks; `just agent gate` is the whole gate.
 
-- Emitter function $\varphi : \mathbb{R}^+ \to \mathbb{R}$
-  - Takes the distance from the emitter as a parameter and returns the amount of signal perceived at this distance.
-- Sensor function $\psi : \mathbb{R} \to \mathbb{R}$
-  - Takes the sum of signals received at a given position and returns a score for the sensor.  
-- $U$: the positions of emitters.
+## The model
+
+Maximize the gain $\mathcal G$ over the emitter positions $U$:
+
+- Emitter law $\varphi : \mathbb{R}^+ \to \mathbb{R}$ — the signal received at
+  a distance.
+- Sensor law $\psi : \mathbb{R} \to \mathbb{R}$ — the score of a received sum.
+- $U$: the positions of the emitters.
 - Parameters $P := (E, \mu, C)$
-  - $E$: A square map.
+  - $E$: the map.
   - $\mu$: a density measure over $E$.
-  - $C$: a list of segments that block the signal.
-- $pass_C : (x, y) \to 1 - \prod_{s \in C} (1 - \mathbb{1}_{[x; y] \cap s})$
-  - Returns 0 if the segment $[x; y]$ collides with a segment inside $C$, 1 otherwise.
-- $dist : (x, y) \to || x - y ||_2$
-- Received signal $r_{U, C} : x \to \sum_{y \in U}\varphi \big( dist(x, y) \big) \cdot pass_C(x, y)$
-- Gain function $\mathcal G_P : U \to \int_E \psi \circ r_{U, C}(x) \, d\mu(x)$
+  - $C$: segments that block the signal.
+- $pass_C : (x, y) \to 1 - \prod_{s \in C} (1 - \mathbb{1}_{[x; y] \cap s})$ —
+  $0$ if the segment $[x; y]$ meets $C$, $1$ otherwise.
+- $dist : (x, y) \to ||x - y||_2$.
+- Received signal
+  $r_{U,C} : x \to \sum_{y \in U} \varphi(dist(x, y)) \cdot pass_C(x, y)$.
+- Gain
+  $\mathcal G_P : U \to \int_E \psi \circ r_{U,C}(x) \, d\mu(x)$.
 
-### Demo
+The integral is a mean over the grid. $\mathcal G$ is differentiable in $U$
+away from the walls, so the search follows its gradient. The current engine
+does it with TensorFlow and Keras; the next step is an exact NumPy gradient
+([ideas/roadmap.md](ideas/roadmap.md)).
 
----
+## What you can change
 
-You can try to optimize emitters using the following density map and colliders map.
+- $\varphi$ and $\psi$: two Python files in `settings/`, editable in the
+  window and plotted live.
+- $\mu$: a density image, one weight per cell.
+- $C$: a collision image (turned into segments) or a list of segments.
+- The number of emitters, the map scale, the grid size, the step and the
+  number of iterations.
 
-- ![Density map](https://raw.githubusercontent.com/Ophiase/Emitter-Optimizer/main/resources/map/value_001.png) : ``resources/map/value_001.png``
-- ![Collision map](https://raw.githubusercontent.com/Ophiase/Emitter-Optimizer/main/resources/map/collide_001.png) : ``resources/map/collide_001.png``
-  - Image $\to$ segments might make too much segments. \
-    Use the approximation ``resources/map/collide_001.numpy``
-  - Note that solving wihout using colliders might be sufficient.
-- ### Adjust the parameters
-  - <img src="https://raw.githubusercontent.com/Ophiase/Emitter-Optimizer/main/resources/demo/interface_002.png" width=500>
-  - For instance, you can modify the sensor/emitter function
-    - <img src="https://raw.githubusercontent.com/Ophiase/Emitter-Optimizer/main/resources/demo/user_defined_sensor_screenshot.png" width=300> <img src="https://raw.githubusercontent.com/Ophiase/Emitter-Optimizer/main/resources/demo/user_defined_emitter_screenshot.png" width=300>
-- ### Update the parameters and start the solver
-  - Before solving : </br> <img src=https://raw.githubusercontent.com/Ophiase/Emitter-Optimizer/main/resources/demo/render_000.png height=150>
-  - After solving : <br> <img src=https://raw.githubusercontent.com/Ophiase/Emitter-Optimizer/main/resources/demo/render_199.png height=150><img src=https://raw.githubusercontent.com/Ophiase/Emitter-Optimizer/main/resources/demo/loss.png height=150>
+## Demo
 
-## Setup
+- ![Density map](https://raw.githubusercontent.com/Ophiase/Emitter-Optimizer/main/resources/map/value_001.png) — `resources/map/value_001.png`
+- ![Collision map](https://raw.githubusercontent.com/Ophiase/Emitter-Optimizer/main/resources/map/collide_001.png) — `resources/map/collide_001.png`
+  (the `.numpy` file is the same map, already segmented; solving without
+  colliders is often enough).
+- Before and after, with the gain curve:
+  <img src="https://raw.githubusercontent.com/Ophiase/Emitter-Optimizer/main/resources/demo/render_000.png" height=150 alt="before">
+  <img src="https://raw.githubusercontent.com/Ophiase/Emitter-Optimizer/main/resources/demo/render_199.png" height=150 alt="after">
+  <img src="https://raw.githubusercontent.com/Ophiase/Emitter-Optimizer/main/resources/demo/loss.png" height=150 alt="gain curve">
 
-### Installation
+## Status
 
-Python 3.14 and [uv](https://docs.astral.sh/uv/) are the only prerequisites;
-`just` is the entry point.
+The 2023 application, modernized in 2026: Python 3.14, uv, `just`, ruff, ty,
+one gate. The engine still runs on TensorFlow; the next steps, in order, are in
+[ideas/roadmap.md](ideas/roadmap.md) — a headless engine, an agent protocol, a
+richer objective, then the 3D, manifold and constrained cases.
 
-```sh
-just install   # uv sync: the environment and every dependency
-```
+## Credits
 
-### Run
+The project was started in 2023 by **Ophiase**, by hand, as a personal
+project; the 2026 modernization (Kanon agent layer, uv, Python 3.14, tests) was
+carried out with **Cline**, an AI coding agent. See
+[CONTRIBUTORS.md](CONTRIBUTORS.md).
 
-```sh
-just run       # start the window
-```
+## License
 
-`just` alone lists every recipe. The checks are `just lint` (ruff and ty),
-`just test` and `just check`; `just agent gate` is the whole gate.
-
-### Technologies Used
-
-- **Dear PyGui** draws the interface.
-- **TensorFlow** follows the gradient of the gain, **Keras** supplies Nadam.
-- **OpenCV** finds the contour segments of a collision map.
-
-## Features
-
-- Basic simulation : Gradient climbing of the gain function $\mathcal G$
-- User defined emitter function $\varphi$
-- User defined sensors activation function $\psi$
-- User defined density map $\mu$
-- User defined collision map $C$
-  - As a grayscale map (that will be converted to segment)
-  - As a numpy array of relatives positions.
-- Save emitters positions
-
-## Future Development
-
-- Features
-  - Optional optimizer (After multiples tests, we currently use Nadam by default)
-    - <img src="https://raw.githubusercontent.com/Ophiase/Emitter-Optimizer/main/resources/demo/optimizer.png" width=300>
-  - Finding the optimal number of sensors
-- Misc
-  - For a large number of emitters on a high-dimensional map, we can consider the following approximations of $\mathcal G$.
-    - Almost every function used in the loss function can be approximated by a piecewise linear function $l$ on a relevant finite interval.
-      - $f \approx l: x \to \sum_{J \in I} (\alpha_i x + \beta_i) \times \mathbb{1}_J(x)$
-        - Where $I$ is a partition of $\mathbb{R}^n$ such that every $J$ is a polytope.
-    - The Euclidean distance isn't a good candidate for piecewise linear function approximation, so it should be correctly approximated by Heron's method.
-    - This implies that the loss function can be approximated by the integral of a piecewise linear function, which can be very fast to calculate using parallelization.
-      - $||x, y||_2$ can be approximated using Heron's method.
-      - $\varphi \approx l_1$, a piecewise linear function.
-      - $\psi \approx l_2$, a piecewise linear function.
-      - $\mu \approx \int l_3 \, d\lambda_2$, where $\lambda_2$ is Lebesgue's measure over $\mathbb{R}^2$.
-      - $\mathcal{G}_P \approx \int_E l_1 \circ (\sum_y l_2(\text{dist}(\cdot, y)) \times \text{pass}_C(\cdot, y)) \, l_3 \, d\lambda_2$.
-  - Manifold distance.
-    - If the map $E$ is a chart over a manifold, we might want to use the distance over the manifold surface.
-    - Example :
-      - If we want to place emitters over Earth's continents. Our grid will be a chart over the manifold $S^2$ and the distance will not be the euclidean distance.
-  - Use a "compilation" optimizer for Python.
+Apache-2.0, see [LICENSE](LICENSE).
