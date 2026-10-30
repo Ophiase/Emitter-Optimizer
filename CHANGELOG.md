@@ -4,6 +4,13 @@ Milestones of the whole project; the version is in `VERSION`.
 
 ## Unreleased
 
+- **`ideas/` is the core again**: the thesis, the vision, the origin, the
+  architecture, the engine, the model, the milestones and the roadmap, one
+  concept per file. `AGENTS.md` reads it first.
+- **The roadmap** names each step, its branch and its acceptance, so a later
+  session resumes without asking: M1 a NumPy engine, M2 an agent protocol,
+  M3 a model worth publishing, M4 a thin face.
+
 ## 2.0.0 — 2026-10-30
 
 - **The project joins the Kanon.** `AGENTS.md`, the portable layer in

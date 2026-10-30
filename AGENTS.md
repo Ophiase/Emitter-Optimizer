@@ -14,6 +14,14 @@ is differentiable, so the search is a gradient descent.
 English everywhere: code, comments, markdown, commits. The author may write to
 you in French; answer in French, write files in English.
 
+## Ideas
+
+Everything starts in `ideas/`: one concept per file, short, a status tag on
+every claim, and the map [ideas/README.md](ideas/README.md) kept current. A
+choice absent from `ideas/` is not made; a question that belongs to the author
+waits in [ideas/open.md](ideas/open.md). The plan, its branches and how to
+resume it are in [ideas/roadmap.md](ideas/roadmap.md).
+
 ## Before working
 
 Read [.agents/references.md](.agents/references.md), the reference projects

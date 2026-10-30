@@ -6,6 +6,8 @@
 [![uv](https://img.shields.io/badge/uv-managed-blueviolet.svg)](https://github.com/astral-sh/uv)
 [![The Kanon](https://img.shields.io/badge/%3C%3E-Kanon-6f42c1)](.agents/kanon.md)
 
+The plan and the open questions live in [ideas/](ideas/README.md).
+
 An application with a parametric interface designed to optimize the positions of emitters. It caters to various emitter types specified by the user, including electromagnetic signals, water irrigation and optimal business placements – ensuring strategic positioning of stores to maximize customer coverage.
 
 ## Table of Contents
