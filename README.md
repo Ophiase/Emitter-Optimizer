@@ -1,5 +1,9 @@
 # Emitter Optimizer 📡
 
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Python 3.14+](https://img.shields.io/badge/Python-3.14%2B-yellow.svg)](https://www.python.org/)
+[![just](https://img.shields.io/badge/just-ready-blue.svg)](https://github.com/casey/just)
+[![uv](https://img.shields.io/badge/uv-managed-blueviolet.svg)](https://github.com/astral-sh/uv)
 [![The Kanon](https://img.shields.io/badge/%3C%3E-Kanon-6f42c1)](.agents/kanon.md)
 
 An application with a parametric interface designed to optimize the positions of emitters. It caters to various emitter types specified by the user, including electromagnetic signals, water irrigation and optimal business placements – ensuring strategic positioning of stores to maximize customer coverage.
