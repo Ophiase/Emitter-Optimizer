@@ -161,6 +161,21 @@ In the window, load `resources/map/value_001.png` as the density, optionally
 emitters and press **Process**. It shows the value map, the emitters and the
 gain curve; **Save** writes the positions.
 
+## For agents
+
+The engine is headless and speaks JSON on localhost:
+
+```sh
+just agent::serve --density resources/map/value_001.png --emitters 15 --seed 0 &
+just agent::run 200 0
+just agent::query '.gain'
+just agent::figure out/plan.png
+```
+
+`just agent::serve` prints the address and binds `127.0.0.1`; nothing leaves
+the machine. The routes, the request shapes and the skill are in
+[AGENTS.md](AGENTS.md#for-agents-the-local-service).
+
 ## What you can change
 
 | What | Where | Notes |

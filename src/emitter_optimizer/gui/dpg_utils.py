@@ -9,7 +9,7 @@ import numpy as np
 from matplotlib.figure import Figure
 from PIL import Image
 
-from emitter_optimizer.engine.types import SignalFunction
+from emitter_optimizer.engine.laws import SignalFunction
 
 IMAGE_EXTENSIONS = "Image (*.bmp *.jpg *.png *.gif){.bmp,.jpg,.png,.gif}"
 PYTHON_EXTENSIONS = "Source file (*.py){.py}"

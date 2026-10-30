@@ -3,10 +3,9 @@
 from pathlib import Path
 from typing import ClassVar
 
-from emitter_optimizer.engine.laws import load_law
+from emitter_optimizer.engine.laws import Law, load_law
 from emitter_optimizer.engine.maps import CollisionMap, DensityMap
 from emitter_optimizer.engine.solver import Solver, UpdateCallback
-from emitter_optimizer.engine.types import Law
 from emitter_optimizer.paths import (
     DEFAULT_EMITTER_FUNCTION,
     DEFAULT_SAVE_PATH,

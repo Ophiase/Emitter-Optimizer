@@ -5,6 +5,11 @@ localhost, in JSON, with a picture at the end.
 
 ## The contract
 
+**[defined]** Implemented on 2026-10-30: `emitter-optimizer serve`, the
+routes below, pydantic request and state models in `service/models.py`, a
+router that answers an unknown route or an invalid body instead of
+crashing, and the recipes in `agent.just`.
+
 | Route | Effect |
 | --- | --- |
 | `GET /api/state` | map, density, obstacles, emitters, gain, history, seed |

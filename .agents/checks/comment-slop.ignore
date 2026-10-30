@@ -1,0 +1,4 @@
+# A hardcoded-url directive has to sit on the URL line; that makes it an
+# inline comment, which this check otherwise rejects. The address is the
+# local service's own; the directive says why it stays.
+*/src/emitter_optimizer/service/http.py

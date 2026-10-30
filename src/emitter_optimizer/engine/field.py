@@ -5,7 +5,7 @@ from dataclasses import dataclass
 import numpy as np
 
 from emitter_optimizer.engine.geometry import visibility
-from emitter_optimizer.engine.types import FloatArray, Law, Positions
+from emitter_optimizer.engine.laws import FloatArray, Law, Positions
 
 CELLS_PER_CHUNK = 4096
 MINIMUM_DISTANCE = 1e-12

@@ -71,6 +71,26 @@ all over the changed files.
 The canon is [.agents/kanon.md](.agents/kanon.md); the `<>` in the README is
 its sign.
 
+## For agents: the local service
+
+`emitter-optimizer serve` binds `127.0.0.1` and answers JSON, so an agent
+drives the engine without a window. The request bodies are pydantic
+models (`service/models.py`); a invalid one is a `422`, never a crash.
+
+| Route | Effect |
+| --- | --- |
+| `GET /api/state` | map, emitters, gain, history, seed |
+| `POST /api/run` | `{"iterations": 200, "seed": 0}` |
+| `POST /api/place` | `{"positions": [[x, y], ...]}` or `{"emitters": 12, "seed": 0}` |
+| `POST /api/stop` | abort the running descent |
+| `GET /api/figure.png` | the current value map |
+| `GET /api/export` | the state, as JSON |
+
+`agent.just` wraps them: `just agent::serve`, `state`, `query`, `run`,
+`place`, `stop`, `figure`, `export`. The skill
+[.claude/skills/place-emitters/SKILL.md](.claude/skills/place-emitters/SKILL.md)
+tells an agent when and how to use them.
+
 ## Done
 
 A topic is done when `just agent gate` passes. Commit then, on its branch,

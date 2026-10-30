@@ -3,7 +3,7 @@
 import cv2
 import numpy as np
 
-from emitter_optimizer.engine.types import FloatArray, Positions
+from emitter_optimizer.engine.laws import FloatArray, Positions
 
 HALF_CELL = 0.5
 

@@ -4,6 +4,14 @@ Milestones of the whole project; the version is in `VERSION`.
 
 ## Unreleased
 
+- **The project is agent-native**: `emitter-optimizer serve` binds
+  `127.0.0.1` and answers `/api/state`, `/run`, `/place`, `/stop`,
+  `/figure.png` and `/export`. Requests and state are pydantic models, the
+  router answers an invalid body with a `422` instead of a traceback, and
+  `agent.just` wraps every route. A skill tells an agent when to use them.
+- **The GUI is a typed client again**: `Application.__call__` runs the
+  loop, the layout is parsed into frozen specs, and an unknown content name
+  fails loudly.
 - **The README is rewritten in the shape of the author's other projects**:
   badges, a start-here table, the problem in plain words, the model in one
   screen with its symbols, the gradient and its meaning, the commands, the

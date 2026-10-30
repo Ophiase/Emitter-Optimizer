@@ -7,8 +7,8 @@ from matplotlib.figure import Figure
 
 from emitter_optimizer.engine.field import Field
 from emitter_optimizer.engine.geometry import generate_points, make_grid, resize_map
+from emitter_optimizer.engine.laws import Law, Positions
 from emitter_optimizer.engine.maps import CollisionMap, DensityMap
-from emitter_optimizer.engine.types import Law, Positions
 
 UpdateCallback = Callable[[Positions | None, list[float] | None], None]
 FIGURE_SIZE = (6, 4)
@@ -46,6 +46,7 @@ class Solver:
         self.epsilon = epsilon
         self.update_rate = update_rate
         self.update_callback = update_callback or _ignore_update
+        self.seed = seed
         self.generator = np.random.default_rng(seed)
 
         self.is_working = False

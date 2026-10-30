@@ -57,22 +57,21 @@ Dependencies: 1.2 before 1.3; 1.3 and 1.5 before 1.6; 1.6 before 1.7.
 
 ## Phase 2 — `dev/agent`: M2, agent-native
 
-- [ ] **2.1 A local service.** `emitter-optimizer serve` binds `127.0.0.1` and
-  exposes `GET /api/state`, `POST /api/run`, `POST /api/place`,
-  `GET /api/figure.png`, `GET /api/export` ([agent-interop](architecture/agent-interop.md)).
-  *Accepts*: `curl` on the state returns the map, the emitters and the gain.
-- [ ] **2.2 `agent.just`.** `just agent::state`, `run`, `place`, `figure`,
-  `export`, `stop`, following the portable harness; every argument passed
-  positionally.
-  *Accepts*: from a fresh shell, `just agent::run` then `just agent::figure
-  0 out.png` produces a picture.
-- [ ] **2.3 A skill.** `.claude/skills/place-emitters/SKILL.md`: when to use
-  it, the recipes, what a good answer contains (gain, seed, figure, limits).
-  *Accepts*: an agent with only the skill completes 1.6's task and reports the
-  gain it reached.
-- [ ] **2.4 Determinism.** Every random draw takes a seed; the same seed gives
-  the same positions and the same gain.
-  *Accepts*: two runs with the same seed are identical byte for byte.
+Done on 2026-10-30, in `dev/service`.
+
+- [x] **2.1 A local service.** (2026-10-30) `emitter-optimizer serve` binds
+  `127.0.0.1` and exposes `/api/state`, `/api/run`, `/api/place`, `/api/stop`,
+  `/api/figure.png`, `/api/export` and `/api/health`. Requests and state are
+  pydantic models; the router turns an invalid body into a `422` and an unknown
+  route into a `404` ([agent-interop](architecture/agent-interop.md)).
+- [x] **2.2 `agent.just`.** (2026-10-30) `just agent::serve`, `url`, `state`,
+  `query`, `run`, `place`, `stop`, `figure`, `export`; every argument is
+  validated and passed positionally.
+- [x] **2.3 A skill.** (2026-10-30) `.claude/skills/place-emitters/SKILL.md`:
+  start the service, place, run, figure, export, and what a good answer
+  contains (gain before and after, seed, emitters, figure).
+- [x] **2.4 Determinism.** (2026-10-30) The service takes a seed on `run` and
+  `place`; two runs with the same seed give the same positions, tested.
 
 ## Phase 3 — `dev/model`: M3, a model worth publishing
 

@@ -1,4 +1,4 @@
-from emitter_optimizer import bench
+from emitter_optimizer.engine import bench
 
 
 def test_a_situation_is_measured_and_reported() -> None:
