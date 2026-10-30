@@ -11,3 +11,6 @@ respect_gitignore = true
 disable = [
   "MD033",
 ]
+
+[per-file-ignores]
+"README.md" = ["MD013"]

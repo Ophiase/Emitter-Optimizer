@@ -9,6 +9,7 @@ status=0
 
 for file in "$@"; do
   [[ -f $file && $file == *.py ]] || continue
+  case $file in .agents/* | */__pycache__/*) continue ;; esac
   count=$(wc -l <"$file")
   if ((count > limit)); then
     printf '%s has %d lines of code, more than %d: split it by concept.\n' "$file" "$count" "$limit"
