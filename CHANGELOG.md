@@ -4,6 +4,10 @@ Milestones of the whole project; the version is in `VERSION`.
 
 ## Unreleased
 
+- **The 3D case gets a direction**: an implicit energy, sampled instead of
+  voxelized, with a quasi-Monte Carlo domain and a fixed seed; the analytic
+  gradient stays, and JAX is a seam, not a dependency
+  ([ideas/model/implicit-energy.md](ideas/model/implicit-energy.md)).
 - **A published benchmark**: `just bench` writes
   `docs/benchmark/results.md` from four fixed situations, with the initial
   and final gain, the improvement and the time. The wall situation is the

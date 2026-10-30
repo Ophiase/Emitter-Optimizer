@@ -27,6 +27,10 @@
    complex phases make a different model ([circuits](model/circuits.md)).
 10. **[question] Python or a Rust kernel?** The arguments and the triggers
     are in [language](architecture/language.md); none is true today.
+11. **[question] Which implicit field first?** A Gaussian mixture, a
+    coordinate network, or a signed distance field ([implicit-energy](model/implicit-energy.md)).
+12. **[question] How many samples?** The benchmark has to pick the count
+    where the Monte Carlo error is below the improvement being measured.
 
 ## Technical
 
@@ -48,6 +52,8 @@
    range do they agree, and at what cost?
 9. **[to check]** Where does a 3D density come from: a voxel image, a point
    cloud, a mesh with a per-vertex weight?
+10. **[to check]** Does `jax.jit` beat NumPy on the 3D gain, and at which
+   sample count ([autodiff](engine/autodiff.md))?
 
 ## Scientific
 

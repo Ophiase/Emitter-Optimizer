@@ -16,6 +16,8 @@ baselines to prove the result is good.
 - [constraints.md](constraints.md) — rigid bodies, torsions, lattice sites.
 - [crystals.md](crystals.md) — a periodic cell, atoms as emitters.
 - [circuits.md](circuits.md) — pairs, interference, layouts.
+- [implicit-energy.md](implicit-energy.md) — a continuous field, sampled,
+  instead of a voxel grid.
 
 ## The order
 

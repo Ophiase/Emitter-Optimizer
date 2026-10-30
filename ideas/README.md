@@ -50,7 +50,8 @@ drive** as easily as a person.
 - **engine/**: [README](engine/README.md) —
   [gain](engine/gain.md) · [occlusion](engine/occlusion.md) ·
   [map](engine/map.md) · [distance](engine/distance.md) ·
-  [functions](engine/functions.md) · [optimizer](engine/optimizer.md)
+  [functions](engine/functions.md) · [optimizer](engine/optimizer.md) ·
+  [autodiff](engine/autodiff.md)
 - **model/**: [README](model/README.md) —
   [objective](model/objective.md) ·
   [emitter-count](model/emitter-count.md) ·
@@ -61,7 +62,8 @@ drive** as easily as a person.
   [manifolds](model/manifolds.md) ·
   [constraints](model/constraints.md) ·
   [crystals](model/crystals.md) ·
-  [circuits](model/circuits.md)
+  [circuits](model/circuits.md) ·
+  [implicit-energy](model/implicit-energy.md)
 
 ## Where the code stands (v2.0, 2026-10-30)
 

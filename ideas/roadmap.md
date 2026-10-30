@@ -97,6 +97,11 @@ Dependencies: 1.2 before 1.3; 1.3 and 1.5 before 1.6; 1.6 before 1.7.
 - [ ] **3.6 The piecewise-linear fast path.** The approximation of your
   Future Development, with its error measured ([piecewise-linear](model/piecewise-linear.md)).
   *Accepts*: a table error versus time, next to the exact run.
+- [ ] **3.7 An implicit energy.** A `Domain` that returns a quasi-Monte Carlo
+  sample and a continuous measure, a fixed seed across iterations, and a 3D
+  case out of reach on a voxel grid ([implicit-energy](model/implicit-energy.md)).
+  *Accepts*: the same seed gives the same answer, and the gain agrees with a
+  fine grid on a case where the grid is affordable.
 
 ## Phase 4 — `dev/ui`: M4, a face
 
