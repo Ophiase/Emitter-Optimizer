@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Allow, ask or deny a shell command before Cursor runs it.
+set -uo pipefail
+
+payload=$(cat)
+command=""
+if command -v jq >/dev/null; then
+  command=$(printf '%s' "$payload" | jq -r '.command // empty' 2>/dev/null)
+fi
+[[ -n $command ]] || { printf '{"permission":"allow"}\n'; exit 0; }
+
+deny() {
+  printf '{"permission":"deny","user_message":"%s","agent_message":"%s"}\n' "$1" "$1"
+  exit 0
+}
+ask() {
+  printf '{"permission":"ask","user_message":"%s","agent_message":"%s"}\n' "$1" "$1"
+  exit 0
+}
+
+case "$command" in
+  sudo|sudo\ *|env|env\ *|printenv*) deny "Environment and privilege commands are blocked." ;;
+  *"git push --force"*|*"git push -f"*|*"git filter-branch"*) deny "Rewriting remote history is blocked." ;;
+  *"rm -rf /"*) deny "Recursive delete of the root is blocked." ;;
+  *"git clean -"*) deny "Destructive clean is blocked." ;;
+  git\ push*|gh\ *|curl\ *|wget\ *|docker\ push*|git\ clone*|git\ rebase*) ask "This command needs the user's approval." ;;
+esac
+printf '{"permission":"allow"}\n'

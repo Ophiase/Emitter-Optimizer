@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Keep the task open while a project check fails, and hand it the report.
+set -uo pipefail
+
+payload=$(cat)
+root=""
+if command -v jq >/dev/null; then
+  root=$(printf '%s' "$payload" | jq -r '.workspaceRoots[0] // empty' 2>/dev/null)
+fi
+[[ -n $root ]] || root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
+cd "$root" || exit 0
+command -v just >/dev/null || { printf '{"cancel":false}\n'; exit 0; }
+
+status=0
+report=$(just guards 2>&1) || status=$?
+if ((status == 0)); then
+  printf '{"cancel":false}\n'
+  exit 0
+fi
+
+if command -v jq >/dev/null; then
+  printf '%s' "$report" | jq -Rs '{cancel:true, errorMessage: .}'
+else
+  printf '%s\n' "$report" >&2
+  printf '{"cancel":true,"errorMessage":"Project checks failed; see the hook report on stderr."}\n'
+fi

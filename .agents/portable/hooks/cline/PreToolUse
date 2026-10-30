@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# Block the commands the project's policy denies; Cline has no ask decision.
+set -uo pipefail
+
+payload=$(cat)
+command=""
+if command -v jq >/dev/null; then
+  command=$(printf '%s' "$payload" | jq -r '.preToolUse.parameters.command // empty' 2>/dev/null)
+fi
+[[ -n $command ]] || { printf '{"cancel":false}\n'; exit 0; }
+
+deny() {
+  printf '{"cancel":true,"errorMessage":"Blocked by policy: %s"}\n' "$1"
+  exit 0
+}
+
+case "$command" in
+  sudo|sudo\ *|env|env\ *|printenv*) deny "environment or privilege command" ;;
+  *"git push --force"*|*"git push -f"*|*"git filter-branch"*) deny "rewriting remote history" ;;
+  *"rm -rf /"*) deny "recursive delete of the root" ;;
+  *"git clean -"*) deny "destructive clean; ask the user" ;;
+esac
+printf '{"cancel":false}\n'
