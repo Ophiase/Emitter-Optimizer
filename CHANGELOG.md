@@ -16,3 +16,7 @@ Milestones of the whole project; the version is in `VERSION`.
   rewritten to their standard.
 - **TensorFlow 2.22** is the first release with a CPython 3.14 wheel, and is
   pinned as a pre-release until 2.22 is final.
+
+## 1.3 - 2024
+
+## 1.2 - 2023
