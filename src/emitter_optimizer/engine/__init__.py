@@ -1,7 +1,16 @@
-from emitter_optimizer.engine.collision_map import CollisionMap
-from emitter_optimizer.engine.density_map import DensityMap
 from emitter_optimizer.engine.field import Field
-from emitter_optimizer.engine.map_type import MapType
+from emitter_optimizer.engine.maps import CollisionMap, DensityMap, MapType
 from emitter_optimizer.engine.solver import Solver
+from emitter_optimizer.engine.types import FloatArray, Law, Positions, SignalFunction
 
-__all__ = ["CollisionMap", "DensityMap", "Field", "MapType", "Solver"]
+__all__ = [
+    "CollisionMap",
+    "DensityMap",
+    "Field",
+    "FloatArray",
+    "Law",
+    "MapType",
+    "Positions",
+    "SignalFunction",
+    "Solver",
+]

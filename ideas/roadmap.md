@@ -20,28 +20,26 @@ passes **and** its acceptance sentence is true.
 
 ## Phase 1 — `dev/engine`: M1, a headless engine
 
-- [ ] **1.1 Remove the GUI from the import path.** `emitter_optimizer.engine`
-  imports no `gui`, no `dearpygui`. A test imports the engine in a process
-  where `dearpygui` is absent.
-  *Accepts*: `uv run python -c "import emitter_optimizer.engine"` works in an
-  environment without DearPyGui.
-- [ ] **1.2 Replace TensorFlow by NumPy.** The gain, its value map and the
-  obstacle test are NumPy arrays; `Field` exposes `gain(positions)` and
-  `value_map(positions)` with the same meaning ([gain](engine/gain.md)).
-  *Accepts*: the eight current tests pass, with TensorFlow uninstalled.
-- [ ] **1.3 Exact gradient for the built-in laws.** A leaf module computes
-  `dG/dpositions`: `sum_x psi'(r) phi'(d) grad(d) mu(x) pass_C(x, y)`, the
-  obstacle term constant between two crossings ([optimizer](engine/optimizer.md)).
-  *Accepts*: it matches a central finite-difference on a random map within
-  1e-4 relative error.
-- [ ] **1.4 A numeric gradient for any callable.** When the user supplies
-  their own `phi` or `psi`, fall back to central differences on the
-  `2 * n_emitters` coordinates ([functions](engine/functions.md)).
-  *Accepts*: the same test as 1.3, with the laws loaded from `settings/`.
-- [ ] **1.5 An optimizer with bounds and restarts.** Projection on the map,
-  `epsilon` as a step or a learning rate, `n_iteration`, `abort`, and the
-  update callback the GUI already uses ([optimizer](engine/optimizer.md)).
-  *Accepts*: the gain is non-decreasing on every benchmark situation.
+Done on 2026-10-30, in `dev/engine-numpy`; 1.6 and 1.7 remain.
+
+- [x] **1.1 Remove the GUI from the import path.** (2026-10-30) The engine
+  imports no `gui`, no `dearpygui`; a test imports it and checks that neither
+  `dearpygui` nor `tensorflow` entered `sys.modules`.
+- [x] **1.2 Replace TensorFlow by NumPy.** (2026-10-30) The gain, its value map
+  and the obstacle test are arrays; `Field` exposes `gain`, `value_map`,
+  `gradient` and `gain_and_gradient` ([gain](engine/gain.md)). TensorFlow and
+  Keras left the dependencies.
+- [x] **1.3 Exact gradient for the built-in laws.** (2026-10-30) The gradient is
+  `-(1/P) sum_x psi'(r) phi'(d) (x - y)/d mu(x) pass_C(x, y)`, in one pass with
+  the gain ([optimizer](engine/optimizer.md)). A test compares it to a central
+  difference.
+- [x] **1.4 A numeric gradient for any callable.** (2026-10-30) `Law.slope`
+  returns the exact derivative when the law declares one, a central difference
+  otherwise ([functions](engine/functions.md)).
+- [x] **1.5 An optimizer with bounds.** (2026-10-30) Projected Adam on the
+  ascent direction, the best positions kept so the gain never drops, `abort`
+  and the update callback. *Restarts are not done*; multi-start is a later
+  step.
 - [ ] **1.6 A headless command.** `emitter-optimizer run --map ... --density
   ... --emitters 12 --seed 0 --iterations 200 --out out/` writes
   `positions.csv`, `history.csv` and `figure.png`, and prints a JSON summary.
@@ -51,9 +49,9 @@ passes **and** its acceptance sentence is true.
   `docs/benchmark/results.md`, sorted, with timings.
   *Accepts*: the table is generated, never hand-edited, and a reader can rerun
   it.
-- [ ] **1.8 Freeze DearPyGui.** Either the window calls the new engine
-  unchanged, or `gui/` is marked legacy in `AGENTS.md` and not tested.
-  *Accepts*: `just check` never imports `dearpygui`.
+- [x] **1.8 DearPyGui calls the new engine.** (2026-10-30) The window builds a
+  `Law` from the edited files and passes it to the solver; `just check` never
+  imports `dearpygui`.
 
 Dependencies: 1.2 before 1.3; 1.3 and 1.5 before 1.6; 1.6 before 1.7.
 

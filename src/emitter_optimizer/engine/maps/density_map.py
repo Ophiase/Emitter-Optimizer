@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from emitter_optimizer.engine.map_type import MapType
+from emitter_optimizer.engine.maps.map_type import MapType
 
 
 @dataclass(eq=False)

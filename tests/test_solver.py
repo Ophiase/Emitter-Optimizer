@@ -1,18 +1,32 @@
-import numpy as np
-import tensorflow as tf
+import importlib
+import sys
 
-from emitter_optimizer.engine import CollisionMap, DensityMap, MapType, Solver
+import numpy as np
+
+from emitter_optimizer.engine import CollisionMap, DensityMap, Law, MapType, Solver
 
 MAP_SCALE = (10.0, 10.0)
 GRID_SIZE = (8, 8)
 
 
-def signal(distance: tf.Tensor) -> tf.Tensor:
-    return tf.exp(-distance)
+def signal(distance: np.ndarray) -> np.ndarray:
+    return np.exp(-distance)
 
 
-def sensor(received: tf.Tensor) -> tf.Tensor:
+def signal_slope(distance: np.ndarray) -> np.ndarray:
+    return -np.exp(-distance)
+
+
+def sensor(received: np.ndarray) -> np.ndarray:
     return received
+
+
+def sensor_slope(received: np.ndarray) -> np.ndarray:
+    return np.ones_like(received)
+
+
+EMITTER_LAW = Law(signal, signal_slope)
+SENSOR_LAW = Law(sensor, sensor_slope)
 
 
 def make_solver(
@@ -27,11 +41,30 @@ def make_solver(
         collision_map=collision_map,
         map_scale=MAP_SCALE,
         grid_size=GRID_SIZE,
-        emitter_function=signal,
-        sensor_function=sensor,
+        emitter_law=EMITTER_LAW,
+        sensor_law=SENSOR_LAW,
         n_iteration=n_iteration,
         epsilon=0.1,
+        seed=0,
     )
+
+
+def test_the_gradient_matches_a_finite_difference() -> None:
+    solver = make_solver()
+    positions = solver.emitters_positions
+    gradient = solver.field.gradient(positions)
+    reference = np.zeros_like(positions)
+    step = 1e-6
+    for index in np.ndindex(positions.shape):
+        forward = positions.copy()
+        backward = positions.copy()
+        forward[index] += step
+        backward[index] -= step
+        reference[index] = (
+            solver.field.gain(forward) - solver.field.gain(backward)
+        ) / (2.0 * step)
+
+    np.testing.assert_allclose(gradient, reference, rtol=1e-5, atol=1e-7)
 
 
 def test_training_maximizes_the_gain() -> None:
@@ -40,7 +73,7 @@ def test_training_maximizes_the_gain() -> None:
 
     positions, history = solver.train()
 
-    assert float(solver.field.gain(positions)) > float(before)
+    assert solver.field.gain(positions) > before
     assert len(history) == solver.n_iteration
 
 
@@ -54,30 +87,23 @@ def test_a_density_map_weights_the_grid() -> None:
     values = solver.field.value_map(solver.emitters_positions)
 
     assert values.shape == GRID_SIZE
-    assert float(tf.reduce_min(values)) >= 0.0
+    assert values.min() >= 0.0
+    np.testing.assert_allclose(values[0, :].max(), 0.0)
 
 
-def test_a_segment_between_two_points_blocks_the_signal() -> None:
-    obstacle = np.array([[[-1.0, -1.0], [1.0, 1.0]]])
-    solver = make_solver(
+def test_a_wall_lowers_the_gain() -> None:
+    wall = np.array([[[0.5, 0.0], [0.5, 1.0]]])
+    clear = make_solver()
+    walled = make_solver(
         collision_map=CollisionMap.from_data(
-            obstacle,
+            wall,
             MapType.SEGMENTS,
             MapType.SEGMENTS,
         )
     )
+    positions = np.array([[0.0, 5.0]])
 
-    blocked = solver.field.path_is_blocked(
-        tf.constant([-1.0, 1.0]),
-        tf.constant([1.0, -1.0]),
-    )
-    clear = solver.field.path_is_blocked(
-        tf.constant([0.0, 0.0]),
-        tf.constant([1.0, 0.0]),
-    )
-
-    assert bool(blocked)
-    assert not bool(clear)
+    assert walled.field.gain(positions) < clear.field.gain(positions)
 
 
 def test_solving_updates_the_positions_and_the_history() -> None:
@@ -87,3 +113,10 @@ def test_solving_updates_the_positions_and_the_history() -> None:
 
     assert solver.history
     assert not solver.is_working
+
+
+def test_the_engine_needs_neither_tensorflow_nor_a_window() -> None:
+    importlib.import_module("emitter_optimizer.engine")
+
+    assert "tensorflow" not in sys.modules
+    assert "dearpygui" not in sys.modules

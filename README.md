@@ -64,9 +64,9 @@ Maximize the gain $\mathcal G$ over the emitter positions $U$:
   $\mathcal G_P : U \to \int_E \psi \circ r_{U,C}(x) \, d\mu(x)$.
 
 The integral is a mean over the grid. $\mathcal G$ is differentiable in $U$
-away from the walls, so the search follows its gradient. The current engine
-does it with TensorFlow and Keras; the next step is an exact NumPy gradient
-([ideas/roadmap.md](ideas/roadmap.md)).
+away from the walls, and the engine computes the exact gradient: a NumPy
+sum over the cells, climbed by a projected Adam step that keeps every
+emitter on the map. No deep-learning framework is involved.
 
 ## What you can change
 
@@ -91,9 +91,10 @@ does it with TensorFlow and Keras; the next step is an exact NumPy gradient
 ## Status
 
 The 2023 application, modernized in 2026: Python 3.14, uv, `just`, ruff, ty,
-one gate. The engine still runs on TensorFlow; the next steps, in order, are in
-[ideas/roadmap.md](ideas/roadmap.md) — a headless engine, an agent protocol, a
-richer objective, then the 3D, manifold and constrained cases.
+a NumPy engine with an exact gradient, ten property tests, one gate. The next
+steps, in order, are in [ideas/roadmap.md](ideas/roadmap.md): a command line,
+a benchmark, an agent protocol, a richer objective, then the 3D, manifold and
+constrained cases.
 
 ## Credits
 

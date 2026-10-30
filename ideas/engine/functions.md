@@ -33,7 +33,6 @@ source. It works and it lets a person edit them in the window.
 - `exec` is not a contract: no validation, no clear error, no isolation. The
   roadmap replaces it by a plugin module (`eval`, optional `derivative`) or a
   restricted expression language ([roadmap](../roadmap.md)).
-- A law written with TensorFlow operations must be rewritten in NumPy;
-  `tf.exp` becomes `np.exp`.
+- A law is a plain NumPy function: `np.exp`, one array in, one array out.
 - Precision is `float64` in the engine; a law returning `float32` is cast
   once, with a test.

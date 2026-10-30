@@ -23,9 +23,7 @@ dependencies = [
   "matplotlib>=3.11.2",
   "numpy>=2.5.4",
   "opencv-python>=5.0.0.93",
-  "keras>=3.11.0",
   "pillow>=13.0.0",
-  "tensorflow>=2.22.0rc0",
 ]
 
 [project.scripts]
@@ -49,4 +47,3 @@ dev = [
 testpaths = ["tests"]
 pythonpath = ["src"]
 addopts = ["--strict-markers", "--strict-config"]
-filterwarnings = ["ignore::DeprecationWarning:gast"]

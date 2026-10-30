@@ -1,9 +1,12 @@
-import tensorflow as tf
+import numpy as np
 
 SIGNAL_STRENGTH = 5.0
 
 
-@tf.function
-def eval(distance: tf.Tensor) -> tf.Tensor:
+def eval(distance: np.ndarray) -> np.ndarray:
     """Signal received from one emitter at `distance`, in the map's unit."""
-    return tf.exp(-(distance / SIGNAL_STRENGTH))
+    return np.exp(-(distance / SIGNAL_STRENGTH))
+
+
+def derivative(distance: np.ndarray) -> np.ndarray:
+    return -np.exp(-(distance / SIGNAL_STRENGTH)) / SIGNAL_STRENGTH

@@ -4,7 +4,7 @@ from pathlib import Path
 
 import dearpygui.dearpygui as dpg
 
-from emitter_optimizer.engine.field import SignalFunction
+from emitter_optimizer.engine.types import SignalFunction
 from emitter_optimizer.gui.configuration import GuiConfig
 from emitter_optimizer.gui.dpg_utils import PYTHON_EXTENSIONS, DpgUtils
 

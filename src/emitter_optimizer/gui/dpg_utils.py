@@ -6,11 +6,10 @@ from collections.abc import Sequence
 import cv2
 import dearpygui.dearpygui as dpg
 import numpy as np
-import tensorflow as tf
 from matplotlib.figure import Figure
 from PIL import Image
 
-from emitter_optimizer.engine.field import SignalFunction
+from emitter_optimizer.engine.types import SignalFunction
 
 IMAGE_EXTENSIONS = "Image (*.bmp *.jpg *.png *.gif){.bmp,.jpg,.png,.gif}"
 PYTHON_EXTENSIONS = "Source file (*.py){.py}"
@@ -106,9 +105,9 @@ class DpgUtils:
         interval: tuple[float, float],
         samples: int = 20,
     ) -> tuple[list[float], list[float]]:
-        abscissas = tf.linspace(interval[0], interval[1], samples)
-        ordinates = tf.vectorized_map(function, abscissas)
-        return abscissas.numpy().tolist(), ordinates.numpy().tolist()
+        abscissas = np.linspace(interval[0], interval[1], samples)
+        ordinates = function(abscissas)
+        return abscissas.tolist(), np.asarray(ordinates).tolist()
 
     @staticmethod
     def fig_to_dpg_texture(figure: Figure) -> list[float]:

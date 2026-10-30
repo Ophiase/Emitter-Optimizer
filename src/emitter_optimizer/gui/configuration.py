@@ -3,10 +3,9 @@
 from pathlib import Path
 from typing import Any, ClassVar, cast
 
-from emitter_optimizer.engine.collision_map import CollisionMap
-from emitter_optimizer.engine.density_map import DensityMap
-from emitter_optimizer.engine.field import SignalFunction
+from emitter_optimizer.engine.maps import CollisionMap, DensityMap
 from emitter_optimizer.engine.solver import Solver, UpdateCallback
+from emitter_optimizer.engine.types import Derivative, Law, SignalFunction
 from emitter_optimizer.paths import (
     DEFAULT_EMITTER_FUNCTION,
     DEFAULT_SAVE_PATH,
@@ -20,6 +19,7 @@ DEFAULT_MAP_SCALE = (100.0, 100.0)
 DEFAULT_GRID_SIZE = (32, 32)
 DEFAULT_UPDATE_RATE = 5
 FUNCTION_ENTRY = "eval"
+FUNCTION_DERIVATIVE = "derivative"
 
 
 class GuiConfig:
@@ -63,10 +63,12 @@ class GuiConfig:
         return path.read_text(encoding="utf-8")
 
     @staticmethod
-    def load_function(source: str) -> SignalFunction:
+    def load_function(source: str) -> Law:
         namespace: dict[str, Any] = {}
         exec(source, namespace)
-        return cast(SignalFunction, namespace[FUNCTION_ENTRY])
+        value = cast(SignalFunction, namespace[FUNCTION_ENTRY])
+        derivative = cast(Derivative | None, namespace.get(FUNCTION_DERIVATIVE))
+        return Law(value, derivative)
 
     def update_solver(self) -> None:
         self.solver = self.to_solver()
@@ -78,8 +80,8 @@ class GuiConfig:
             collision_map=self.collision_map,
             map_scale=self.map_scale,
             grid_size=self.grid_size,
-            emitter_function=self.emitter_function,
-            sensor_function=self.sensor_function,
+            emitter_law=self.emitter_function,
+            sensor_law=self.sensor_function,
             n_iteration=self.n_iteration,
             epsilon=self.learning_step,
             update_callback=self.update_callback,

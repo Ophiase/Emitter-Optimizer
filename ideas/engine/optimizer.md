@@ -5,10 +5,11 @@ with the bounds the map implies.
 
 ## Today
 
-`Solver.train` wraps the positions in a variable and asks Keras' Nadam to
-minimize `-G`, for `n_iteration` steps, with a learning rate named `epsilon`.
-An abort flag and an update callback make it usable from a window. It works;
-it also drags TensorFlow and Keras into the core ([stack](../architecture/stack.md)).
+`Solver.train` runs Adam on the exact gradient, ascends the gain, clips the
+positions to the map, and keeps the best positions seen so the returned gain
+never drops. `epsilon` is the learning rate; an abort flag and an update
+callback make it usable from a window. TensorFlow and Keras were removed in
+this step; the code is plain NumPy ([stack](../architecture/stack.md)).
 
 ## [sketch] The replacement
 

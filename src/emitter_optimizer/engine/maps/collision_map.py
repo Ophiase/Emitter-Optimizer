@@ -3,7 +3,7 @@ from dataclasses import dataclass
 import cv2
 import numpy as np
 
-from emitter_optimizer.engine.map_type import MapType
+from emitter_optimizer.engine.maps.map_type import MapType
 
 CANNY_THRESHOLD = 300
 CANNY_APERTURE = 3
