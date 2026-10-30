@@ -17,9 +17,11 @@ quotient of the flat case by a lattice.
 
 ## What the math becomes
 
-```text
-G(U) = integral_M psi( sum_{y in U} phi(d_g(x, y)) pass_C(x, y) ) dmu(x)
-```
+$$
+\mathcal G(U) = \int_M
+  \psi\!\left(\sum_{y \in U} \varphi\bigl(d_g(x, y)\bigr) \, pass_C(x, y)\right)
+  d\mu(x).
+$$
 
 - `d_g` is the geodesic distance, so `grad d_g` is the Riemannian gradient
   (the direction of the geodesic from `x` to `y`, with the inverse metric).

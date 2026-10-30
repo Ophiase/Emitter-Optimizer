@@ -17,10 +17,12 @@
 
 ## The function
 
-```text
-r_U,C(x) = sum_{y in U} phi(dist(x, y)) * pass_C(x, y)
-G(U)     = (1 / (R C)) * sum_{x in grid} psi(r_U,C(x)) * mu(x)
-```
+$$
+r_{U, C}(x) = \sum_{y \in U} \varphi\bigl(dist(x, y)\bigr) \cdot pass_C(x, y),
+\qquad
+\mathcal G(U) = \frac{1}{R C} \sum_{x \in \text{grid}}
+  \psi\bigl(r_{U, C}(x)\bigr) \, \mu(x).
+$$
 
 The mean over the cells is the integral against the uniform measure; with
 `mu` normalized it is the expected value of `psi` under the density.
@@ -31,10 +33,13 @@ The mean over the cells is the integral against the uniform measure; with
 crosses a segment: the sum is smooth, `dist` is smooth away from `x = y`, and
 `pass_C` is locally constant.
 
-```text
-dG/dy = (1 / (R C)) * sum_x psi'(r(x)) * phi'(dist(x, y))
-        * ((y - x) / dist(x, y)) * pass_C(x, y) * mu(x)
-```
+$$
+\frac{\partial \mathcal G}{\partial y}
+= \frac{1}{R C} \sum_{x} \psi'\bigl(r(x)\bigr) \,
+  \varphi'\bigl(dist(x, y)\bigr) \,
+  \frac{y - x}{dist(x, y)} \,
+  pass_C(x, y) \, \mu(x).
+$$
 
 That is the whole method: a gradient of a sum, evaluated on a grid, with a
 mask. No framework is needed to obtain it, which is why NumPy replaces

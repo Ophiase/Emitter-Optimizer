@@ -8,9 +8,11 @@ axis the cost is the model, not the optimizer. The energy has to be evaluated
 
 ## The integral is the object
 
-```text
-G(U) = integral_M psi( sum_{y in U} phi(d(x, y)) pass_C(x, y) ) dmu(x)
-```
+$$
+\mathcal G(U) = \int_M
+  \psi\!\left(\sum_{y \in U} \varphi\bigl(d(x, y)\bigr) \, pass_C(x, y)\right)
+  d\mu(x).
+$$
 
 A grid is one quadrature of this integral. Three others are available, and
 none of them needs a volume of cells:

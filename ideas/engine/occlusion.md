@@ -15,9 +15,12 @@ the far side.
 
 Replace the indicator by a smooth crossing count, with a temperature `T`:
 
-```text
-pass_C(x, y) ~ sigmoid(-crossing(x, y) / T)
-```
+$$
+pass_C(x, y) \;\simeq\; \sigma\!\left(-\frac{crossing(x, y)}{T}\right),
+$$
+
+where $\sigma$ is the logistic sigmoid and $crossing$ is a signed distance to
+the obstacle, positive when the segment crosses.
 
 where `crossing` is a signed distance to the obstacle, positive when the
 segment crosses. `T -> 0` recovers the exact test; a finite `T` lets the

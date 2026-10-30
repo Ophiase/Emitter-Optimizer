@@ -10,9 +10,10 @@ independent emitters.
 - **A pairwise term**: destructive interference, coupling, or a repulsion,
   written `kappa(y_i, y_j)`. The gain becomes
 
-```text
-G(U) = sum_x psi( sum_i phi_i(x) ) mu(x) - sum_{i<j} kappa(y_i, y_j)
-```
+$$
+\mathcal G(U) = \sum_{x} \psi\!\left(\sum_{i} \varphi_i(x)\right) \mu(x)
+  - \sum_{i < j} \kappa(y_i, y_j).
+$$
 
   which is the energy of a Markov random field with a continuous state: unary
   plus pairwise.

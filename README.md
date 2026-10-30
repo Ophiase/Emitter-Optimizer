@@ -56,33 +56,50 @@ a dripper or a shop.
 
 ## The model
 
-The score is the **gain** $\mathcal G$, maximized over the emitter positions
-$U$:
+The score is the **gain** $\mathcal G_P$, maximized over the emitter positions
+$U$. The parameters are $P := (E, \mu, C)$:
 
-| Symbol | Meaning |
-| --- | --- |
-| $E$, $\mu$ | the map, and a density: a non-negative weight per place |
-| $C$ | the segments that block the signal |
-| $U$ | the positions of the emitters |
-| $\varphi$ | the emitter law: the signal received at a distance |
-| $\psi$ | the sensor law: the score of a received sum |
-| $pass_C(x,y)$ | $1$ if the segment $[x,y]$ meets no obstacle, $0$ otherwise |
-| $dist(x,y)$ | the Euclidean distance, in map units |
+- $E$ — the map.
+- $\mu$ — a density measure over $E$: a non-negative weight per place.
+- $C$ — the segments that block the signal.
+- $U$ — the positions of the emitters.
 
-```text
-r_U,C(x) = sum_{y in U} phi(dist(x, y)) * pass_C(x, y)      received signal
-G(U)     = mean over the grid of  psi(r_U,C(x)) * mu(x)     the gain
-```
+Two laws are the user's:
 
-The integral of the definition is a mean over the cells; with a normalized
-density it is the expected score of a random place. $\mathcal G$ is
-differentiable in $U$ everywhere except across a wall, and the engine computes
-the gradient exactly:
+- $\varphi : \mathbb{R}^+ \to \mathbb{R}$ — the signal received from one
+  emitter at a given distance.
+- $\psi : \mathbb{R} \to \mathbb{R}$ — the score of a sensor that receives a
+  sum of signals.
 
-```text
-dG/dy = - mean_x  psi'(r(x)) * phi'(dist(x, y)) * (x - y) / dist(x, y)
-                 * pass_C(x, y) * mu(x)
-```
+The path through the obstacles and the distance are
+
+$$
+pass_C : (x, y) \mapsto 1 - \prod_{s \in C} \left(1 - \mathbb{1}_{[x; y] \cap s}\right),
+\qquad
+dist : (x, y) \mapsto \lVert x - y \rVert_2 .
+$$
+
+The received signal at a place, and the gain over the map:
+
+$$
+r_{U, C}(x) = \sum_{y \in U} \varphi\bigl(dist(x, y)\bigr) \cdot pass_C(x, y),
+\qquad
+\mathcal G_P(U) = \int_E \psi \circ r_{U, C}(x) \, d\mu(x).
+$$
+
+The integral is a mean over the cells of the grid; with a normalized density it
+is the expected score of a random place. $\mathcal G_P$ is differentiable in
+$U$ everywhere except across a wall, and the engine computes the gradient
+exactly:
+
+$$
+\frac{\partial \mathcal G_P}{\partial y}
+= -\frac{1}{\lvert E \rvert} \sum_{x \in E}
+  \psi'\bigl(r_{U, C}(x)\bigr) \,
+  \varphi'\bigl(dist(x, y)\bigr) \,
+  \frac{x - y}{\lVert x - y \rVert_2} \,
+  pass_C(x, y) \, \mu(x).
+$$
 
 In words: each emitter is pulled towards the places that value it, weighted by
 how much the sensor still has to gain there, and the pull is cut wherever a

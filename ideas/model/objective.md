@@ -23,12 +23,12 @@ average.
 
 An objective is a function of the per-cell values `psi(r(x)) * mu(x)`:
 
-```text
-mean      -> average
-coverage  -> average of (value > threshold)
-quantile  -> the q-th smallest value
-max-min   -> the smallest value
-```
+| Objective | Value of a placement |
+| --- | --- |
+| Mean gain | the average of $v(x) = \psi(r(x)) \, \mu(x)$ |
+| Coverage | the share of cells with $v(x) > \tau$ |
+| Quantile | the $q$-th smallest $v(x)$ |
+| Max-min | the smallest $v(x)$ |
 
 All but coverage are differentiable almost everywhere; coverage needs a
 smooth threshold (a sigmoid) or a two-stage approach: maximize a soft
