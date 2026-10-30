@@ -63,7 +63,7 @@ class WindowUserDefinedFunction:
     def _try_load(self) -> None:
         try:
             function = GuiConfig.load_function(dpg.get_value(self.code_tag))
-        except SyntaxError, KeyError, NameError, TypeError:
+        except (SyntaxError, KeyError, NameError, TypeError):
             DpgUtils.show_info("Can't parse the function passed", "Error")
             return
         setattr(self.config, self.attribute, function)
