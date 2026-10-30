@@ -12,7 +12,6 @@ Milestones of the whole project; the version is in `VERSION`.
 - **A wall test, a density test and a no-GUI/no-framework test** join the
   suite, which now runs in under a second.
 - `engine/` splits into `maps/` and the rest; the engine imports no window.
-
 - **The project has a face**: `CONTRIBUTORS.md` records that it started in
   2023 by hand and was modernized in 2026 with an agent; the README says who
   it is for, what the baseline model is, and how to try it in two
