@@ -75,8 +75,9 @@ its sign.
 ## For agents: the local service
 
 `emitter-optimizer serve` binds `127.0.0.1` and answers JSON, so an agent
-drives the engine without a window. The request bodies are pydantic
-models (`service/models.py`); a invalid one is a `422`, never a crash.
+drives the engine without a window. FastAPI serves the routes; the request
+bodies are pydantic models (`service/models.py`); an invalid one is a `422`,
+never a crash.
 
 | Route | Effect |
 | --- | --- |

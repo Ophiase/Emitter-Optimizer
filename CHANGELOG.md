@@ -4,6 +4,11 @@ Milestones of the whole project; the version is in `VERSION`.
 
 ## Unreleased
 
+- **The service is FastAPI.** The standard-library handler, the hand-written
+  router and the error mapping are gone: FastAPI serves the routes, pydantic
+  validates the bodies, and `ServiceSettings` holds the host and the port.
+  `TestClient` replaces the server threads in the tests.
+
 ## 2.1.1 — 2026-10-31
 
 - **A README built on generated figures**: the problem, five use cases, the

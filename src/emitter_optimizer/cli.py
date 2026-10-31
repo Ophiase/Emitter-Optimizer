@@ -8,7 +8,13 @@ from emitter_optimizer.engine.laws import load_law_file
 from emitter_optimizer.engine.solver import Solver
 from emitter_optimizer.gui.configuration import GuiConfig
 from emitter_optimizer.paths import DEFAULT_EMITTER_FUNCTION, DEFAULT_SENSOR_FUNCTION
-from emitter_optimizer.service import PORT, MapOptions, serve
+from emitter_optimizer.service import (
+    DEFAULT_HOST,
+    DEFAULT_PORT,
+    MapOptions,
+    ServiceSettings,
+    serve,
+)
 from emitter_optimizer.service.options import (
     DEFAULT_EMITTERS,
     DEFAULT_GRID_SIZE,
@@ -60,7 +66,8 @@ def build_parser() -> argparse.ArgumentParser:
         help="serve the engine on 127.0.0.1 for an agent",
     )
     _add_map_arguments(service)
-    service.add_argument("--port", type=int, default=PORT)
+    service.add_argument("--host", default=str(DEFAULT_HOST))
+    service.add_argument("--port", type=int, default=DEFAULT_PORT)
 
     window = commands.add_parser(
         "window",
@@ -86,7 +93,8 @@ def run_optimization(arguments: argparse.Namespace) -> int:
 
 
 def run_service(arguments: argparse.Namespace) -> int:
-    serve(MapOptions.from_arguments(arguments).session(), port=int(arguments.port))
+    settings = ServiceSettings(host=arguments.host, port=arguments.port)
+    serve(MapOptions.from_arguments(arguments).session(), settings)
     return 0
 
 
