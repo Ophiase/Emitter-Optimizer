@@ -4,6 +4,10 @@ Milestones of the whole project; the version is in `VERSION`.
 
 ## Unreleased
 
+- **The author's decisions are recorded**: JAX and optax are the engine, laws
+  are `jax.numpy` with `eval` only, matplotlib and OpenCV leave, walls become
+  an absorption field, the window and a Rust kernel stay open
+  ([kernel](ideas/architecture/kernel.md)).
 - **The service is FastAPI.** The standard-library handler, the hand-written
   router and the error mapping are gone: FastAPI serves the routes, pydantic
   validates the bodies, and `ServiceSettings` holds the host and the port.

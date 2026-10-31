@@ -8,7 +8,21 @@ extend-exclude = [".agents"]
 [lint]
 extend-select = ["unused-async"]
 fixable = ["ALL"]
-select = ["E", "F", "UP", "B", "I", "SIM", "S", "RUF", "PTH", "C4", "ARG", "G"]
+select = [
+  "E",
+  "F",
+  "UP",
+  "B",
+  "I",
+  "SIM",
+  "S",
+  "RUF",
+  "PTH",
+  "C4",
+  "ARG",
+  "G",
+  "ANN",
+]
 
 [lint.per-file-ignores]
 "tests/**/*.py" = [

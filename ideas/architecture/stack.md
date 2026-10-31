@@ -1,31 +1,24 @@
-# Stack
+# Stack [decided]
 
-**[sketch]** Python stays: the user writes physics in Python, and the hot loop
-is NumPy, not the interpreter. Each piece is the best of its kind for one job,
-and the core carries as few as it can.
+Python stays as the host; the engine is JAX. A dependency is a promise kept by
+someone else, and the core keeps two: `jax` and `optax`.
 
 ## The core
 
 | Piece | Why this one |
 | --- | --- |
-| **Python 3.14** | The author's language; the user's laws are Python callables |
-| **NumPy** | The gain is three broadcast arrays; the GIL is released |
-| **A step of optimizer** | Projected gradient or `scipy.optimize.minimize` with bounds; no framework |
-
-**[caution]** TensorFlow is out: 600 MB, a release candidate for 3.14, a
-retraced graph and autograph warnings for a problem with fifteen variables.
-Keras goes with it. PyTorch and JAX stay optional extras, never requirements:
-JAX only when a traceable `phi` or `psi` makes `jax.grad` worth it
-([functions](../engine/functions.md)).
+| **JAX** | `value_and_grad`, `jit`, `vmap`, `lax.scan`; one program, CPU or GPU |
+| **optax** | Adam, AdamW, Nadam, Lion, SGD behind one interface |
+| **Pillow** | reading a map and writing a PNG; not a plotting stack |
 
 ## The faces
 
 | Face | Stack |
 | --- | --- |
-| Command line | `argparse` or `typer`, JSON out, CSV and PNG beside it |
-| Local service | FastAPI and uvicorn, pydantic models at the boundary and a pydantic-settings config ([agent-interop](agent-interop.md)) |
-| Window | DearPyGui, a client of the engine; a thin local page is a question ([open](../open.md)) |
-| Figures | `matplotlib` to PNG now; a hand-written SVG renderer is a question |
+| Command line | `argparse`, JSON out, CSV and PNG beside it |
+| Local service | FastAPI and uvicorn; pydantic at the boundary; pydantic-settings for the host and the port |
+| Window | Dear PyGui, a thin client of the session; a local page is the alternative (phase 5) |
+| Figures | a renderer of our own: PNG with Pillow, SVG by hand (phase 3) |
 
 ## Around the code
 
@@ -33,12 +26,12 @@ JAX only when a traceable `phi` or `psi` makes `jax.grad` worth it
 | --- | --- |
 | Environment | `uv`, `pyproject.toml`, `uv.lock` |
 | Recipes | `just`, every recipe with its `[doc]` |
-| Style, types, tests | `ruff`, `ty`, `pytest` |
+| Style, types, tests | `ruff` (including `ANN`), `ty`, `pytest` |
 | Markdown, TOML | `rumdl`, `taplo` |
 | Gate | `just agent gate` |
 
-## [caution] What stays out
+## Out
 
-No GPU requirement, no network at runtime, no build step for the face, no
-second language in the core path. Each of those would make the engine harder
-to embed — and the engine is the product.
+- **Matplotlib**, everywhere and permanently.
+- **OpenCV**: `jax.image.resize` and Pillow do its two jobs.
+- Any network call at runtime; any build step for a face.

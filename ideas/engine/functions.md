@@ -1,38 +1,21 @@
-# The two user laws
+# The two user laws [decided]
 
-**[defined]** The physics is the user's: `phi` says how much signal a sensor
-receives at a distance, `psi` says what it scores. The engine only
-optimizes.
-
-## The contract
+The physics is the user's: `emitter` maps a distance to a signal, `sensor` a
+received sum to a score. Both are `jax.numpy` functions of one array.
 
 ```python
-def eval(value: FloatArray) -> FloatArray: ...
+def eval(value: jnp.ndarray) -> jnp.ndarray: ...
 ```
 
-- One array in, one array out, same shape, elementwise.
-- `phi` is defined on `[0, +inf)`, `psi` on the whole line.
-- Both must be pure: no global state, no randomness, no printing.
+- One array in, one array out, same shape, elementwise, pure.
+- No `derivative`: JAX differentiates the law itself.
+- No global state, no randomness, no printing, no `numpy` call on a traced
+  value.
 
-An optional companion closes the loop:
+The loader checks that `jax.grad` traces what it reads and refuses a law that
+it cannot, naming the file. It caches `Physics` by file content so `jit` does
+not recompile for the same law.
 
-```python
-def derivative(value: FloatArray) -> FloatArray: ...
-```
-
-When `derivative` is present the engine uses the exact gradient
-([optimizer](optimizer.md)); when it is absent, it uses central differences.
-
-## Today
-
-`settings/emitter.py` and `settings/sensor.py`, loaded by `exec` of their
-source. It works and it lets a person edit them in the window.
-
-## [caution] What changes
-
-- `exec` is not a contract: no validation, no clear error, no isolation. The
-  roadmap replaces it by a plugin module (`eval`, optional `derivative`) or a
-  restricted expression language ([roadmap](../roadmap.md)).
-- A law is a plain NumPy function: `np.exp`, one array in, one array out.
-- Precision is `float64` in the engine; a law returning `float32` is cast
-  once, with a test.
+`settings/emitter.py` and `settings/sensor.py` are the defaults; the window and
+the command line edit them. The 2.x loader with its finite-difference fallback
+is gone with `engine/`.

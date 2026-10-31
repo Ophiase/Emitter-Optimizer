@@ -1,43 +1,28 @@
-# Occlusion
+# Occlusion [decided]
 
-**[defined]** A wall blocks the signal: the segment between an emitter and a
-cell either crosses an obstacle segment or it does not.
-
-## Today
-
-The test is the classical orientation test on two segments: `[x, y]` crosses
-`[a, b]` when `a` and `b` are on opposite sides of `[x, y]` and `x` and `y` are
-on opposite sides of `[a, b]`. `pass_C` is `0` or `1`, and an emitter is
-never pushed through a wall by the gradient, because the gradient vanishes on
-the far side.
-
-## [sketch] The smooth version
-
-Replace the indicator by a smooth crossing count, with a temperature `T`:
+A wall is matter that absorbs. The engine rasterises the map into an opacity
+image, samples `K` points along each sight line, and the visibility is the
+transmittance
 
 $$
-pass_C(x, y) \;\simeq\; \sigma\!\left(-\frac{crossing(x, y)}{T}\right),
+pass(x, y) = \exp\!\left(-\frac{\lVert x - y \rVert}{K}
+  \sum_{k=1}^{K} opacity(x_k)\right),
 $$
 
-where $\sigma$ is the logistic sigmoid and $crossing$ is a signed distance to
-the obstacle, positive when the segment crosses.
+as in volume rendering. The cost no longer depends on the number of walls; a
+map image *is* the field, so no contour extraction is needed; a partial wall
+(plaster against concrete) is physics, not a special case.
 
-where `crossing` is a signed distance to the obstacle, positive when the
-segment crosses. `T -> 0` recovers the exact test; a finite `T` lets the
-gradient flow through the wall, so the descent can *go around* a corner
-instead of stopping.
+- `Absorption(opacity, extent, samples)` is the engine; `Absorption.from_segments`
+  and `.from_image` build it.
+- `Segments(walls, edge)` is the exact reference, used by the tests and the
+  benchmark; `edge` is `HardEdge` or `SoftEdge`.
+- `Clear` has no walls.
+- The descent anneals: `Annealed.at(progress)` blurs the opacity (or the
+  segment edge) from 5 % to 0.1 % of the scene; the final score uses the sharp
+  version.
 
-## [caution] Traps
-
-- A temperature that is too large blurs the map and creates minima at the
-  scale of `T`; the benchmark must show the gain and the time against `T`.
-- The exact test must remain available, and be the default, so a result can
-  always be reproduced without a smooth approximation.
-- The crossing count must be differentiable in `y`, which means the obstacle
-  is a distance field, not a list of segments only; the two representations
-  must agree on a crossing ([map](map.md)).
-
-## Done when
-
-An emitter placed against a wall moves along it and around its end when the
-temperature is lowered, and the exact run at `T = 0` is unchanged.
+A one-pixel wall in a coarse image leaks: its opacity times its thickness must
+reach about 5, so the transmittance is below 1 %. A test compares `Absorption`
+to `Segments` within 0.05 on every cell, and another proves that the soft
+gradient sees the wall the hard one ignores.

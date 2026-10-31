@@ -44,7 +44,8 @@ drive** as easily as a person.
   [open.md](open.md) · [prior-art.md](prior-art.md) ·
   [crossover.md](crossover.md)
 - **architecture/**: [README](architecture/README.md) —
-  [stack](architecture/stack.md) · [layers](architecture/layers.md) ·
+  [kernel](architecture/kernel.md) · [stack](architecture/stack.md) ·
+  [layers](architecture/layers.md) ·
   [agent-interop](architecture/agent-interop.md) ·
   [zero-telemetry](architecture/zero-telemetry.md) ·
   [language](architecture/language.md)
