@@ -4,8 +4,10 @@
 
 1. **[question] Which face?** A local web page (agent-friendly, no build, no
    CDN) or a reduced DearPyGui window (native, already there).
-2. **[question] Keep `matplotlib`?** It draws the figure a person looks at;
-   a hand-written SVG renderer would remove 30 MB of dependencies.
+2. **[question] Which renderer?** `matplotlib` draws the figure a person
+   looks at today; the author would reach for `plotly` for the charts, and a
+   hand-written SVG would remove 30 MB of dependencies. The window still
+   needs DearPyGui drawings.
 3. **[question] Keep `opencv-python`?** It is used for one Canny plus one
    contour extraction; a marching-squares in NumPy or `scikit-image` would
    remove 60 MB.
