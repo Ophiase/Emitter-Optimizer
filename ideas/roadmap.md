@@ -65,7 +65,7 @@ Done on 2026-10-30, in `dev/service`.
   pydantic models; the router turns an invalid body into a `422` and an unknown
   route into a `404` ([agent-interop](architecture/agent-interop.md)).
 - [x] **2.2 `agent.just`.** (2026-10-30) `just agent::serve`, `url`, `state`,
-  `query`, `run`, `place`, `stop`, `figure`, `export`; every argument is
+  `query`, `run`, `place`, `stop`, `figure`, `save`; every argument is
   validated and passed positionally.
 - [x] **2.3 A skill.** (2026-10-30) `.claude/skills/place-emitters/SKILL.md`:
   start the service, place, run, figure, export, and what a good answer

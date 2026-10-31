@@ -89,7 +89,7 @@ never a crash.
 | `GET /api/export` | the state, as JSON |
 
 `agent.just` wraps them: `just agent::serve`, `state`, `query`, `run`,
-`place`, `stop`, `figure`, `export`. The skill
+`place`, `stop`, `figure`, `save`. The skill
 [.claude/skills/place-emitters/SKILL.md](.claude/skills/place-emitters/SKILL.md)
 tells an agent when and how to use them.
 

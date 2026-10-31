@@ -29,7 +29,7 @@ just agent::state              # positions, gain, history, seed
 just agent::place 12 0         # draw twelve emitters from seed 0
 just agent::run 200 0          # climb for two hundred iterations from seed 0
 just agent::figure out/plan.png
-just agent::export out/plan.json
+just agent::save out/plan.json
 ```
 
 ## Answer

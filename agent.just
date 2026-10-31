@@ -88,10 +88,25 @@ figure out="out/figure.png":
     echo "$1"
 
 [group("service")]
-[doc("Save the state: just agent::export out/state.json")]
+[doc("Save the state: just agent::save out/state.json")]
 [script("bash")]
-export out="out/state.json":
+save out="out/state.json":
     set -euo pipefail
     mkdir -p "$(dirname "$1")"
     curl -sS --fail-with-body --max-time 60 "{{ service_url }}/api/export" -o "$1"
     echo "$1"
+
+[group("code")]
+[doc("The 2024 shapes still in the code, counted per pattern; non-zero exit while any remain")]
+[script("bash")]
+smells:
+    set -euo pipefail
+    patterns=('tuple\[int, int\]' 'tuple\[float, float\]' 'matplotlib' 'cv2' 'MapType' 'def set_' 'is_aborting' 'NotImplementedError' 'from_mapping' 'derivative')
+    total=0
+    for pattern in "${patterns[@]}"; do
+        count=$(git grep -cE "$pattern" -- src scripts settings | awk -F: '{ sum += $2 } END { print sum + 0 }')
+        total=$((total + count))
+        printf '%5d  %s\n' "$count" "$pattern"
+    done
+    printf '%5d  total\n' "$total"
+    ((total == 0))
