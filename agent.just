@@ -16,11 +16,29 @@ ci:
 longest count="30":
     set -euo pipefail
     [[ $1 =~ ^[0-9]+$ ]] || { echo "a count of files" >&2; exit 1; }
-    git ls-files -- '*.py' ':!tests/*' | while read -r file; do
+    git ls-files -- '*.py' ':!tests/*' ':!.agents/*' | while IFS= read -r file; do
+        [[ -f $file ]] || continue
         awk 'END { print NR + 0 }' "$file" | sed "s|\$| $file|"
     done | sort -rn | head -n "$1" | while read -r lines file; do
         if ((lines > 200)); then colour=31; elif ((lines > 100)); then colour=33; else colour=32; fi
         printf '\e[%sm%5d\e[0m  %s\n' "$colour" "$lines" "$file"
+    done
+
+[group("code")]
+[doc("Files carrying many functions and classes: just agent::shapes 20; red past 10 functions or 3 classes")]
+[script("bash")]
+shapes count="20":
+    set -euo pipefail
+    [[ $1 =~ ^[0-9]+$ ]] || { echo "a count of files" >&2; exit 1; }
+    git ls-files -- '*.py' ':!tests/*' ':!.agents/*' | while IFS= read -r file; do
+        [[ -f $file ]] || continue
+        functions=$(grep -cE '^[[:space:]]*def ' "$file" || true)
+        classes=$(grep -cE '^[[:space:]]*class ' "$file" || true)
+        lines=$(wc -l < "$file")
+        printf '%4d %4d %5d %s\n' "$functions" "$classes" "$lines" "$file"
+    done | sort -k1,1nr -k2,2nr | head -n "$1" | while read -r functions classes lines file; do
+        if ((functions > 10 || classes > 3)); then colour=31; elif ((functions > 6 || classes > 1)); then colour=33; else colour=32; fi
+        printf '\e[%sm%3d f %2d c %5d l\e[0m  %s\n' "$colour" "$functions" "$classes" "$lines" "$file"
     done
 
 service_url := env("EMITTER_URL", "http://127.0.0.1:8765")
@@ -30,7 +48,7 @@ service_url := env("EMITTER_URL", "http://127.0.0.1:8765")
 [script("bash")]
 serve *arguments:
     set -euo pipefail
-    exec uv run emitter-optimizer serve "$@"
+    exec uv run python -m emitter_optimizer serve "$@"
 
 [group("service")]
 [doc("Where the service answers; EMITTER_URL overrides the default")]

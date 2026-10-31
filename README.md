@@ -152,7 +152,7 @@ just run       # open the DearPyGui window
 The `run` command takes the same options as the window, and a seed:
 
 ```sh
-uv run emitter-optimizer run --density my-field.png --collisions walls.png \
+uv run python -m emitter_optimizer run --density my-field.png --collisions walls.png \
     --emitters 50 --iterations 200 --seed 0 --out out/my-plan
 ```
 
