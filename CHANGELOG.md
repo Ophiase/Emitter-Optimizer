@@ -4,6 +4,10 @@ Milestones of the whole project; the version is in `VERSION`.
 
 ## Unreleased
 
+- **Five named use cases** replace the four anonymous benchmark rows: a
+  uniform map, a farm with crop rows and a hedge, a building with two rooms and
+  a corridor, a shop with three demand peaks, and a wide map. `just bench`
+  writes the table and a figure per case.
 - **Generated figures and a GIF**: `just figures` writes the before, after and
   gain figures and the descent animation into `docs/figures/`, from a seeded
   run. The README shows them instead of the 2021 screenshots.

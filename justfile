@@ -40,7 +40,7 @@ test:
 [group("dev")]
 [doc("Run the published benchmark into docs/benchmark/results.md")]
 bench:
-    uv run python -m emitter_optimizer.engine.bench
+    uv run python scripts/bench.py
 
 [group("dev")]
 [doc("Recompute the README figures into docs/figures: before, after, gain and the descent")]

@@ -199,13 +199,22 @@ difference ([ideas/engine/functions.md](ideas/engine/functions.md)).
 ## Benchmark
 
 `just bench` regenerates [docs/benchmark/results.md](docs/benchmark/results.md)
-from four fixed situations — a uniform map, a density, the same density with
-walls, and a wide non-square grid — with the initial and final gain, the
-improvement and the time. The table is generated, never edited by hand.
+from five named cases — a uniform map, a farm, a building, a shop and a wide
+map — with the initial and final gain, the improvement and the time, and draws
+each one into `docs/benchmark/<case>.png`:
 
-What it shows today: the wall situation costs about twenty times the same map
-without walls. The obstacle test is the hot spot, and the smooth occlusion of
-the roadmap is what attacks it ([ideas/engine/occlusion.md](ideas/engine/occlusion.md)).
+| Case | What it is |
+| --- | --- |
+| uniform | no density, no walls: the emitters spread out |
+| farm | rows of crops, a hedge with a gate |
+| building | two rooms and a corridor, walls between |
+| shop | three demand peaks in a town centre |
+| wide | a map twice as wide as tall |
+
+The table is generated, never edited by hand. The cost follows the number of
+cells first; the walls of the building case add about a factor of two. The
+figures show where the emitters end up: in rows on the farm, in the two rooms
+of the building, on the demand peaks of the shop.
 
 ## Status
 
@@ -216,7 +225,7 @@ the roadmap is what attacks it ([ideas/engine/occlusion.md](ideas/engine/occlusi
 | Laws with an optional derivative, finite-difference fallback | Done, tested |
 | Density, collision mask or CSV, non-square grids | Done, tested |
 | Command line: maps, laws, seed, four output files | Done (`just demo`) |
-| Benchmark: four situations, a generated table | Done (`just bench`) |
+| Benchmark: five named cases, a table and a figure per case | Done (`just bench`) |
 | Window: Dear PyGui 2.3, one solver, live laws | Done, not yet tested on screen |
 | Local service and `agent.just` | Next ([roadmap](ideas/roadmap.md)) |
 | Coverage, quantile, max-min objectives | Planned ([objective](ideas/model/objective.md)) |
