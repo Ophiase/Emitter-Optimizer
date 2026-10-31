@@ -45,100 +45,35 @@ from a seeded run.</em></p>
 </p>
 
 *Left: the demand in grey, the walls in black, the emitters in red. Right: the
-score the engine maximizes — the deeper the blue, the better served; the pale
-places are not. The walls cut the signal: a place behind a wall receives nothing from an
+score the engine maximizes — bright places are well served, dark places are
+not. The walls cut the signal: a place behind a wall receives nothing from an
 emitter in front of it, whatever the distance.*
 
-## Five situations, one engine
+## Multiple situations, one engine
 
-<table>
-  <thead>
-    <tr><th>Case</th><th>Simulation</th><th>Layers</th><th>What it shows</th></tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><strong>uniform</strong></td>
-      <td><img src="docs/figures/case_uniform.gif" alt="uniform" width="260"></td>
-      <td><img src="docs/figures/case_uniform.png" alt="demand, walls, score" width="480"></td>
-      <td>No density, no walls: the emitters spread out. The three layers are demand, walls and score, in that order.</td>
-    </tr>
-    <tr>
-      <td><strong>farm</strong></td>
-      <td><img src="docs/figures/case_farm.gif" alt="farm" width="260"></td>
-      <td><img src="docs/figures/case_farm.png" alt="demand, walls, score" width="480"></td>
-      <td>Crop rows and a hedge with a gate: the wall makes the gate decisive.</td>
-    </tr>
-    <tr>
-      <td><strong>building</strong></td>
-      <td><img src="docs/figures/case_building.gif" alt="building" width="260"></td>
-      <td><img src="docs/figures/case_building.png" alt="demand, walls, score" width="480"></td>
-      <td>Two rooms and a corridor: the signal crosses a doorway, not a wall.</td>
-    </tr>
-    <tr>
-      <td><strong>shop</strong></td>
-      <td><img src="docs/figures/case_shop.gif" alt="shop" width="260"></td>
-      <td><img src="docs/figures/case_shop.png" alt="demand, walls, score" width="480"></td>
-      <td>Three demand peaks without walls: the emitters choose between them.</td>
-    </tr>
-    <tr>
-      <td><strong>wide</strong></td>
-      <td><img src="docs/figures/case_wide.gif" alt="wide" width="260"></td>
-      <td><img src="docs/figures/case_wide.png" alt="demand, walls, score" width="480"></td>
-      <td>A map twice as wide as tall: the geometry changes, the model does not.</td>
-    </tr>
-    <tr>
-      <td><strong>incoming</strong></td>
-      <td colspan="3">Varieties, 3D volumes and crystal lattices reuse the same signal → score → mean chain; only the representation of the space changes.</td>
-    </tr>
-  </tbody>
-</table>
+Each case starts from a vertical aerial photograph. Two layers are painted
+over it at the photograph's own resolution, as one would in an image editor:
+the **attraction** (where the demand is) and the **collision** (what blocks the
+signal). The engine discretizes both onto its grid — the mean attraction of a
+cell, and a wall wherever a quarter of the cell is wall — then runs the same
+descent with the laws $\varphi$ and $\psi$ that fit the physics; distances are in metres.
 
-The emitter and sensor laws are the same in every row (`settings/emitter.py`
-and `settings/sensor.py`); the demand, the walls and the grid are the only
-things that change. Each GIF is the first twenty iterations; the layer strip
-reads demand, walls, score, with the emitters in crimson.
+| Case | Aerial view | Painted layers | Simulation | What it shows |
+| --- | --- | --- | --- | --- |
+| **garden** | <img src="resources/cases/garden/source.jpg" alt="Allotment gardens, Bamberg" width="240"> | <img src="docs/figures/layers_garden.jpg" alt="garden: attraction in yellow, collision in red" width="240"> | <img src="docs/figures/case_garden.gif" alt="garden: the descent" width="240"> | Sprinklers over vegetable beds; the sheds block the jet.<br><br>$\varphi(d) = \max(0, 1 - (d/6)^2)^2$ — water stops at the throw.<br><br>$\psi(s) = 1 - (1 - s)^2$ — one dose is ideal, a second drowns the bed. |
+| **beach** | <img src="resources/cases/beach/source.jpg" alt="Palombaggia beach, Corsica" width="240"> | <img src="docs/figures/layers_beach.jpg" alt="beach: attraction in yellow, collision in red" width="240"> | <img src="docs/figures/case_beach.gif" alt="beach: the descent" width="240"> | Lifeguards over the bathing strip; the headland and the rocks hide the swimmers.<br><br>$\varphi(d) = e^{-(d/35)^2}$ — the chance to reach a swimmer in time.<br><br>$\psi(s) = 1 - e^{-s}$ — the chance that someone gets there. |
+| **marina** | <img src="resources/cases/marina/source.jpg" alt="Old town of Saint-Tropez" width="240"> | <img src="docs/figures/layers_marina.jpg" alt="marina: attraction in yellow, collision in red" width="240"> | <img src="docs/figures/case_marina.gif" alt="marina: the descent" width="240"> | Wi-Fi over the yachts and the old town; the harbour-front blocks stand between them.<br><br>$\varphi(d) = 1 / (1 + (d/20)^2)$ — an inverse square that never reaches zero.<br><br>$\psi(s) = \log(1 + s/N) / \log(1 + 1/N)$ — Shannon throughput, diminishing returns. |
+| **harbor** | <img src="resources/cases/harbor/source.jpg" alt="Skopelos harbour, Greece" width="240"> | <img src="docs/figures/layers_harbor.jpg" alt="harbor: attraction in yellow, collision in red" width="240"> | <img src="docs/figures/case_harbor.gif" alt="harbor: the descent" width="240"> | Lamps along the quays and the car park; the house fronts cast the shadow.<br><br>$\varphi(d) = (1 + (d/20)^2)^{-3/2}$ — the illuminance under a pole.<br><br>$\psi(s) = \sigma((s - 0.15)/0.03)$ — a quay is lit or not; more light adds nothing. |
+| **ramparts** | <img src="resources/cases/ramparts/source.jpg" alt="Old town of Rhodes" width="240"> | <img src="docs/figures/layers_ramparts.jpg" alt="ramparts: attraction in yellow, collision in red" width="240"> | <img src="docs/figures/case_ramparts.gif" alt="ramparts: the descent" width="240"> | Sirens inside a walled town; the ramparts stop the sound, the gate lets it out.<br><br>$\varphi(d) = e^{-d/300} / (1 + (d/10)^2)$ — spreading and air absorption.<br><br>$\psi(s) = \sigma((10 \log_{10} s + 25)/3)$ — heard once it clears the street noise. |
 
-## How the emitters move
-
-<p align="center">
-  <img src="docs/figures/paths.png" alt="The path of each emitter over the score" width="70%">
-</p>
-
-*The grey circle is where an emitter starts, the crimson dot where it ends,
-and the white line is its trajectory over the score. The pull is the exact
-gradient of the score; it vanishes through a wall, so no emitter crosses one.*
-
-1. **The map becomes a grid.** Rows, columns, and a scale in map units; a
-   density image is resized to it, a collision mask becomes segments.
-2. **Each cell is served.** Every emitter adds its law at the cell's distance,
-   unless a wall stands in between.
-3. **Each cell is scored.** The sensor law turns the received sum into a score,
-   the density weights it, the mean over the cells is the gain.
-4. **The emitters climb.** The exact gradient gives the direction, Adam gives
-   the step, the positions are clipped to the map, and the best gain seen is
-   the answer.
-
-JAX compiles the gain; the kernel stays a handful of files and takes its
-gradient by autodiff.
+In the painted layers the attraction is yellow and the collision red. Each
+case is a folder in [resources/cases](resources/cases/README.md): the
+photograph, the two layers, and its `emitter.py` and `sensor.py`.
+`uv run python -m scripts.paint` repaints the layers; each GIF is the first
+twenty iterations. Varieties, 3D volumes and crystal lattices are the next
+representations of space ([ideas/roadmap.md](ideas/roadmap.md)).
 
 ## The model
-
-The whole model is four assignments:
-
-```text
-s(e, x) = phi(||e - x||) * pass_C(x, e)
-r(x)    = sum_e s(e, x)
-score(x) = psi(r(x)) * mu(x)
-gain     = mean_x score(x)
-```
-
-`phi` is the emitter law, `psi` the sensor law, `mu` the density, and
-`pass_C(x, e)` the share of the sight line from `x` to `e` that no wall blocks.
-The grid is one representation; a voxel grid, a manifold or a 3D lattice can
-replace it as long as distance, visibility and measure are defined. That is
-the whole extension point.
-
-### The formal version
 
 The score is the **gain** $\mathcal G_P$, maximized over the emitter positions
 $U$. The parameters are $P := (E, \mu, C)$:
@@ -251,7 +186,7 @@ its slope by autodiff; there is no `derivative` to write
 `just bench` regenerates [docs/benchmark/results.md](docs/benchmark/results.md)
 from five named cases — uniform, farm, building, shop, wide — with the initial
 and final gain, the improvement and the time; `just figures` draws the cases
-and the paths from the same runs. The building case gains the most; the farm pays
+and the figures from the same runs. The building case gains the most; the farm pays
 for its size. The table is generated, never edited by hand.
 
 ## Status

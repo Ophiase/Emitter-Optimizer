@@ -1,7 +1,7 @@
 from emitter_optimizer.kernel import Coverage, HardOcclusion
 from emitter_optimizer.render import MapImage
 from emitter_optimizer.service.paths import PROJECT_ROOT
-from scripts.situations import PHYSICS, measure, situations
+from scripts.situations import measure, situations
 
 OUTPUT = PROJECT_ROOT / "docs" / "benchmark" / "results.md"
 FIGURES = PROJECT_ROOT / "docs" / "benchmark"
@@ -24,7 +24,9 @@ def main() -> None:
     OUTPUT.write_text("\n".join(lines) + "\n", encoding="utf-8")
     FIGURES.mkdir(parents=True, exist_ok=True)
     for result in results:
-        coverage = Coverage(result.situation.scene, HardOcclusion(), PHYSICS)
+        coverage = Coverage(
+            result.situation.scene, HardOcclusion(), result.situation.physics
+        )
         image = MapImage(result.situation.scene, coverage, width=640).png(
             result.positions
         )

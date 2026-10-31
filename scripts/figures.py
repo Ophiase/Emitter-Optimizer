@@ -11,10 +11,12 @@ from emitter_optimizer.kernel import (
     Extent,
     GridShape,
     HardOcclusion,
+    Physics,
     Scene,
     Step,
 )
-from emitter_optimizer.render import ChartImage, ContactSheet, MapImage, ProblemImage
+from emitter_optimizer.render import ChartImage, MapImage, ProblemImage
+from emitter_optimizer.service.evaluated_law import EvaluatedLaw
 from emitter_optimizer.service.options import MapOptions
 from emitter_optimizer.service.paths import (
     DEFAULT_EMITTER_FUNCTION,
@@ -22,12 +24,17 @@ from emitter_optimizer.service.paths import (
     PROJECT_ROOT,
 )
 from scripts.situation import Situation
-from scripts.situations import PHYSICS, measure, situations
+from scripts.situations import measure, situations
 
 FIGURES = PROJECT_ROOT / "docs" / "figures"
 EMITTERS = 15
 ITERATIONS = 200
 STEP_SIZE = 0.01
+CASE_ITERATIONS = 20
+PHYSICS = Physics(
+    emitter=EvaluatedLaw.from_file(DEFAULT_EMITTER_FUNCTION),
+    sensor=EvaluatedLaw.from_file(DEFAULT_SENSOR_FUNCTION),
+)
 
 
 def _gif(start: np.ndarray, steps: list[np.ndarray], scene: Scene) -> bytes:
@@ -41,7 +48,7 @@ def _gif(start: np.ndarray, steps: list[np.ndarray], scene: Scene) -> bytes:
         format="GIF",
         save_all=True,
         append_images=frames[1:],
-        duration=80,
+        duration=120,
         loop=0,
     )
     return buffer.getvalue()
@@ -56,13 +63,13 @@ def _case_gif(image: MapImage, start: np.ndarray, steps: list[np.ndarray]) -> by
         format="GIF",
         save_all=True,
         append_images=frames[1:],
-        duration=80,
+        duration=300,
         loop=0,
     )
     return buffer.getvalue()
 
 
-def _case(situation: Situation) -> tuple[bytes, bytes, bytes, float]:
+def _case(situation: Situation) -> bytes:
     steps: list[np.ndarray] = []
 
     def capture(step: Step) -> None:
@@ -70,23 +77,13 @@ def _case(situation: Situation) -> tuple[bytes, bytes, bytes, float]:
 
     result = measure(
         situation,
-        iterations=20,
-        report_every=5,
+        iterations=CASE_ITERATIONS,
+        report_every=2,
         on_step=capture,
     )
-    coverage = Coverage(situation.scene, HardOcclusion(), PHYSICS)
-    image = MapImage(situation.scene, coverage, width=300)
-    layers = ContactSheet(columns=3).png([
-        (image.demand_png(result.positions), "demand"),
-        (image.walls_png(result.positions), "walls"),
-        (image.png(result.positions), "score"),
-    ])
-    return (
-        layers,
-        _case_gif(image, result.start, steps),
-        image.png(result.positions),
-        result.improvement,
-    )
+    coverage = Coverage(situation.scene, HardOcclusion(), situation.physics)
+    image = MapImage(situation.scene, coverage, width=400)
+    return _case_gif(image, result.start, steps)
 
 
 def main() -> None:
@@ -105,7 +102,7 @@ def main() -> None:
     scene = options.scene()
     coverage = Coverage(scene, HardOcclusion(), PHYSICS)
     start = np.asarray(scene.sample(jax.random.key(0), 1, EMITTERS)[0])
-    trajectories: list[np.ndarray] = []
+    steps: list[np.ndarray] = []
     settings = DescentSettings(
         emitters=EMITTERS,
         steps=ITERATIONS,
@@ -114,7 +111,7 @@ def main() -> None:
     )
 
     def on_step(step: Step) -> None:
-        trajectories.append(np.asarray(step.positions))
+        steps.append(np.asarray(step.positions))
 
     result = Descender(scene, PHYSICS, settings, on_step=on_step).run()
     before = MapImage(scene, coverage).png(start)
@@ -123,18 +120,10 @@ def main() -> None:
         ProblemImage(scene, coverage, width=600).png(start)
     )
     (FIGURES / "after.png").write_bytes(MapImage(scene, coverage).png(result.positions))
-    (FIGURES / "paths.png").write_bytes(
-        MapImage(scene, coverage).png(result.positions, trajectories)
-    )
     (FIGURES / "gain.png").write_bytes(ChartImage(result.history).png())
-    (FIGURES / "descent.gif").write_bytes(_gif(start, trajectories, scene))
-    cases: list[tuple[bytes, str]] = []
+    (FIGURES / "descent.gif").write_bytes(_gif(start, steps, scene))
     for situation in situations():
-        layers, animation, overview, improvement = _case(situation)
-        (FIGURES / f"case_{situation.name}.png").write_bytes(layers)
-        (FIGURES / f"case_{situation.name}.gif").write_bytes(animation)
-        cases.append((overview, f"{situation.name}  {improvement:+.3f}"))
-    (FIGURES / "cases.png").write_bytes(ContactSheet(columns=3).png(cases))
+        (FIGURES / f"case_{situation.name}.gif").write_bytes(_case(situation))
 
 
 if __name__ == "__main__":

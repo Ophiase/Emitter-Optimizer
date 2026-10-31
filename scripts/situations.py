@@ -7,42 +7,32 @@ from emitter_optimizer.kernel import (
     Coverage,
     Descender,
     DescentSettings,
-    Extent,
-    GridShape,
     HardOcclusion,
-    Physics,
 )
-from emitter_optimizer.service.evaluated_law import EvaluatedLaw
-from emitter_optimizer.service.paths import (
-    DEFAULT_EMITTER_FUNCTION,
-    DEFAULT_SENSOR_FUNCTION,
-)
-from scripts.densities import collision_map, crop_rows, density_map, peaks, rooms
+from emitter_optimizer.service.paths import PROJECT_ROOT
 from scripts.result import Result
 from scripts.situation import Situation
 
 ITERATIONS = 60
-EMITTERS = 15
 SEED = 0
 STEP_SIZE = 0.01
 
-PHYSICS = Physics(
-    emitter=EvaluatedLaw.from_file(DEFAULT_EMITTER_FUNCTION),
-    sensor=EvaluatedLaw.from_file(DEFAULT_SENSOR_FUNCTION),
-)
+CASES = PROJECT_ROOT / "resources" / "cases"
 
 
 def measure(
     situation: Situation,
     *,
     iterations: int = ITERATIONS,
-    emitters: int = EMITTERS,
+    emitters: int | None = None,
     seed: int = SEED,
     report_every: int = 50,
     on_step: Descender.StepCallback | None = None,
 ) -> Result:
     scene = situation.scene
-    coverage = Coverage(scene, HardOcclusion(), PHYSICS)
+    physics = situation.physics
+    emitters = situation.emitters if emitters is None else emitters
+    coverage = Coverage(scene, HardOcclusion(), physics)
     start = scene.sample(jax.random.key(seed), 1, emitters)[0]
     initial = float(coverage.gain(start))
     settings = DescentSettings(
@@ -53,7 +43,7 @@ def measure(
         seed=seed,
     )
     started = time.perf_counter()
-    result = Descender(scene, PHYSICS, settings, on_step=on_step).run()
+    result = Descender(scene, physics, settings, on_step=on_step).run()
     seconds = time.perf_counter() - started
     return Result(
         situation,
@@ -68,48 +58,13 @@ def measure(
 
 def situations() -> tuple[Situation, ...]:
     return (
+        Situation(CASES / "garden", "Sprinklers over allotment beds.", 120.0, 32, 24),
+        Situation(CASES / "beach", "Lifeguards over the bathing strip.", 150.0, 32, 5),
         Situation(
-            "uniform",
-            "No density, no walls: the emitters spread out.",
-            None,
-            None,
-            Extent(100.0, 100.0),
-            GridShape(32, 32),
+            CASES / "marina", "Wi-Fi over a marina and its old town.", 300.0, 32, 8
         ),
         Situation(
-            "farm",
-            "Rows of crops, a hedge with a gate.",
-            density_map(crop_rows((32, 64))),
-            collision_map(((0.5, 0.0), (0.5, 0.4)), ((0.5, 0.6), (0.5, 1.0))),
-            Extent(100.0, 50.0),
-            GridShape(32, 64),
+            CASES / "harbor", "Lamps along the quays of a ferry port.", 400.0, 32, 14
         ),
-        Situation(
-            "building",
-            "Two rooms and a corridor, walls between.",
-            density_map(rooms((32, 32))),
-            collision_map(
-                ((0.5, 0.0), (0.5, 0.45)),
-                ((0.5, 0.55), (0.5, 1.0)),
-                ((0.0, 0.5), (0.35, 0.5)),
-            ),
-            Extent(60.0, 40.0),
-            GridShape(32, 32),
-        ),
-        Situation(
-            "shop",
-            "Three demand peaks in a town centre.",
-            density_map(peaks((32, 32), ((0.3, 0.3), (0.7, 0.6), (0.5, 0.82)))),
-            None,
-            Extent(100.0, 100.0),
-            GridShape(32, 32),
-        ),
-        Situation(
-            "wide",
-            "A map twice as wide as tall.",
-            density_map(peaks((32, 64), ((0.25, 0.5), (0.75, 0.5)), width=0.2)),
-            None,
-            Extent(100.0, 50.0),
-            GridShape(32, 64),
-        ),
+        Situation(CASES / "ramparts", "Sirens inside a walled old town.", 350.0, 32, 4),
     )

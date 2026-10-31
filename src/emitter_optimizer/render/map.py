@@ -1,5 +1,4 @@
 import io
-from collections.abc import Sequence
 from dataclasses import dataclass
 
 import jax.numpy as jnp
@@ -14,8 +13,6 @@ EMITTER_RADIUS = 6
 WALL_WIDTH = 2
 WALL = "#1a1a1a"
 EMITTER = "crimson"
-PATH = "white"
-START = "#6b7280"
 
 
 def _palette(name: str) -> np.ndarray:
@@ -38,31 +35,23 @@ class MapImage:
     def png(
         self,
         positions: Array | np.ndarray,
-        trajectories: Sequence[Array | np.ndarray] | None = None,
     ) -> bytes:
         values = np.asarray(
             self.coverage.value_map(jnp.asarray(np.asarray(positions))),
             dtype=np.float64,
         )
-        return self._png(values, positions, trajectories, PLASMA)
+        return self._png(values, positions, PLASMA)
 
     def demand_png(self, positions: Array | np.ndarray) -> bytes:
         values = np.asarray(self.scene.measure, dtype=np.float64).reshape(
             self.scene.grid.rows, self.scene.grid.columns
         )
-        return self._png(values, positions, None, GREYS)
-
-    def walls_png(self, positions: Array | np.ndarray) -> bytes:
-        values = np.zeros(
-            (self.scene.grid.rows, self.scene.grid.columns), dtype=np.float64
-        )
-        return self._png(values, positions, None, GREYS)
+        return self._png(values, positions, GREYS)
 
     def _png(
         self,
         values: np.ndarray,
         positions: Array | np.ndarray,
-        trajectories: Sequence[Array | np.ndarray] | None,
         palette: np.ndarray,
     ) -> bytes:
         low = float(values.min()) if values.size else 0.0
@@ -89,13 +78,6 @@ class MapImage:
                 fill=WALL,
                 width=WALL_WIDTH,
             )
-        if trajectories:
-            starts = np.asarray(trajectories[0])[:, :2] * scale
-            for x, y in starts:
-                draw.ellipse((x - 4, y - 4, x + 4, y + 4), outline=START, width=2)
-        for path in trajectories or ():
-            points = np.asarray(path)[:, :2] * scale
-            draw.line([tuple(point) for point in points], fill=PATH, width=3)
         for point in np.asarray(positions)[:, :2] * scale:
             x, y = point
             box = (
