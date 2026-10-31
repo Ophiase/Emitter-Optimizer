@@ -1,4 +1,4 @@
-import importlib
+import subprocess
 import sys
 
 import numpy as np
@@ -116,7 +116,16 @@ def test_solving_updates_the_positions_and_the_history() -> None:
 
 
 def test_the_engine_needs_neither_tensorflow_nor_a_window() -> None:
-    importlib.import_module("emitter_optimizer.engine")
+    program = (
+        "import sys, emitter_optimizer.engine; "
+        "print('tensorflow' in sys.modules, 'dearpygui' in sys.modules)"
+    )
 
-    assert "tensorflow" not in sys.modules
-    assert "dearpygui" not in sys.modules
+    result = subprocess.run(
+        [sys.executable, "-c", program],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+
+    assert result.stdout.strip() == "False False"
