@@ -45,7 +45,7 @@ bench:
 [group("dev")]
 [doc("Recompute the README figures into docs/figures: before, after, gain and the descent")]
 figures:
-    uv run python scripts/figures.py
+    uv run python -m scripts.figures
 
 [group("dev")]
 [doc("Everything that must pass before declaring work done")]

@@ -41,7 +41,8 @@ drive** as easily as a person.
 
 - [vision.md](vision.md) · [origin.md](origin.md) ·
   [milestones.md](milestones.md) · [roadmap.md](roadmap.md) ·
-  [open.md](open.md) · [prior-art.md](prior-art.md)
+  [open.md](open.md) · [prior-art.md](prior-art.md) ·
+  [crossover.md](crossover.md)
 - **architecture/**: [README](architecture/README.md) —
   [stack](architecture/stack.md) · [layers](architecture/layers.md) ·
   [agent-interop](architecture/agent-interop.md) ·
