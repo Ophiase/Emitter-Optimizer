@@ -4,6 +4,9 @@ Milestones of the whole project; the version is in `VERSION`.
 
 ## Unreleased
 
+- **Generated figures and a GIF**: `just figures` writes the before, after and
+  gain figures and the descent animation into `docs/figures/`, from a seeded
+  run. The README shows them instead of the 2021 screenshots.
 - **The project is agent-native**: `emitter-optimizer serve` binds
   `127.0.0.1` and answers `/api/state`, `/run`, `/place`, `/stop`,
   `/figure.png` and `/export`. Requests and state are pydantic models, the

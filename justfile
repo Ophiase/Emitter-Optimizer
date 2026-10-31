@@ -43,6 +43,11 @@ bench:
     uv run python -m emitter_optimizer.engine.bench
 
 [group("dev")]
+[doc("Recompute the README figures into docs/figures: before, after, gain and the descent")]
+figures:
+    uv run python scripts/figures.py
+
+[group("dev")]
 [doc("Everything that must pass before declaring work done")]
 check: lint test rumdl
 
