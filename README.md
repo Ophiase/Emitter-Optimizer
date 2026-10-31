@@ -197,10 +197,10 @@ difference ([ideas/engine/functions.md](ideas/engine/functions.md)).
 </p>
 
 `just bench` regenerates [docs/benchmark/results.md](docs/benchmark/results.md)
-and the chart above from five named cases — uniform, farm, building, shop,
-wide — with the initial and final gain, the improvement and the time. The
-building case gains the most; the farm pays for its size. The table is
-generated, never edited by hand.
+from five named cases — uniform, farm, building, shop, wide — with the initial
+and final gain, the improvement and the time; `just figures` draws the chart
+above from the same cases. The building case gains the most; the farm pays
+for its size. The table is generated, never edited by hand.
 
 ## Status
 
