@@ -14,7 +14,7 @@ from emitter_optimizer.kernel import (
     Scene,
     Step,
 )
-from emitter_optimizer.render import ChartImage, MapImage, ProblemImage
+from emitter_optimizer.render import ChartImage, ContactSheet, MapImage, ProblemImage
 from emitter_optimizer.service.options import MapOptions
 from emitter_optimizer.service.paths import (
     DEFAULT_EMITTER_FUNCTION,
@@ -27,18 +27,6 @@ FIGURES = PROJECT_ROOT / "docs" / "figures"
 EMITTERS = 15
 ITERATIONS = 200
 STEP_SIZE = 0.01
-
-
-def _sheet(images: list[bytes], columns: int = 3) -> bytes:
-    tiles = [Image.open(BytesIO(data)) for data in images]
-    width, height = tiles[0].size
-    rows = (len(tiles) + columns - 1) // columns
-    sheet = Image.new("RGB", (width * columns, height * rows), "#0b0f14")
-    for index, tile in enumerate(tiles):
-        sheet.paste(tile, ((index % columns) * width, (index // columns) * height))
-    buffer = BytesIO()
-    sheet.save(buffer, format="PNG")
-    return buffer.getvalue()
 
 
 def _gif(start: np.ndarray, steps: list[np.ndarray], scene: Scene) -> bytes:
@@ -97,17 +85,18 @@ def main() -> None:
     )
     (FIGURES / "gain.png").write_bytes(ChartImage(result.history).png())
     (FIGURES / "descent.gif").write_bytes(_gif(start, trajectories, scene))
-    cases: list[bytes] = []
+    cases: list[tuple[bytes, str]] = []
     for situation in situations():
         case = measure(situation, iterations=20)
-        cases.append(
+        cases.append((
             MapImage(
                 situation.scene,
                 Coverage(situation.scene, HardOcclusion(), PHYSICS),
                 width=300,
-            ).png(case.positions)
-        )
-    (FIGURES / "cases.png").write_bytes(_sheet(cases))
+            ).png(case.positions),
+            f"{situation.name}  {case.improvement:+.3f}",
+        ))
+    (FIGURES / "cases.png").write_bytes(ContactSheet(columns=3).png(cases))
 
 
 if __name__ == "__main__":

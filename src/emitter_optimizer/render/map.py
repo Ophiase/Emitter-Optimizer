@@ -5,23 +5,30 @@ from dataclasses import dataclass
 import jax.numpy as jnp
 import numpy as np
 from jax import Array
-from PIL import Image, ImageDraw, ImageOps
+from PIL import Image, ImageColor, ImageDraw
+from plotly.colors import sample_colorscale
 
 from emitter_optimizer.kernel import Coverage, Scene
 
 EMITTER_RADIUS = 6
 WALL_WIDTH = 2
-LOW = "#fbfaf6"
-HIGH = "#123b5c"
-DEMAND_HIGH = "#c9c3b6"
-WALL = "#1f2933"
-EMITTER = "#c44536"
-PATH = "#2f5d8a"
+WALL = "#1a1a1a"
+EMITTER = "crimson"
+PATH = "white"
+
+
+def _palette(name: str) -> np.ndarray:
+    samples = sample_colorscale(name, np.linspace(0.0, 1.0, 256).tolist())
+    return np.array([ImageColor.getrgb(sample) for sample in samples], dtype=np.uint8)
+
+
+PLASMA = _palette("Plasma")
+GREYS = _palette("Greys")
 
 
 @dataclass(frozen=True, slots=True)
 class MapImage:
-    """A light PNG of the value map, the walls and the emitters."""
+    """A PNG of the value map, the walls and the emitters."""
 
     scene: Scene
     coverage: Coverage
@@ -36,20 +43,20 @@ class MapImage:
             self.coverage.value_map(jnp.asarray(np.asarray(positions))),
             dtype=np.float64,
         )
-        return self._png(values, positions, trajectories, HIGH)
+        return self._png(values, positions, trajectories, PLASMA)
 
     def demand_png(self, positions: Array | np.ndarray) -> bytes:
         values = np.asarray(self.scene.measure, dtype=np.float64).reshape(
             self.scene.grid.rows, self.scene.grid.columns
         )
-        return self._png(values, positions, None, DEMAND_HIGH)
+        return self._png(values, positions, None, GREYS)
 
     def _png(
         self,
         values: np.ndarray,
         positions: Array | np.ndarray,
         trajectories: Sequence[Array | np.ndarray] | None,
-        high: str,
+        palette: np.ndarray,
     ) -> bytes:
         top = float(values.max()) if values.size else 0.0
         normalised = values / top if top > 0 else np.zeros_like(values)
@@ -59,12 +66,10 @@ class MapImage:
                 self.width * float(self.scene.bounds[1]) / float(self.scene.bounds[0])
             ),
         )
-        gray = Image.fromarray((normalised * 255.0).astype(np.uint8), mode="L")
-        image = ImageOps.colorize(
-            gray.resize((self.width, height), Image.Resampling.NEAREST),
-            black=LOW,
-            white=high,
-        ).convert("RGB")
+        indices = (normalised * 255.0).astype(np.uint8)
+        image = Image.fromarray(palette[indices], mode="RGB").resize(
+            (self.width, height), Image.Resampling.NEAREST
+        )
         draw = ImageDraw.Draw(image)
         scale = np.array([self.width, height], dtype=np.float64) / np.asarray(
             self.scene.bounds
