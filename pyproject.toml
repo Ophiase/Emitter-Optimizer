@@ -1,6 +1,6 @@
 [project]
 name = "emitter-optimizer"
-version = "2.0.0"
+version = "2.1.0"
 description = "Optimize the positions of emitters over a weighted, obstructed map."
 readme = "README.md"
 license = "Apache-2.0"
@@ -23,13 +23,12 @@ dependencies = [
   "matplotlib>=3.11.2",
   "numpy>=2.5.4",
   "opencv-python>=5.0.0.93",
-  "keras>=3.11.0",
   "pillow>=13.0.0",
-  "tensorflow>=2.22.0rc0",
+  "pydantic>=2.13",
 ]
 
 [project.scripts]
-emitter-optimizer = "emitter_optimizer.main:main"
+emitter-optimizer = "emitter_optimizer.cli:main"
 
 [build-system]
 build-backend = "hatchling.build"
@@ -49,4 +48,3 @@ dev = [
 testpaths = ["tests"]
 pythonpath = ["src"]
 addopts = ["--strict-markers", "--strict-config"]
-filterwarnings = ["ignore::DeprecationWarning:gast"]

@@ -14,3 +14,4 @@ disable = [
 
 [per-file-ignores]
 "README.md" = ["MD013"]
+"docs/benchmark/results.md" = ["MD013"]

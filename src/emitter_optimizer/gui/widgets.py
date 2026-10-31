@@ -1,0 +1,32 @@
+from collections.abc import Sequence
+
+import dearpygui.dearpygui as dpg
+import numpy as np
+
+from emitter_optimizer.engine.laws import SignalFunction
+
+SPACER_HEIGHT = 5
+PLOT_SAMPLES = 20
+
+
+def separator(height: int = SPACER_HEIGHT) -> None:
+    dpg.add_spacer(height=height)
+    dpg.add_separator()
+    dpg.add_spacer(height=height)
+
+
+def show_item(item: str, items: Sequence[str]) -> None:
+    dpg.configure_item(item, show=True)
+    for other in items:
+        dpg.configure_item(other, show=other == item)
+    dpg.focus_item(item)
+
+
+def plot_data(
+    function: SignalFunction,
+    interval: tuple[float, float],
+    samples: int = PLOT_SAMPLES,
+) -> tuple[list[float], list[float]]:
+    abscissas = np.linspace(interval[0], interval[1], samples)
+    ordinates = function(abscissas)
+    return abscissas.tolist(), np.asarray(ordinates).tolist()

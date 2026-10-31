@@ -11,7 +11,12 @@ install:
 [group("user")]
 [doc("Start the optimizer window")]
 run:
-    uv run python -m emitter_optimizer
+    uv run emitter-optimizer window
+
+[group("user")]
+[doc("Optimize the demo map and write out/demo: positions, history, figure, summary")]
+demo:
+    uv run emitter-optimizer run --density resources/map/value_001.png --collisions resources/map/collide_001.png --emitters 15 --iterations 200 --seed 0 --out out/demo
 
 [group("dev")]
 [doc("Rewrite the code with ruff, then type-check it with ty")]
@@ -33,6 +38,16 @@ test:
     uv run pytest
 
 [group("dev")]
+[doc("Run the published benchmark into docs/benchmark/results.md")]
+bench:
+    uv run python scripts/bench.py
+
+[group("dev")]
+[doc("Recompute the README figures into docs/figures: before, after, gain and the descent")]
+figures:
+    uv run python scripts/figures.py
+
+[group("dev")]
 [doc("Everything that must pass before declaring work done")]
 check: lint test rumdl
 
@@ -47,7 +62,7 @@ rumdl-fmt:
 [script("bash")]
 guards:
     status=0
-    for check in markdown french comment-slop hardcoded-url portable folder-size yaml-extension config-format file-length version; do
+    for check in markdown french comment-slop no-suppression no-module-docstring hardcoded-url portable folder-size yaml-extension config-format file-length version; do
         just _guard "$check" || status=1
     done
     exit $status

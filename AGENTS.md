@@ -14,6 +14,14 @@ is differentiable, so the search is a gradient descent.
 English everywhere: code, comments, markdown, commits. The author may write to
 you in French; answer in French, write files in English.
 
+## Ideas
+
+Everything starts in `ideas/`: one concept per file, short, a status tag on
+every claim, and the map [ideas/README.md](ideas/README.md) kept current. A
+choice absent from `ideas/` is not made; a question that belongs to the author
+waits in [ideas/open.md](ideas/open.md). The plan, its branches and how to
+resume it are in [ideas/roadmap.md](ideas/roadmap.md).
+
 ## Before working
 
 Read [.agents/references.md](.agents/references.md), the reference projects
@@ -46,7 +54,8 @@ seven entries per folder, two hundred lines per file
 
 ## Python
 
-Follow [.agents/portable/rules/python.md](.agents/portable/rules/python.md):
+Follow [.agents/portable/rules/python.md](.agents/portable/rules/python.md)
+and this project's [.agents/rules/python.md](.agents/rules/python.md):
 type annotations everywhere, names that say what a value means, short
 functions, one concern per file, dataclasses for internal data and pydantic
 only at a boundary. A comment records a **why** the code cannot express
@@ -62,6 +71,26 @@ all over the changed files.
 
 The canon is [.agents/kanon.md](.agents/kanon.md); the `<>` in the README is
 its sign.
+
+## For agents: the local service
+
+`emitter-optimizer serve` binds `127.0.0.1` and answers JSON, so an agent
+drives the engine without a window. The request bodies are pydantic
+models (`service/models.py`); a invalid one is a `422`, never a crash.
+
+| Route | Effect |
+| --- | --- |
+| `GET /api/state` | map, emitters, gain, history, seed |
+| `POST /api/run` | `{"iterations": 200, "seed": 0}` |
+| `POST /api/place` | `{"positions": [[x, y], ...]}` or `{"emitters": 12, "seed": 0}` |
+| `POST /api/stop` | abort the running descent |
+| `GET /api/figure.png` | the current value map |
+| `GET /api/export` | the state, as JSON |
+
+`agent.just` wraps them: `just agent::serve`, `state`, `query`, `run`,
+`place`, `stop`, `figure`, `export`. The skill
+[.claude/skills/place-emitters/SKILL.md](.claude/skills/place-emitters/SKILL.md)
+tells an agent when and how to use them.
 
 ## Done
 

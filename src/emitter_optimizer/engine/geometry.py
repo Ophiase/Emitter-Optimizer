@@ -1,48 +1,30 @@
-"""Conversions between the grid and the world, and the path a signal takes."""
-
-from collections.abc import Sequence
-
 import cv2
 import numpy as np
-import tensorflow as tf
 
-SIGNAL_DTYPE = tf.float32
+from emitter_optimizer.engine.laws import FloatArray, Positions
+
 HALF_CELL = 0.5
 
 
-def resize_map(image: np.ndarray, size: tuple[int, int]) -> np.ndarray:
-    return cv2.resize(image, size)
-
-
-def point_to_grid(
-    point: tf.Tensor,
-    world_shape: tuple[float, float],
-    grid_shape: tuple[int, int],
-) -> tuple[tf.Tensor, tf.Tensor]:
-    """The (row, column) cell of the grid that holds a world position."""
-    rows, columns = grid_shape
-    width, height = world_shape
-    column = tf.cast(tf.floor(columns * point[0] / width), tf.int32)
-    row = tf.cast(tf.floor(rows * point[1] / height), tf.int32)
-    return row, column
+def resize_map(image: FloatArray, size: tuple[int, int]) -> FloatArray:
+    return np.asarray(cv2.resize(image, size), dtype=np.float64)
 
 
 def grid_to_world(
-    cells: tf.Tensor,
+    cells: FloatArray,
     world_shape: tuple[float, float],
     grid_shape: tuple[int, int],
-) -> tf.Tensor:
+) -> FloatArray:
     """The world coordinates of grid cells written as (column, row)."""
     rows, columns = grid_shape
     width, height = world_shape
-    scale = tf.constant([width / columns, height / rows], dtype=SIGNAL_DTYPE)
-    return cells * scale
+    return cells * np.array([width / columns, height / rows])
 
 
 def make_grid(
     grid_shape: tuple[int, int],
     world_shape: tuple[float, float],
-) -> tf.Tensor:
+) -> FloatArray:
     """World coordinates of every cell, shaped (rows, columns, 2)."""
     rows, columns = grid_shape
     row_indices, column_indices = np.meshgrid(
@@ -50,66 +32,60 @@ def make_grid(
         np.arange(columns),
         indexing="ij",
     )
-    cells = np.stack([column_indices, row_indices], axis=-1).astype(np.float32)
-    return grid_to_world(tf.constant(cells), world_shape, grid_shape)
+    cells = np.stack([column_indices, row_indices], axis=-1).astype(np.float64)
+    return grid_to_world(cells, world_shape, grid_shape)
 
 
-def turn_is_clockwise(
-    origin: tf.Tensor,
-    first: tf.Tensor,
-    second: tf.Tensor,
-) -> tf.Tensor:
-    return (second[1] - origin[1]) * (first[0] - origin[0]) > (first[1] - origin[1]) * (
-        second[0] - origin[0]
-    )
+def turn(origin: FloatArray, first: FloatArray, second: FloatArray) -> FloatArray:
+    return (second[..., 1] - origin[..., 1]) * (first[..., 0] - origin[..., 0]) - (
+        first[..., 1] - origin[..., 1]
+    ) * (second[..., 0] - origin[..., 0])
 
 
-def segments_intersect(
-    start: tf.Tensor,
-    end: tf.Tensor,
-    obstacle: tf.Tensor,
-) -> tf.Tensor:
-    """Whether the segment [start, end] crosses the segment obstacle."""
+def crosses(start: FloatArray, end: FloatArray, obstacle: FloatArray) -> FloatArray:
+    """Whether the segment [start, end] crosses the segment `obstacle`."""
     obstacle_start, obstacle_end = obstacle[0], obstacle[1]
-    return tf.logical_and(
-        turn_is_clockwise(start, obstacle_start, obstacle_end)
-        != turn_is_clockwise(end, obstacle_start, obstacle_end),
-        turn_is_clockwise(start, end, obstacle_start)
-        != turn_is_clockwise(start, end, obstacle_end),
-    )
+    return (
+        (turn(start, obstacle_start, obstacle_end) > 0)
+        != (turn(end, obstacle_start, obstacle_end) > 0)
+    ) & ((turn(start, end, obstacle_start) > 0) != (turn(start, end, obstacle_end) > 0))
 
 
-def is_blocked(
-    start: tf.Tensor,
-    end: tf.Tensor,
-    obstacles: Sequence[tf.Tensor],
-) -> tf.Tensor:
-    blocked = tf.constant(False)
+def visibility(
+    cells: FloatArray,
+    emitters: Positions,
+    obstacles: FloatArray | None,
+) -> FloatArray:
+    """True where the segment from a cell to an emitter crosses no obstacle."""
+    start = cells[:, None, :]
+    end = emitters[None, :, :]
+    shape = (len(cells), len(emitters))
+    if obstacles is None or len(obstacles) == 0:
+        return np.ones(shape, dtype=bool)
+    blocked = np.zeros(shape, dtype=bool)
     for obstacle in obstacles:
-        blocked = tf.logical_or(blocked, segments_intersect(start, end, obstacle))
-    return blocked
+        blocked |= crosses(start, end, obstacle)
+    return ~blocked
 
 
 def generate_points(
-    density: np.ndarray | None,
+    density: FloatArray | None,
     world_shape: tuple[float, float],
     count: int,
-) -> tf.Tensor:
+    generator: np.random.Generator,
+) -> Positions:
     """`count` points drawn from a density, or uniformly when it has none."""
     width, height = world_shape
     if density is None or not np.any(density):
-        return tf.constant(
-            np.random.uniform(size=(count, 2)) * np.array([width, height]),
-            dtype=SIGNAL_DTYPE,
-        )
+        return generator.uniform(size=(count, 2)) * np.array([width, height])
 
     rows, columns = density.shape
     weights = (density / density.sum()).ravel()
     row_indices, column_indices = np.unravel_index(
-        np.random.choice(weights.size, size=count, p=weights), density.shape
+        generator.choice(weights.size, size=count, p=weights),
+        density.shape,
     )
-    points = np.column_stack([
+    return np.column_stack([
         (column_indices + HALF_CELL) * width / columns,
         (row_indices + HALF_CELL) * height / rows,
     ])
-    return tf.constant(points, dtype=SIGNAL_DTYPE)

@@ -4,6 +4,61 @@ Milestones of the whole project; the version is in `VERSION`.
 
 ## Unreleased
 
+## 2.1.0 — 2026-10-31
+
+- **Five named use cases** replace the four anonymous benchmark rows: a
+  uniform map, a farm with crop rows and a hedge, a building with two rooms and
+  a corridor, a shop with three demand peaks, and a wide map. `just bench`
+  writes the table and a figure per case.
+- **Generated figures and a GIF**: `just figures` writes the before, after and
+  gain figures and the descent animation into `docs/figures/`, from a seeded
+  run. The README shows them instead of the 2021 screenshots.
+- **The project is agent-native**: `emitter-optimizer serve` binds
+  `127.0.0.1` and answers `/api/state`, `/run`, `/place`, `/stop`,
+  `/figure.png` and `/export`. Requests and state are pydantic models, the
+  router answers an invalid body with a `422` instead of a traceback, and
+  `agent.just` wraps every route. A skill tells an agent when to use them.
+- **The GUI is a typed client again**: `Application.__call__` runs the
+  loop, the layout is parsed into frozen specs, and an unknown content name
+  fails loudly.
+- **The README is rewritten in the shape of the author's other projects**:
+  badges, a start-here table, the problem in plain words, the model in one
+  screen with its symbols, the gradient and its meaning, the commands, the
+  what-you-can-change table, the status, the repository, the prior art, the
+  roadmap, and the agent's name.
+- **The 3D case gets a direction**: an implicit energy, sampled instead of
+  voxelized, with a quasi-Monte Carlo domain and a fixed seed; the analytic
+  gradient stays, and JAX is a seam, not a dependency
+  ([ideas/model/implicit-energy.md](ideas/model/implicit-energy.md)).
+- **A published benchmark**: `just bench` writes
+  `docs/benchmark/results.md` from four fixed situations, with the initial
+  and final gain, the improvement and the time. The wall situation is the
+  measured hot spot.
+- **A command line**: `emitter-optimizer run` takes a density, a collision
+  map, the laws, a seed and the parameters, and writes `positions.csv`,
+  `history.csv`, `figure.png` and `summary.json`. `just demo` runs it on the
+  demo map; `emitter-optimizer window` opens the window.
+- **The engine is NumPy.** The gain, its value map and its gradient are
+  arrays; the descent is a projected Adam step with a best-seen safeguard.
+  TensorFlow and Keras are gone, with 600 MB and a release candidate.
+- **The gradient is exact**, tested against a central difference; a law
+  without a derivative falls back to one. A law is a plain NumPy function.
+- **A wall test, a density test and a no-GUI/no-framework test** join the
+  suite, which now runs in under a second.
+- `engine/` splits into `maps/` and the rest; the engine imports no window.
+- **The project has a face**: `CONTRIBUTORS.md` records that it started in
+  2023 by hand and was modernized in 2026 with an agent; the README says who
+  it is for, what the baseline model is, and how to try it in two
+  commands.
+- **The 2023 model stays the baseline**: newer models are compared against
+  it, never silently replace it ([ideas/model](ideas/model/README.md)).
+- **`ideas/` is the core again**: the thesis, the vision, the origin, the
+  architecture, the engine, the model, the milestones and the roadmap, one
+  concept per file. `AGENTS.md` reads it first.
+- **The roadmap** names each step, its branch and its acceptance, so a later
+  session resumes without asking: M1 a NumPy engine, M2 an agent protocol,
+  M3 a model worth publishing, M4 a thin face.
+
 ## 2.0.0 — 2026-10-30
 
 - **The project joins the Kanon.** `AGENTS.md`, the portable layer in
