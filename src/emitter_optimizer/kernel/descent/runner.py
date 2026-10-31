@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 import threading
 from functools import partial
+from typing import Protocol
 
 import jax
 import jax.numpy as jnp
@@ -11,7 +14,6 @@ from emitter_optimizer.kernel.descent.progress import Progress
 from emitter_optimizer.kernel.descent.result import DescentResult
 from emitter_optimizer.kernel.descent.settings import DescentSettings
 from emitter_optimizer.kernel.descent.step import Step
-from emitter_optimizer.kernel.descent.step_callback import StepCallback
 from emitter_optimizer.kernel.laws import Physics
 from emitter_optimizer.kernel.occlusion import Occlusion, SoftOcclusion
 from emitter_optimizer.kernel.scene import Scene
@@ -24,23 +26,6 @@ def _negative_gain(
     physics: Physics,
 ) -> Array:
     return -Coverage(scene, occlusion, physics).gain(positions)
-
-
-def _transform(optimizer: str, rate: float) -> optax.GradientTransformation:
-    match optimizer:
-        case "adam":
-            return optax.adam(rate)
-        case "adamw":
-            return optax.adamw(rate)
-        case "nadam":
-            return optax.nadam(rate)
-        case "lion":
-            return optax.lion(rate)
-        case "sgd":
-            return optax.sgd(rate, momentum=0.9, nesterov=True)
-        case _:
-            message = f"unknown optimizer: {optimizer}"
-            raise ValueError(message)
 
 
 def _sharpness(scene: Scene, settings: DescentSettings) -> Array:
@@ -74,12 +59,15 @@ def _settle(
 class Descender:
     """Run `settings.starts` descents side by side; keep the best, sharp walls."""
 
+    class StepCallback(Protocol):
+        def __call__(self, step: Step, /) -> None: ...
+
     def __init__(
         self,
         scene: Scene,
         physics: Physics,
         settings: DescentSettings,
-        on_step: StepCallback | None = None,
+        on_step: Descender.StepCallback | None = None,
         start: Array | None = None,
     ) -> None:
         self.scene = scene
@@ -94,7 +82,7 @@ class Descender:
 
     def run(self) -> DescentResult:
         rate = self.settings.step_size * float(jnp.max(self.scene.bounds))
-        transform = _transform(self.settings.optimizer, rate)
+        transform = self.settings.optimizer.to_optax(rate)
         objective = jax.vmap(
             jax.value_and_grad(partial(_negative_gain, physics=self.physics)),
             in_axes=(0, None, None),
