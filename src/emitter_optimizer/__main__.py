@@ -75,6 +75,8 @@ def build_parser() -> argparse.ArgumentParser:
     )
     _add_map_arguments(window)
     window.add_argument("--iterations", type=int, default=DEFAULT_RUN_ITERATIONS)
+    window.add_argument("--host", default=str(DEFAULT_HOST))
+    window.add_argument("--port", type=int, default=DEFAULT_PORT)
     window.add_argument(
         "--solve",
         action="store_true",
