@@ -11,6 +11,7 @@ override the 2.x pages that argued for NumPy and no framework.
 | **OpenCV is out** | `jax.image.resize` and Pillow replace it (phase 4) |
 | **Walls are an absorption field** | `Segments` stays the exact reference; `Absorption` is the engine |
 | **The window and a Rust kernel are open** | phase 5; the author decides |
+| **An is-a hierarchy is an ABC** | `Occlusion` is an `ABC`, `HardOcclusion` and `SoftOcclusion` subclass it, one per file |
 
 The kernel is the reference for everything that follows: `shapes`,
 `laws`, `scene`, `occlusion`, `coverage`, `descent`. The old `engine/` is

@@ -4,6 +4,9 @@ Milestones of the whole project; the version is in `VERSION`.
 
 ## Unreleased
 
+- **An is-a hierarchy is an ABC**: `Occlusion` is an `ABC`, `HardOcclusion` and
+  `SoftOcclusion` subclass it, one class per file under `kernel/occlusion/`;
+  `Protocol` is now refused by a guard in `src/`.
 - **The author's decisions are recorded**: JAX and optax are the engine, laws
   are `jax.numpy` with `eval` only, matplotlib and OpenCV leave, walls become
   an absorption field, the window and a Rust kernel stay open

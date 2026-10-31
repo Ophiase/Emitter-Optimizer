@@ -12,6 +12,11 @@ three:
 - **Eighty lines of code at most, imports excluded; fifty is the target.** A
   file that grows past that holds several things: split it. Blank lines and
   comments do not count, imports do not count, everything else does.
+- **An is-a hierarchy is an ABC, not a Protocol.** `Occlusion` is the contract
+  and `HardOcclusion` / `SoftOcclusion` its implementations: `occlusion/base.py`
+  is an `ABC`, each implementation a subclass in its own file. A `Protocol` is
+  for a structural seam with an object the project does not own, and needs a
+  reason.
 
 [no-module-docstring.sh](../checks/no-module-docstring.sh),
 [one-class.sh](../checks/one-class.sh) and
