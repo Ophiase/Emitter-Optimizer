@@ -18,6 +18,21 @@ passes **and** its acceptance sentence is true.
 5. A question that belongs to the author goes to [open.md](open.md); it is not
    settled in code.
 
+## Phase 0 — split the kernel before migrating
+
+**[decided]** A Python file holds **one class** and at most **80 lines of
+code**, imports excluded; a file that grows holds several things. The kernel
+added by the author predates the rule and violates it: `occlusion.py` declares
+three classes, `descent.py` four, `shapes.py` two. `one-class.sh` and
+`file-length.sh` now fail on any Python file changed, so the next commit must
+split the kernel before it touches the migration.
+
+**[question]** The split collides with the seven-entry rule: `Extent`,
+`GridShape`, `Physics` and the small settings are value objects, and one file
+each pushes `kernel/` past seven entries. Either the folder rule grows (to
+twelve) for a value-object package, or one `shapes.py` may hold the two value
+objects. The author decides ([open](open.md)).
+
 ## Phase 1 — `dev/engine`: M1, a headless engine
 
 Done on 2026-10-30, in `dev/engine-numpy`; 1.6 and 1.7 remain.
