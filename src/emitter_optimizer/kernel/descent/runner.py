@@ -1,6 +1,5 @@
 import threading
-from collections.abc import Callable, Mapping
-from functools import cache, partial
+from functools import partial
 
 import jax
 import jax.numpy as jnp
@@ -17,14 +16,6 @@ from emitter_optimizer.kernel.laws import Physics
 from emitter_optimizer.kernel.occlusion import Occlusion, SoftOcclusion
 from emitter_optimizer.kernel.scene import Scene
 
-OPTIMIZERS: Mapping[str, Callable[[float], optax.GradientTransformation]] = {
-    "adam": optax.adam,
-    "adamw": optax.adamw,
-    "nadam": optax.nadam,
-    "lion": optax.lion,
-    "sgd": partial(optax.sgd, momentum=0.9, nesterov=True),
-}
-
 
 def _negative_gain(
     positions: Array,
@@ -35,42 +26,21 @@ def _negative_gain(
     return -Coverage(scene, occlusion, physics).gain(positions)
 
 
-@cache
-def _chunk_runner(
-    physics: Physics, optimizer: str, rate: float
-) -> Callable[..., tuple[Progress, Array]]:
-    transform = _transform(optimizer, rate)
-    objective = jax.vmap(
-        jax.value_and_grad(partial(_negative_gain, physics=physics)),
-        in_axes=(0, None, None),
-    )
-
-    def one(
-        progress: Progress,
-        sharpness: Array,
-        scene: Scene,
-    ) -> tuple[Progress, Array]:
-        loss, gradient = objective(progress.positions, scene, SoftOcclusion(sharpness))
-        updates, state = transform.update(gradient, progress.state, progress.positions)
-        moved = jnp.clip(
-            jnp.asarray(optax.apply_updates(progress.positions, updates)),
-            0.0,
-            scene.bounds,
-        )
-        return Progress(moved, state), -loss
-
-    @jax.jit
-    def run(
-        progress: Progress, sharpness: Array, scene: Scene
-    ) -> tuple[Progress, Array]:
-        return jax.lax.scan(partial(one, scene=scene), progress, sharpness)
-
-    return run
-
-
-@cache
 def _transform(optimizer: str, rate: float) -> optax.GradientTransformation:
-    return OPTIMIZERS[optimizer](rate)
+    match optimizer:
+        case "adam":
+            return optax.adam(rate)
+        case "adamw":
+            return optax.adamw(rate)
+        case "nadam":
+            return optax.nadam(rate)
+        case "lion":
+            return optax.lion(rate)
+        case "sgd":
+            return optax.sgd(rate, momentum=0.9, nesterov=True)
+        case _:
+            message = f"unknown optimizer: {optimizer}"
+            raise ValueError(message)
 
 
 def _sharpness(scene: Scene, settings: DescentSettings) -> Array:
@@ -123,14 +93,40 @@ class Descender:
     def run(self) -> DescentResult:
         rate = self.settings.step_size * float(jnp.max(self.scene.bounds))
         transform = _transform(self.settings.optimizer, rate)
-        run = _chunk_runner(self.physics, self.settings.optimizer, rate)
+        objective = jax.vmap(
+            jax.value_and_grad(partial(_negative_gain, physics=self.physics)),
+            in_axes=(0, None, None),
+        )
+
+        def one(
+            progress: Progress, sharpness: Array, scene: Scene
+        ) -> tuple[Progress, Array]:
+            loss, gradient = objective(
+                progress.positions, scene, SoftOcclusion(sharpness)
+            )
+            updates, state = transform.update(
+                gradient, progress.state, progress.positions
+            )
+            moved = jnp.clip(
+                jnp.asarray(optax.apply_updates(progress.positions, updates)),
+                0.0,
+                scene.bounds,
+            )
+            return Progress(moved, state), -loss
+
+        @jax.jit
+        def chunk(
+            progress: Progress, sharpness: Array, scene: Scene
+        ) -> tuple[Progress, Array]:
+            return jax.lax.scan(partial(one, scene=scene), progress, sharpness)
+
         key = jax.random.key(self.settings.seed)
         start = self.scene.sample(key, self.settings.starts, self.settings.emitters)
         progress = Progress(start, transform.init(start))
         sharpness = _sharpness(self.scene, self.settings)
         history: list[float] = []
         for first in range(0, self.settings.steps, self.settings.report_every):
-            progress, gains = run(
+            progress, gains = chunk(
                 progress,
                 sharpness[first : first + self.settings.report_every],
                 self.scene,

@@ -1,6 +1,5 @@
 from emitter_optimizer.kernel.coverage import Coverage
 from emitter_optimizer.kernel.descent import (
-    OPTIMIZERS,
     Descender,
     DescentResult,
     DescentSettings,
@@ -17,7 +16,6 @@ from emitter_optimizer.kernel.scene import Scene
 from emitter_optimizer.kernel.shapes import Extent, GridShape
 
 __all__ = [
-    "OPTIMIZERS",
     "Coverage",
     "Descender",
     "DescentResult",
