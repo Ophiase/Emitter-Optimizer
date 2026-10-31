@@ -1,16 +1,15 @@
 #!/usr/bin/env bash
 # Usage: no-protocol.sh <file>...
-# Reports `Protocol` in Python sources: an is-a hierarchy is an ABC, and a
-# Protocol hides which implementation is expected (.agents/rules/python.md).
+# A Protocol is allowed for a callable role: the class declares __call__.
+# Any other Protocol is an is-a hierarchy, and an is-a hierarchy is an ABC.
 set -uo pipefail
 
 status=0
 for file in "$@"; do
   [[ -f $file && $file == *.py ]] || continue
   case $file in .agents/*) continue ;; esac
-  hits=$(grep -nE '\bProtocol\b' "$file" || true)
-  if [[ -n $hits ]]; then
-    printf '%s\n' "$hits" | sed "s|^|$file:|"
+  if grep -qE '\bProtocol\b' "$file" && ! grep -qE 'def __call__' "$file"; then
+    printf '%s: a Protocol must be a callable role; use an ABC for an is-a hierarchy.\n' "$file"
     status=1
   fi
 done

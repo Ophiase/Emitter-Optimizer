@@ -1,20 +1,20 @@
-import io
 import threading
 from dataclasses import dataclass, field
-from pathlib import Path
 
+import jax
+import jax.numpy as jnp
 import numpy as np
 
-from emitter_optimizer.engine.geometry import generate_points
-from emitter_optimizer.engine.laws import load_law_file
-from emitter_optimizer.engine.maps import CollisionMap, DensityMap
-from emitter_optimizer.engine.solver import Problem, Solver, SolverSettings
-from emitter_optimizer.paths import (
-    DEFAULT_EMITTER_FUNCTION,
-    DEFAULT_SENSOR_FUNCTION,
+from emitter_optimizer.kernel import (
+    Coverage,
+    Descender,
+    DescentSettings,
+    HardOcclusion,
+    Physics,
+    Scene,
 )
+from emitter_optimizer.render import GainChart, MapImage
 from emitter_optimizer.service.models import (
-    DEFAULT_ITERATIONS,
     PlaceRequest,
     RunRequest,
     State,
@@ -24,42 +24,40 @@ from emitter_optimizer.service.models import (
 
 @dataclass
 class Session:
-    map_scale: tuple[float, float] = (100.0, 100.0)
-    grid_size: tuple[int, int] = (32, 32)
-    density: DensityMap | None = None
-    collisions: CollisionMap | None = None
+    scene: Scene
+    physics: Physics
     emitters: int = 15
-    learning_rate: float = 1.0
+    step_size: float = 0.01
     seed: int = 0
-    emitter_law: Path = DEFAULT_EMITTER_FUNCTION
-    sensor_law: Path = DEFAULT_SENSOR_FUNCTION
     positions: np.ndarray | None = None
     history: list[float] = field(default_factory=list)
+    _descender: Descender | None = field(default=None, repr=False)
+    _running: bool = False
     _lock: threading.Lock = field(default_factory=threading.Lock, repr=False)
-    _solver: Solver | None = field(default=None, repr=False)
 
-    def solver(self) -> Solver:
-        if self._solver is None:
-            self._solver = self._build()
-        return self._solver
+    def __post_init__(self) -> None:
+        if self.positions is None:
+            self.positions = self._sample(self.seed)
 
     def state(self) -> State:
-        solver = self.solver()
         positions = (
-            solver.emitters_positions if self.positions is None else self.positions
+            self.positions if self.positions is not None else self._sample(self.seed)
         )
+        gain = float(self._coverage().gain(jnp.asarray(positions)))
         return State(
-            map_scale=self.map_scale,
-            grid_size=self.grid_size,
-            emitters=self.emitters,
-            positions=tuple(
-                (float(point[0]), float(point[1]))
-                for point in np.asarray(positions).tolist()
+            map_scale=(
+                float(self.scene.bounds[0]),
+                float(self.scene.bounds[1]),
             ),
-            gain=float(solver.field.gain(positions)),
+            grid_size=(self.scene.grid.rows, self.scene.grid.columns),
+            emitters=len(positions),
+            positions=tuple(
+                (float(point[0]), float(point[1])) for point in np.asarray(positions)
+            ),
+            gain=gain,
             history=tuple(self.history),
             seed=self.seed,
-            running=solver.is_working,
+            running=self._running,
         )
 
     def place(self, request: PlaceRequest) -> State:
@@ -67,62 +65,59 @@ class Session:
             if request.seed is not None:
                 self.seed = request.seed
             if request.positions is not None:
-                positions = np.asarray(request.positions, dtype=np.float64)
-                self.emitters = int(positions.shape[0])
+                self.positions = np.asarray(request.positions, dtype=np.float64)
+                self.emitters = len(self.positions)
             elif request.emitters is not None:
                 self.emitters = request.emitters
-
-            self._solver = self._build()
-            if request.positions is not None:
-                self._solver.emitters_positions = positions
-            self.positions = np.array(self._solver.emitters_positions, copy=True)
+                self.positions = self._sample(self.seed)
             self.history = []
-            return self.state()
+        return self.state()
 
     def run(self, request: RunRequest) -> State:
         with self._lock:
-            solver = self.solver()
-            solver.set_iteration_count(request.iterations)
             if request.seed is not None:
                 self.seed = request.seed
-                solver.emitters_positions = generate_points(
-                    solver.density,
-                    solver.map_scale,
-                    solver.settings.emitter_count,
-                    np.random.default_rng(self.seed),
-                )
-            solver.solve()
-            self.positions = np.array(solver.emitters_positions, copy=True)
-            self.history = list(solver.history)
-            return self.state()
+                self.positions = self._sample(self.seed)
+            self.emitters = len(self.positions) if self.positions is not None else 0
+            settings = DescentSettings(
+                emitters=self.emitters,
+                steps=request.iterations,
+                step_size=self.step_size,
+                seed=self.seed,
+            )
+            descender = Descender(self.scene, self.physics, settings)
+            self._descender = descender
+            self._running = True
+        try:
+            result = descender.run()
+        finally:
+            with self._lock:
+                self._descender = None
+                self._running = False
+        with self._lock:
+            self.positions = np.asarray(result.positions, dtype=np.float64)
+            self.history = list(result.history)
+        return self.state()
 
     def stop(self) -> StopResult:
-        solver = self._solver
-        if solver is None or not solver.is_working:
+        descender = self._descender
+        if descender is None or not self._running:
             return StopResult(aborted=False)
-        solver.abort()
+        descender.stop()
         return StopResult(aborted=True)
 
     def figure(self) -> bytes:
-        figure = self.solver().make_fig(self.positions)
-        buffer = io.BytesIO()
-        figure.savefig(buffer, format="png")
-        return buffer.getvalue()
-
-    def _build(self) -> Solver:
-        return Solver(
-            problem=Problem(
-                density_map=self.density,
-                collision_map=self.collisions,
-                map_scale=self.map_scale,
-                grid_size=self.grid_size,
-            ),
-            settings=SolverSettings(
-                emitter_count=self.emitters,
-                iteration_count=DEFAULT_ITERATIONS,
-                learning_rate=self.learning_rate,
-                seed=self.seed,
-            ),
-            emitter_law=load_law_file(self.emitter_law),
-            sensor_law=load_law_file(self.sensor_law),
+        positions = (
+            self.positions if self.positions is not None else self._sample(self.seed)
         )
+        return MapImage(self.scene, self._coverage()).png(jnp.asarray(positions))
+
+    def chart(self) -> str:
+        return GainChart(self.history).html()
+
+    def _coverage(self) -> Coverage:
+        return Coverage(self.scene, HardOcclusion(), self.physics)
+
+    def _sample(self, seed: int) -> np.ndarray:
+        key = jax.random.key(seed)
+        return np.asarray(self.scene.sample(key, 1, self.emitters)[0], dtype=np.float64)

@@ -18,6 +18,10 @@ three:
   the methods that act on it, exposed by autocomplete: `Segments.visibility`,
   `Absorption.from_segments`, `Scene.of`. No module of free helpers that a
   reader has to discover by grep.
+- **A callable role is a Protocol with `__call__`, not a `Callable` alias.**
+  `Callable` names a shape, not a responsibility; the `callable-alias` check
+  prints every one so it can be named. A callback protocol may declare only
+  `__call__`; an is-a hierarchy is still an ABC, not a Protocol.
 - **An is-a hierarchy is an ABC, not a Protocol.** `Occlusion` is the contract
   and `HardOcclusion` / `SoftOcclusion` its implementations: `occlusion/base.py`
   is an `ABC`, each implementation a subclass in its own file. A `Protocol` is

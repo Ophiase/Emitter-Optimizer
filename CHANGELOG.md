@@ -4,6 +4,14 @@ Milestones of the whole project; the version is in `VERSION`.
 
 ## Unreleased
 
+- **The legacy engine and the window are gone**: the CLI, the service and the
+  page all run on the JAX kernel; `engine/` and `gui/` are deleted, not kept
+  as shims.
+- **The stack is modern**: plotly draws the interactive gain, scikit-image
+  finds the wall contours, Pillow renders the maps; matplotlib, OpenCV and
+  DearPyGui left the dependencies.
+- **The face is a local page**: FastAPI serves it, `just run` opens it, and the
+  page drives the same routes as an agent.
 - **The kernel is one concept per module**: `shapes/`, `descent/` and
   `occlusion/` hold one class each; `Scene.visibility` owns the ray crossing,
   and the free geometry module is gone.

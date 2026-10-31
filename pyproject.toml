@@ -19,16 +19,15 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "dearpygui>=2.3.1",
   "fastapi>=0.135",
   "jax>=0.12",
-  "matplotlib>=3.11.2",
   "numpy>=2.5.4",
-  "opencv-python>=5.0.0.93",
   "optax>=0.2.8",
   "pillow>=13.0.0",
+  "plotly>=7.1.0",
   "pydantic>=2.13",
   "pydantic-settings>=2.13",
+  "scikit-image>=0.26.0",
   "uvicorn>=0.41",
 ]
 

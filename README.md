@@ -36,12 +36,12 @@ from a seeded run.</em></p>
 | Change the physics | [What you can change](#what-you-can-change) |
 | The numbers, case by case | [docs/benchmark/results.md](docs/benchmark/results.md) |
 | The plan and the open questions | [ideas/roadmap.md](ideas/roadmap.md) |
-| Dependencies | Python 3.14+, `just`; nothing else |
+| Dependencies | Python 3.14+, `just`; `uv` installs JAX, plotly, scikit-image and Pillow |
 
 ## The problem, in one picture
 
 <p align="center">
-  <img src="docs/figures/problem.svg" alt="The demand map, the walls and the emitters, and the score they produce" width="95%">
+  <img src="docs/figures/problem.png" alt="The demand map, the walls and the emitters, and the score they produce" width="95%">
 </p>
 
 *Left: the demand in grey, the walls in black, the emitters in red. Right: the
@@ -52,7 +52,7 @@ emitter in front of it, whatever the distance.*
 ## Five situations, one engine
 
 <p align="center">
-  <img src="docs/figures/cases.svg" alt="Five situations: uniform, farm, building, shop, wide" width="95%">
+  <img src="docs/figures/cases.png" alt="Five situations: uniform, farm, building, shop, wide" width="95%">
 </p>
 
 *The same engine on a farm, a building, a shop and a wide map, each with its
@@ -62,7 +62,7 @@ bench` writes the table and one figure per case.*
 ## How the emitters move
 
 <p align="center">
-  <img src="docs/figures/paths.svg" alt="The path of each emitter over the score" width="70%">
+  <img src="docs/figures/paths.png" alt="The path of each emitter over the score" width="70%">
 </p>
 
 *Every emitter leaves a grey dot and climbs, step after step, toward the demand
@@ -79,8 +79,8 @@ wall, so no emitter crosses one.*
    the step, the positions are clipped to the map, and the best gain seen is
    the answer.
 
-Nothing needs a deep-learning framework: the gradient is one NumPy pass over
-the cells.
+JAX compiles the gain; the kernel stays a handful of files and takes its
+gradient by autodiff.
 
 ## The model
 
@@ -117,8 +117,8 @@ $$
 
 The integral is a mean over the cells of the grid; with a normalized density it
 is the expected score of a random place. $\mathcal G_P$ is differentiable in
-$U$ everywhere except across a wall, and the engine computes the gradient
-exactly:
+$U$ everywhere except across a wall, and the kernel computes the gradient with JAX
+autodiff:
 
 $$
 \frac{\partial \mathcal G_P}{\partial y}
@@ -137,7 +137,7 @@ against ([ideas/model](ideas/model/README.md)).
 ```sh
 just install   # uv sync: Python 3.14 and the dependencies
 just demo      # optimize the demo map into out/demo/
-just run       # or open the window
+just run       # serve the local page and open it
 ```
 
 `just demo` writes four files into `out/demo/`:
@@ -149,19 +149,19 @@ just run       # or open the window
 | `figure.png` | the value map and the emitters |
 | `summary.json` | the final gain, the seed, the parameters |
 
-The command takes anything the window takes, and a seed:
+The command takes anything the page takes, and a seed:
 
 ```sh
 uv run emitter-optimizer run --density my-field.png --collisions walls.png \
     --emitters 50 --iterations 200 --seed 0 --out out/my-plan
 ```
 
-`emitter-optimizer window --density my-field.png --solve` opens the window on
-the optimized result instead of a random start.
+`emitter-optimizer window --density my-field.png --solve` opens the local page
+on the optimized result instead of a random start.
 
 ## For agents
 
-The engine is headless and speaks JSON on localhost:
+The kernel is headless; the service speaks JSON on localhost:
 
 ```sh
 just agent::serve --density resources/map/value_001.png --emitters 15 --seed 0 &
@@ -180,38 +180,34 @@ the machine. The routes, the request shapes and the skill are in
 | --- | --- | --- |
 | Emitter law $\varphi$ | `settings/emitter.py` | `eval(distance)`, optional `derivative` |
 | Sensor law $\psi$ | `settings/sensor.py` | `eval(signal)`, optional `derivative` |
-| Density $\mu$ | `--density`, or the window | a grayscale image, one weight per cell |
-| Obstacles $C$ | `--collisions`, or the window | a mask, or a CSV of segments |
-| Number of emitters | `--emitters`, or the window | fixed today; chosen automatically later |
+| Density $\mu$ | `--density`, or the page | a grayscale image, one weight per cell |
+| Obstacles $C$ | `--collisions`, or the page | a mask, or a CSV of segments |
+| Number of emitters | `--emitters`, or the page | fixed today; chosen automatically later |
 | The map | `--map-scale`, `--grid-size` | width and height, rows and columns |
-| The descent | `--iterations`, `--learning-rate`, `--seed` | the same seed gives the same answer |
+| The descent | `--iterations`, `--step-size`, `--seed` | the same seed gives the same answer |
 
-A law is a plain NumPy function: one array in, one array out. When it declares
-a `derivative`, the engine uses it; otherwise it falls back to a central
-difference ([ideas/engine/functions.md](ideas/engine/functions.md)).
+A law is a `jax.numpy` function: one array in, one array out. The kernel takes
+its slope by autodiff; there is no `derivative` to write
+([ideas/engine/functions.md](ideas/engine/functions.md)).
 
 ## Benchmark
 
-<p align="center">
-  <img src="docs/benchmark/benchmark.svg" alt="The gain each use case gets, and its time" width="80%">
-</p>
-
 `just bench` regenerates [docs/benchmark/results.md](docs/benchmark/results.md)
 from five named cases — uniform, farm, building, shop, wide — with the initial
-and final gain, the improvement and the time; `just figures` draws the chart
-above from the same cases. The building case gains the most; the farm pays
+and final gain, the improvement and the time; `just figures` draws the cases
+and the paths from the same runs. The building case gains the most; the farm pays
 for its size. The table is generated, never edited by hand.
 
 ## Status
 
 | Part | State |
 | --- | --- |
-| Gain, value map and exact gradient, in NumPy | Done, tested against a central difference |
-| Projected Adam, bounds, abort, best-seen safeguard | Done, tested |
-| Laws with an optional derivative, finite-difference fallback | Done, tested |
-| Density, collision mask or CSV, non-square grids | Done, tested |
+| Gain, value map and gradient, in JAX | Done, autodiff tested against a central difference |
+| optax, bounds, abort, best-seen safeguard | Done, tested |
+| Laws as `jax.numpy` functions, autodiff | Done, tested |
+| Density, collision mask or CSV, non-square grids | Done, Pillow and scikit-image |
 | Command line, five use cases, figures and benchmark | Done (`just demo`, `bench`, `figures`) |
-| Window: Dear PyGui 2.3, typed windows, live laws | Done, not yet tested on screen |
+| Local page: FastAPI, pydantic, plotly, no build | Done, tested |
 | Local service, `agent.just` and the skill | Done ([agent-interop](ideas/architecture/agent-interop.md)) |
 | Coverage, quantile, max-min objectives | Planned ([objective](ideas/model/objective.md)) |
 | 3D, manifolds, constrained emitters | Planned ([implicit energy](ideas/model/implicit-energy.md)) |
@@ -224,11 +220,12 @@ The questions still open are in [ideas/open.md](ideas/open.md).
 | Folder | What it is |
 | --- | --- |
 | [ideas/](ideas/README.md) | Every concept, one per file, with its status: start here |
-| [src/emitter_optimizer/engine/](src/emitter_optimizer/engine/) | The gain, the maps, the laws, the solver: no window, no printing |
-| [src/emitter_optimizer/service/](src/emitter_optimizer/service/) | The local HTTP service and its pydantic models |
-| [src/emitter_optimizer/gui/](src/emitter_optimizer/gui/) | The Dear PyGui window, one typed window per concept |
+| [src/emitter_optimizer/kernel/](src/emitter_optimizer/kernel/) | The JAX kernel: shapes, scene, occlusion, coverage and descent |
+| [src/emitter_optimizer/service/](src/emitter_optimizer/service/) | FastAPI, pydantic models, the session and the local page |
+| [src/emitter_optimizer/maps/](src/emitter_optimizer/maps/) | Pillow and scikit-image load a density and a wall mask |
+| [src/emitter_optimizer/render/](src/emitter_optimizer/render/) | Pillow draws the map; plotly draws the gain |
 | [scripts/](scripts/) | The benchmark and the figures of this page |
-| [settings/](settings/) | The two laws the person edits, and the window layout |
+| [settings/](settings/) | The two laws the person edits |
 | [tests/](tests/) | A property per guarantee: the gradient, the walls, the grid, the service |
 | [docs/benchmark/](docs/benchmark/results.md) | The published benchmark, generated by `just bench` |
 | [docs/figures/](docs/figures/) | The figures of this page, generated by `just figures` |
@@ -239,10 +236,10 @@ Agents working on this code read [AGENTS.md](AGENTS.md).
 
 | Milestone | What | Branch | State |
 | --- | --- | --- | --- |
-| M1 | A headless NumPy engine, a command line, a benchmark | `dev/engine` | Done |
+| M1 | A headless JAX kernel, a command line, a benchmark | `dev/engine` | Done |
 | M2 | A local service an agent can drive | `dev/agent` | Done |
 | M3 | A model worth publishing: objectives, count, baselines | `dev/model` | Next |
-| M4 | A thin face, or a reduced window | `dev/ui` | Planned |
+| M4 | The local page: FastAPI and plotly, no window | `dev/modernize` | Done |
 | M5 | 3D, manifolds, constrained emitters | `dev/manifold` | Planned |
 
 Every step, its acceptance sentence and how to resume it:

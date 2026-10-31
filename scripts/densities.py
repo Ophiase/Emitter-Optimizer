@@ -1,24 +1,16 @@
 import numpy as np
 
-from emitter_optimizer.engine.maps import CollisionMap, DensityMap, MapType
+from emitter_optimizer.maps import Density, Walls
 
 
-def density_map(data: np.ndarray) -> DensityMap:
-    return DensityMap.from_data(
-        np.asarray(data, dtype=np.float64),
-        MapType.GRID,
-        MapType.GRID,
-    )
+def density_map(data: np.ndarray) -> Density:
+    return Density.of(data)
 
 
 def collision_map(
     *segments: tuple[tuple[float, float], tuple[float, float]],
-) -> CollisionMap:
-    return CollisionMap.from_data(
-        np.array(segments, dtype=np.float64),
-        MapType.SEGMENTS,
-        MapType.SEGMENTS,
-    )
+) -> Walls:
+    return Walls.of(*segments)
 
 
 def crop_rows(shape: tuple[int, int]) -> np.ndarray:

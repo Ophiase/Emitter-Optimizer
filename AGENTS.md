@@ -33,8 +33,8 @@ in [.agents/portable/rules/python.md](.agents/portable/rules/python.md).
 
 - Python 3.14, managed by `uv`; the environment comes from `pyproject.toml`
   and `uv.lock`. Never `pip install` into the environment.
-- `just install` syncs it; `just run` starts the window; `just test` runs
-  pytest.
+- `just install` syncs it; `just run` serves the local page and opens it;
+  `just test` runs pytest.
 - `just lint` is `ruff check`, `ruff format --check` and `ty check`.
   `just precommit` fixes what it can.
 - `just agent gate` is the one command to declare work done: `just check`
@@ -47,10 +47,13 @@ The package is `src/emitter_optimizer/`, in a src layout: it is imported as
 seven entries per folder, two hundred lines per file
 ([layout](.agents/rules/layout.md)).
 
-- `engine/` — geometry, maps and the solver: no GUI, no printing.
-- `gui/` — Dear PyGui windows and the configuration they edit.
+- `kernel/` — the JAX kernel: shapes, laws, scene, occlusion, coverage and
+  descent. No GUI, no printing.
+- `maps/` — Pillow and scikit-image load a density and a wall mask.
+- `render/` — Pillow draws the map; plotly draws the gain.
+- `service/` — FastAPI, pydantic models, the session and the local page.
 - `settings/` at the root holds the default emitter and sensor functions the
-  user edits in the window.
+  user edits.
 
 ## Python
 
@@ -75,7 +78,7 @@ its sign.
 ## For agents: the local service
 
 `emitter-optimizer serve` binds `127.0.0.1` and answers JSON, so an agent
-drives the engine without a window. FastAPI serves the routes; the request
+drives the kernel through the local page. FastAPI serves the routes; the request
 bodies are pydantic models (`service/models.py`); an invalid one is a `422`,
 never a crash.
 
@@ -108,7 +111,6 @@ The policy is recorded in [.agents/project.yaml](.agents/project.yaml).
 
 - A network call the person did not ask for: no telemetry, analytics, crash
   report, update check, nor a font, script or style fetched from elsewhere.
-  The fonts in `resources/font/` are local on purpose.
 - The name of a company, client or professional project in a tracked file or
   a commit.
 - Commit or push without being asked.

@@ -1,10 +1,17 @@
+import jax.numpy as jnp
 from fastapi.testclient import TestClient
 
+from emitter_optimizer.kernel import Extent, GridShape, Physics, Scene
 from emitter_optimizer.service import Session, create_app
 
 
 def make_client() -> TestClient:
-    session = Session(map_scale=(10.0, 10.0), grid_size=(4, 4), emitters=2)
+    scene = Scene.of(Extent(10.0, 10.0), GridShape(4, 4))
+    physics = Physics(
+        emitter=lambda distance: jnp.exp(-distance / 5.0),
+        sensor=lambda signal: signal,
+    )
+    session = Session(scene, physics, emitters=2)
     return TestClient(create_app(session))
 
 
@@ -19,13 +26,19 @@ def test_state_run_place_and_a_figure() -> None:
     assert len(run["history"]) == 2
 
     placed = client.post(
-        "/api/place",
-        json={"positions": [[1.0, 2.0], [3.0, 4.0]]},
+        "/api/place", json={"positions": [[1.0, 2.0], [3.0, 4.0]]}
     ).json()
     assert placed["positions"] == [[1.0, 2.0], [3.0, 4.0]]
 
     assert client.get("/api/figure.png").content.startswith(b"\x89PNG")
     assert client.get("/api/health").json() == {"ok": True}
+
+
+def test_the_page_and_the_chart_are_served() -> None:
+    client = make_client()
+
+    assert "Emitter Optimizer" in client.get("/").text
+    assert "plotly" in client.get("/api/chart").text.lower()
 
 
 def test_a_seed_reproduces_the_same_positions() -> None:

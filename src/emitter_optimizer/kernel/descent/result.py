@@ -4,7 +4,7 @@ from jax import Array
 
 
 @dataclass(frozen=True, slots=True)
-class Descent:
+class DescentResult:
     """`gain` is measured with the sharp walls; `history` is the best blurred
     objective at each step."""
 

@@ -3,13 +3,13 @@ import jax.numpy as jnp
 from jax.test_util import check_grads
 
 from emitter_optimizer.kernel import (
+    Coverage,
     Extent,
     GridShape,
     HardOcclusion,
     Physics,
     Scene,
     SoftOcclusion,
-    gain,
 )
 
 jax.config.update("jax_enable_x64", True)
@@ -35,8 +35,15 @@ def test_the_soft_gradient_sees_the_wall_the_hard_one_ignores() -> None:
     wall = jnp.array([[[50.0, 0.0], [50.0, 60.0]]])
     scene = Scene.of(EXTENT, GridShape(4, 4), density, wall)
     hidden = jnp.array([[75.0, 40.0]])
-    hard = jax.grad(gain)(hidden, scene, HardOcclusion(), PHYSICS)
-    soft = jax.grad(gain)(hidden, scene, SoftOcclusion(jnp.asarray(0.2)), PHYSICS)
+
+    def hard_gain(p: jax.Array) -> jax.Array:
+        return Coverage(scene, HardOcclusion(), PHYSICS).gain(p)
+
+    def soft_gain(p: jax.Array) -> jax.Array:
+        return Coverage(scene, SoftOcclusion(jnp.asarray(0.2)), PHYSICS).gain(p)
+
+    hard = jax.grad(hard_gain)(hidden)
+    soft = jax.grad(soft_gain)(hidden)
     assert not bool(jnp.any(hard))
     assert float(soft[0, 1]) > 0.0
 
@@ -45,8 +52,8 @@ def test_the_gain_ignores_the_order_of_emitters() -> None:
     scene = Scene.of(EXTENT, GridShape(8, 8), walls=WALL)
     emitters = jnp.array([[10.0, 20.0], [70.0, 80.0], [40.0, 55.0]])
     occlusion = SoftOcclusion(jnp.asarray(1.0))
-    forward = gain(emitters, scene, occlusion, PHYSICS)
-    backward = gain(emitters[::-1], scene, occlusion, PHYSICS)
+    forward = Coverage(scene, occlusion, PHYSICS).gain(emitters)
+    backward = Coverage(scene, occlusion, PHYSICS).gain(emitters[::-1])
     assert jnp.allclose(forward, backward)
 
 
@@ -55,6 +62,6 @@ def test_the_soft_gain_has_the_gradient_it_reports() -> None:
     emitters = jnp.array([[30.0, 20.0], [65.0, 70.0]])
 
     def objective(positions: jax.Array) -> jax.Array:
-        return gain(positions, scene, SoftOcclusion(jnp.asarray(0.3)), PHYSICS)
+        return Coverage(scene, SoftOcclusion(jnp.asarray(0.3)), PHYSICS).gain(positions)
 
     check_grads(objective, (emitters,), order=1, modes=("rev",))

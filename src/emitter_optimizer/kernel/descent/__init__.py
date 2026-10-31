@@ -1,6 +1,14 @@
-from emitter_optimizer.kernel.descent.result import Descent
-from emitter_optimizer.kernel.descent.runner import OPTIMIZERS, descend
+from emitter_optimizer.kernel.descent.result import DescentResult
+from emitter_optimizer.kernel.descent.runner import OPTIMIZERS, Descender
 from emitter_optimizer.kernel.descent.settings import DescentSettings
 from emitter_optimizer.kernel.descent.step import Step
+from emitter_optimizer.kernel.descent.step_callback import StepCallback
 
-__all__ = ["OPTIMIZERS", "Descent", "DescentSettings", "Step", "descend"]
+__all__ = [
+    "OPTIMIZERS",
+    "Descender",
+    "DescentResult",
+    "DescentSettings",
+    "Step",
+    "StepCallback",
+]

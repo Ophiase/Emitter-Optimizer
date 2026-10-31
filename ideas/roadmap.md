@@ -7,10 +7,11 @@ passes **and** its acceptance sentence is true.
 
 ## Current state
 
-**[fact]** 2026-10-31. The kernel is clean and tested; the application still
-calls the old `engine/`. The gate is green, 25 tests pass, and the next work
-is the migration: replace `engine/` with `kernel/`, then phases 3 and 4 of
-the brief. The last release is v2.1.1; nothing is pushed.
+**[fact]** 2026-10-31. The application runs on the kernel; the old `engine/`,
+the DearPyGui window, matplotlib and OpenCV are gone. JAX, optax, plotly,
+scikit-image and Pillow are the stack; the face is a local FastAPI page. The
+gate is green, 14 tests pass, and the next work is the model, not the
+migration. The last release is v2.1.1; nothing is pushed.
 
 ## How to resume
 
@@ -60,15 +61,15 @@ Done on 2026-10-30, in `dev/engine-numpy`.
 - [x] **1.6 A headless command.** (2026-10-30) `emitter-optimizer run` takes a
   density, a collision map, the laws, a seed and the parameters, and writes
   `positions.csv`, `history.csv`, `figure.png` and `summary.json`; `just demo`
-  runs it on the demo map. `emitter-optimizer window` opens the window.
+  runs it on the demo map. `emitter-optimizer window` opens the local page.
 - [x] **1.7 A benchmark.** (2026-10-30) `just bench` runs four situations
   (uniform, density, walls, a wide non-square grid) and writes
   `docs/benchmark/results.md`: initial and final gain, improvement, seconds.
   *Measured*: the wall situation costs twenty times the same map without
   walls; the obstacle test is the hot spot, which is what Phase 3.1 attacks.
-- [x] **1.8 DearPyGui calls the new engine.** (2026-10-30) The window builds a
-  `Law` from the edited files and passes it to the solver; `just check` never
-  imports `dearpygui`.
+- [x] **1.8 DearPyGui calls the new engine.** (2026-10-30, superseded by the
+  local page) The window builds a `Law` from the edited files and passes it to
+  the solver; `just check` never imports `dearpygui`.
 
 Dependencies: 1.2 before 1.3; 1.3 and 1.5 before 1.6; 1.6 before 1.7.
 
@@ -121,10 +122,10 @@ Done on 2026-10-30, in `dev/service`.
 
 ## Phase 4 — `dev/ui`: M4, a face
 
-- [ ] **4.1 A thin local page**, served by the same service, no build step,
-  no CDN ([zero-telemetry](architecture/zero-telemetry.md)).
-- [ ] **4.2 Or a reduced DearPyGui window** that only draws the state the
-  service serves. Decide in [open.md](open.md) before writing it.
+- [x] **4.1 A local page**, served by the same service, no build step, no CDN
+  (2026-10-31, [zero-telemetry](architecture/zero-telemetry.md)).
+- [x] **4.2 The page draws the state**, the map and the gain the service serves
+  (2026-10-31); the DearPyGui window is deleted, never kept as a shim.
 
 ## Phase 5 — `dev/manifold`: the cases that justify the project
 

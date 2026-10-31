@@ -7,11 +7,12 @@ import jax.numpy as jnp
 import optax
 from jax import Array
 
-from emitter_optimizer.kernel.coverage import coverage, gain
+from emitter_optimizer.kernel.coverage import Coverage
 from emitter_optimizer.kernel.descent.progress import Progress
-from emitter_optimizer.kernel.descent.result import Descent
+from emitter_optimizer.kernel.descent.result import DescentResult
 from emitter_optimizer.kernel.descent.settings import DescentSettings
 from emitter_optimizer.kernel.descent.step import Step
+from emitter_optimizer.kernel.descent.step_callback import StepCallback
 from emitter_optimizer.kernel.laws import Physics
 from emitter_optimizer.kernel.occlusion import Occlusion, SoftOcclusion
 from emitter_optimizer.kernel.scene import Scene
@@ -31,7 +32,7 @@ def _negative_gain(
     occlusion: Occlusion,
     physics: Physics,
 ) -> Array:
-    return -jnp.mean(coverage(positions, scene, occlusion, physics))
+    return -Coverage(scene, occlusion, physics).gain(positions)
 
 
 @cache
@@ -79,14 +80,20 @@ def _sharpness(scene: Scene, settings: DescentSettings) -> Array:
     return 1.0 / widths
 
 
+def _sharp(scene: Scene) -> Occlusion:
+    side = jnp.max(scene.bounds)
+    return SoftOcclusion(1.0 / (side * 0.001))
+
+
 def _settle(
     progress: Progress, scene: Scene, physics: Physics, history: list[float]
-) -> Descent:
-    gains = jax.vmap(gain, in_axes=(0, None, None, None))(
-        progress.positions, scene, _sharp(scene), physics
-    )
+) -> DescentResult:
+    def objective(positions: Array) -> Array:
+        return Coverage(scene, _sharp(scene), physics).gain(positions)
+
+    gains = jax.vmap(objective)(progress.positions)
     best = int(jnp.argmax(gains))
-    return Descent(
+    return DescentResult(
         progress.positions[best],
         float(gains[best]),
         tuple(history),
@@ -94,35 +101,44 @@ def _settle(
     )
 
 
-def _sharp(scene: Scene) -> Occlusion:
-    side = jnp.max(scene.bounds)
-    return SoftOcclusion(1.0 / (side * 0.001))
-
-
-def descend(
-    scene: Scene,
-    physics: Physics,
-    settings: DescentSettings,
-    stop: threading.Event | None = None,
-    on_step: Callable[[Step], None] | None = None,
-) -> Descent:
+class Descender:
     """Run `settings.starts` descents side by side; keep the best, sharp walls."""
-    rate = settings.step_size * float(jnp.max(scene.bounds))
-    transform = _transform(settings.optimizer, rate)
-    run = _chunk_runner(physics, settings.optimizer, rate)
-    key = jax.random.key(settings.seed)
-    start = scene.sample(key, settings.starts, settings.emitters)
-    progress = Progress(start, transform.init(start))
-    sharpness = _sharpness(scene, settings)
-    history: list[float] = []
-    for first in range(0, settings.steps, settings.report_every):
-        progress, gains = run(
-            progress, sharpness[first : first + settings.report_every], scene
-        )
-        history.extend(jnp.max(gains, axis=1).tolist())
-        if on_step is not None:
-            best = int(jnp.argmax(gains[-1]))
-            on_step(Step(len(history), history[-1], progress.positions[best]))
-        if stop is not None and stop.is_set():
-            break
-    return _settle(progress, scene, physics, history)
+
+    def __init__(
+        self,
+        scene: Scene,
+        physics: Physics,
+        settings: DescentSettings,
+        on_step: StepCallback | None = None,
+    ) -> None:
+        self.scene = scene
+        self.physics = physics
+        self.settings = settings
+        self.on_step = on_step
+        self._stop = threading.Event()
+
+    def stop(self) -> None:
+        self._stop.set()
+
+    def run(self) -> DescentResult:
+        rate = self.settings.step_size * float(jnp.max(self.scene.bounds))
+        transform = _transform(self.settings.optimizer, rate)
+        run = _chunk_runner(self.physics, self.settings.optimizer, rate)
+        key = jax.random.key(self.settings.seed)
+        start = self.scene.sample(key, self.settings.starts, self.settings.emitters)
+        progress = Progress(start, transform.init(start))
+        sharpness = _sharpness(self.scene, self.settings)
+        history: list[float] = []
+        for first in range(0, self.settings.steps, self.settings.report_every):
+            progress, gains = run(
+                progress,
+                sharpness[first : first + self.settings.report_every],
+                self.scene,
+            )
+            history.extend(jnp.max(gains, axis=1).tolist())
+            if self.on_step is not None:
+                best = int(jnp.argmax(gains[-1]))
+                self.on_step(Step(len(history), history[-1], progress.positions[best]))
+            if self._stop.is_set():
+                break
+        return _settle(progress, self.scene, self.physics, history)
