@@ -4,9 +4,17 @@ import sys
 import numpy as np
 
 from emitter_optimizer.engine import CollisionMap, DensityMap, Law, MapType, Solver
+from emitter_optimizer.engine.geometry import (
+    generate_points,
+    grid_to_world,
+    make_grid,
+    visibility,
+)
 
+GRID_SHAPE = (2, 4)
+WORLD_SHAPE = (8.0, 4.0)
 MAP_SCALE = (10.0, 10.0)
-GRID_SIZE = (8, 8)
+SOLVER_GRID = (8, 8)
 
 
 def signal(distance: np.ndarray) -> np.ndarray:
@@ -40,13 +48,51 @@ def make_solver(
         density_map=density_map,
         collision_map=collision_map,
         map_scale=MAP_SCALE,
-        grid_size=GRID_SIZE,
+        grid_size=SOLVER_GRID,
         emitter_law=EMITTER_LAW,
         sensor_law=SENSOR_LAW,
         n_iteration=n_iteration,
         epsilon=0.1,
         seed=0,
     )
+
+
+def test_the_grid_follows_the_width_and_the_height() -> None:
+    grid = make_grid(GRID_SHAPE, WORLD_SHAPE)
+
+    np.testing.assert_allclose(grid[1, 3], [6.0, 2.0])
+
+
+def test_world_coordinates_are_the_cells_scaled() -> None:
+    cells = np.array([[1.0, 1.0]])
+
+    world = grid_to_world(cells, WORLD_SHAPE, GRID_SHAPE)
+
+    np.testing.assert_allclose(world, [[2.0, 2.0]])
+
+
+def test_a_segment_hides_what_lies_behind_it() -> None:
+    cells = np.array([[0.0, 0.0], [2.0, 0.0]])
+    emitters = np.array([[0.0, 2.0], [3.0, 2.0]])
+    obstacles = np.array([[[-1.0, 1.0], [0.5, 1.0]]])
+
+    mask = visibility(cells, emitters, obstacles)
+
+    assert not mask[0, 0]
+    assert mask[1, 0]
+    assert mask[0, 1]
+    assert mask[1, 1]
+
+
+def test_generated_points_stay_on_the_map() -> None:
+    density = np.zeros((4, 4))
+    density[:, 0] = 1.0
+
+    points = generate_points(density, WORLD_SHAPE, 32, np.random.default_rng(0))
+
+    assert points.shape == (32, 2)
+    assert points[:, 0].min() >= 0.0
+    assert points[:, 0].max() < WORLD_SHAPE[0] / 2.0
 
 
 def test_the_gradient_matches_a_finite_difference() -> None:
@@ -86,7 +132,7 @@ def test_a_density_map_weights_the_grid() -> None:
 
     values = solver.field.value_map(solver.emitters_positions)
 
-    assert values.shape == GRID_SIZE
+    assert values.shape == SOLVER_GRID
     assert values.min() >= 0.0
     np.testing.assert_allclose(values[0, :].max(), 0.0)
 

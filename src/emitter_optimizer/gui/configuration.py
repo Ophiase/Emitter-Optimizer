@@ -1,7 +1,8 @@
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import ClassVar
 
-from emitter_optimizer.engine.laws import Law, load_law
+from emitter_optimizer.engine.laws import Law, load_law_file
 from emitter_optimizer.engine.maps import CollisionMap, DensityMap
 from emitter_optimizer.engine.solver import Solver, UpdateCallback
 from emitter_optimizer.paths import (
@@ -16,53 +17,44 @@ DEFAULT_EMITTERS = 15
 DEFAULT_MAP_SCALE = (100.0, 100.0)
 DEFAULT_GRID_SIZE = (32, 32)
 DEFAULT_UPDATE_RATE = 5
+ITEMS_TO_HIDE = (
+    "user_defined_density",
+    "user_defined_collisions",
+    "user_defined_emitter",
+    "user_defined_sensor",
+    "loss",
+)
 
 
+def _default_emitter_law() -> Law:
+    return load_law_file(DEFAULT_EMITTER_FUNCTION)
+
+
+def _default_sensor_law() -> Law:
+    return load_law_file(DEFAULT_SENSOR_FUNCTION)
+
+
+@dataclass
 class GuiConfig:
+    n_iteration: int = DEFAULT_ITERATIONS
+    learning_step: float = DEFAULT_LEARNING_STEP
+    n_emitters: int = DEFAULT_EMITTERS
+    map_scale: tuple[float, float] = DEFAULT_MAP_SCALE
+    grid_size: tuple[int, int] = DEFAULT_GRID_SIZE
+    update_rate: int = DEFAULT_UPDATE_RATE
+    density_map: DensityMap | None = None
+    collision_map: CollisionMap | None = None
+    emitter_law: Law = field(default_factory=_default_emitter_law)
+    sensor_law: Law = field(default_factory=_default_sensor_law)
+    update_callback: UpdateCallback | None = None
+    solver: Solver = field(init=False)
+
     DEFAULT_EMITTER_FUNCTION: ClassVar[Path] = DEFAULT_EMITTER_FUNCTION
     DEFAULT_SENSOR_FUNCTION: ClassVar[Path] = DEFAULT_SENSOR_FUNCTION
-    DEFAULT_SAVE_PATH: ClassVar[Path] = DEFAULT_SAVE_PATH
+    SAVE_PATH: ClassVar[Path] = DEFAULT_SAVE_PATH
+    ITEMS_TO_HIDE: ClassVar[tuple[str, ...]] = ITEMS_TO_HIDE
 
-    ITEMS_TO_HIDE: ClassVar[tuple[str, ...]] = (
-        "user_defined_density",
-        "user_defined_collisions",
-        "user_defined_emitter",
-        "user_defined_sensor",
-        "loss",
-    )
-
-    def __init__(self, update_callback: UpdateCallback | None = None) -> None:
-        self.n_iteration = DEFAULT_ITERATIONS
-        self.learning_step = DEFAULT_LEARNING_STEP
-
-        self.n_emitters = DEFAULT_EMITTERS
-        self.density_map: DensityMap | None = None
-        self.collision_map: CollisionMap | None = None
-
-        self.map_scale = DEFAULT_MAP_SCALE
-        self.grid_size = DEFAULT_GRID_SIZE
-
-        self.emitter_function = self.load_function(
-            self.load_file(self.DEFAULT_EMITTER_FUNCTION)
-        )
-        self.sensor_function = self.load_function(
-            self.load_file(self.DEFAULT_SENSOR_FUNCTION)
-        )
-
-        self.update_callback = update_callback
-        self.update_rate = DEFAULT_UPDATE_RATE
-
-        self.update_solver()
-
-    @staticmethod
-    def load_file(path: Path) -> str:
-        return path.read_text(encoding="utf-8")
-
-    @staticmethod
-    def load_function(source: str) -> Law:
-        return load_law(source)
-
-    def update_solver(self) -> None:
+    def __post_init__(self) -> None:
         self.solver = self.to_solver()
 
     def to_solver(self) -> Solver:
@@ -72,10 +64,13 @@ class GuiConfig:
             collision_map=self.collision_map,
             map_scale=self.map_scale,
             grid_size=self.grid_size,
-            emitter_law=self.emitter_function,
-            sensor_law=self.sensor_function,
+            emitter_law=self.emitter_law,
+            sensor_law=self.sensor_law,
             n_iteration=self.n_iteration,
             epsilon=self.learning_step,
             update_callback=self.update_callback,
             update_rate=self.update_rate,
         )
+
+    def update_solver(self) -> None:
+        self.solver = self.to_solver()

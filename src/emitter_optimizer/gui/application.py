@@ -7,18 +7,14 @@ from typing import Any
 import dearpygui.dearpygui as dpg
 
 from emitter_optimizer.gui.configuration import GuiConfig
-from emitter_optimizer.gui.windows.loss import WindowLoss
-from emitter_optimizer.gui.windows.parameters import WindowParameters
-from emitter_optimizer.gui.windows.process import WindowProcess
-from emitter_optimizer.gui.windows.render import WindowRender
-from emitter_optimizer.gui.windows.user_defined_collisions import (
-    WindowUserDefinedCollisions,
-)
-from emitter_optimizer.gui.windows.user_defined_density import (
-    WindowUserDefinedDensity,
-)
-from emitter_optimizer.gui.windows.user_defined_function import (
-    WindowUserDefinedFunction,
+from emitter_optimizer.gui.windows import (
+    CollisionsWindow,
+    DensityWindow,
+    FunctionWindow,
+    LossWindow,
+    ParametersWindow,
+    ProcessWindow,
+    RenderWindow,
 )
 from emitter_optimizer.paths import DEFAULT_GUI_CONFIGURATION, DEFAULT_GUI_FONT
 
@@ -120,28 +116,24 @@ class Application:
 
     def _content_functions(self) -> dict[str, WindowContent]:
         return {
-            "window_loss": WindowLoss(self.config).process,
-            "window_parameters": WindowParameters(self.config).process,
-            "window_process": WindowProcess(self.config).process,
-            "window_render": WindowRender(self.config).process,
-            "window_user_defined_collisions": WindowUserDefinedCollisions(
-                self.config
-            ).process,
-            "window_user_defined_density": WindowUserDefinedDensity(
-                self.config
-            ).process,
-            "window_user_defined_emitter": WindowUserDefinedFunction(
+            "window_loss": LossWindow(self.config),
+            "window_parameters": ParametersWindow(self.config),
+            "window_process": ProcessWindow(self.config),
+            "window_render": RenderWindow(self.config),
+            "window_user_defined_collisions": CollisionsWindow(self.config),
+            "window_user_defined_density": DensityWindow(self.config),
+            "window_user_defined_emitter": FunctionWindow(
                 self.config,
                 "emitter",
                 self.config.DEFAULT_EMITTER_FUNCTION,
-                "emitter_function",
-            ).process,
-            "window_user_defined_sensor": WindowUserDefinedFunction(
+                "emitter_law",
+            ),
+            "window_user_defined_sensor": FunctionWindow(
                 self.config,
                 "sensor",
                 self.config.DEFAULT_SENSOR_FUNCTION,
-                "sensor_function",
-            ).process,
+                "sensor_law",
+            ),
         }
 
     def _bind_font(self) -> None:
