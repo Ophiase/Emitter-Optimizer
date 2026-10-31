@@ -65,10 +65,11 @@ drive** as easily as a person.
   [circuits](model/circuits.md) ·
   [implicit-energy](model/implicit-energy.md)
 
-## Where the code stands (v2.0, 2026-10-30)
+## Where the code stands (v2.1, 2026-10-31)
 
-**[defined]** The Kanon migration is done: uv, Python 3.14, `just`, ruff, ty,
-and the gate `just agent gate`. The engine is split out of the GUI
-(`Field` for the gain, `Solver` for the descent) but still runs on TensorFlow
-and Keras, and DearPyGui is still the only face of the project. Everything
-below `milestones.md` describes where it goes next.
+**[defined]** v2.1 is the modernization: NumPy with an exact gradient, a
+projected Adam descent, a command line, a local service an agent drives, five
+named use cases, generated figures and a benchmark. The window is one client
+of the engine, not its only face. What remains is Phase 3 of the roadmap: a
+richer objective, the emitter count, the baselines, then the 3D and the
+manifolds.

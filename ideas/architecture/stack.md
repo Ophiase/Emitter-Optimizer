@@ -24,7 +24,7 @@ JAX only when a traceable `phi` or `psi` makes `jax.grad` worth it
 | --- | --- |
 | Command line | `argparse` or `typer`, JSON out, CSV and PNG beside it |
 | Local service | `http.server` of the standard library, or FastAPI if the routes grow ([agent-interop](agent-interop.md)) |
-| Window | DearPyGui today, legacy; a thin local page later ([open](../open.md)) |
+| Window | DearPyGui, a client of the engine; a thin local page is a question ([open](../open.md)) |
 | Figures | `matplotlib` to PNG now; a hand-written SVG renderer is a question |
 
 ## Around the code

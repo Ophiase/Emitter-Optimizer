@@ -4,6 +4,8 @@ Milestones of the whole project; the version is in `VERSION`.
 
 ## Unreleased
 
+## 2.1.0 — 2026-10-31
+
 - **Five named use cases** replace the four anonymous benchmark rows: a
   uniform map, a farm with crop rows and a hedge, a building with two rooms and
   a corridor, a shop with three demand peaks, and a wide map. `just bench`

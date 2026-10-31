@@ -225,9 +225,11 @@ of the building, on the demand peaks of the shop.
 | Laws with an optional derivative, finite-difference fallback | Done, tested |
 | Density, collision mask or CSV, non-square grids | Done, tested |
 | Command line: maps, laws, seed, four output files | Done (`just demo`) |
-| Benchmark: five named cases, a table and a figure per case | Done (`just bench`) |
-| Window: Dear PyGui 2.3, one solver, live laws | Done, not yet tested on screen |
-| Local service and `agent.just` | Next ([roadmap](ideas/roadmap.md)) |
+| Five named use cases, a table and a figure per case | Done (`just bench`) |
+| Generated figures and the descent animation | Done (`just figures`) |
+| Window: Dear PyGui 2.3, typed windows, live laws | Done, not yet tested on screen |
+| Window arguments, `--solve` on an optimized map | Done |
+| Local service, `agent.just` and the skill | Done ([agent-interop](ideas/architecture/agent-interop.md)) |
 | Coverage, quantile, max-min objectives | Planned ([objective](ideas/model/objective.md)) |
 | 3D, manifolds, constrained emitters | Planned ([implicit energy](ideas/model/implicit-energy.md)) |
 
