@@ -6,7 +6,7 @@ from matplotlib.figure import Figure
 
 from emitter_optimizer.engine.field import Field
 from emitter_optimizer.engine.laws import Positions
-from emitter_optimizer.engine.situations import Result
+from scripts.situations import Result
 
 WALL_COLOUR = "0.1"
 EMITTER_COLOUR = "crimson"

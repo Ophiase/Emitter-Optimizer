@@ -1,11 +1,11 @@
-from emitter_optimizer.engine.situations import (
+from emitter_optimizer.paths import PROJECT_ROOT
+from scripts.situations import (
     ITERATIONS,
     SEED,
     Result,
     measure,
     situations,
 )
-from emitter_optimizer.paths import PROJECT_ROOT
 
 OUTPUT = PROJECT_ROOT / "docs" / "benchmark" / "results.md"
 FIGURES = PROJECT_ROOT / "docs" / "benchmark"

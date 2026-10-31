@@ -7,14 +7,14 @@ from PIL import Image
 
 from emitter_optimizer.engine.laws import load_law_file
 from emitter_optimizer.engine.maps import load_collisions, load_density
-from emitter_optimizer.engine.situations import measure, situations
-from emitter_optimizer.engine.solver import Solver
+from emitter_optimizer.engine.solver import Problem, Solver, SolverSettings
 from emitter_optimizer.paths import (
     DEFAULT_EMITTER_FUNCTION,
     DEFAULT_SENSOR_FUNCTION,
     PROJECT_ROOT,
 )
 from scripts import plots
+from scripts.situations import measure, situations
 
 OUTPUT = PROJECT_ROOT / "docs" / "figures"
 BENCHMARK = PROJECT_ROOT / "docs" / "benchmark"
@@ -29,17 +29,21 @@ FIGURE_SIZE = (6, 4)
 
 def build_solver() -> Solver:
     return Solver(
-        n_emitters=EMITTERS,
-        density_map=load_density(RESOURCES / "value_001.png"),
-        collision_map=load_collisions(RESOURCES / "collide_001.png"),
-        map_scale=(100.0, 100.0),
-        grid_size=(32, 32),
+        problem=Problem(
+            density_map=load_density(RESOURCES / "value_001.png"),
+            collision_map=load_collisions(RESOURCES / "collide_001.png"),
+            map_scale=(100.0, 100.0),
+            grid_size=(32, 32),
+        ),
+        settings=SolverSettings(
+            emitter_count=EMITTERS,
+            iteration_count=ITERATIONS,
+            learning_rate=1.0,
+            report_every=UPDATE_RATE,
+            seed=SEED,
+        ),
         emitter_law=load_law_file(DEFAULT_EMITTER_FUNCTION),
         sensor_law=load_law_file(DEFAULT_SENSOR_FUNCTION),
-        n_iteration=ITERATIONS,
-        epsilon=1.0,
-        seed=SEED,
-        update_rate=UPDATE_RATE,
     )
 
 

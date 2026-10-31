@@ -1,6 +1,6 @@
 import numpy as np
 
-from emitter_optimizer.engine.situations import measure, situations, solver_for
+from scripts.situations import measure, situations, solver_for
 
 
 def test_every_case_matches_its_grid() -> None:

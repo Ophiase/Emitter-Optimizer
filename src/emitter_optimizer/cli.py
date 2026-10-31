@@ -119,8 +119,8 @@ def write_result(directory: Path, solver: Solver) -> dict[str, object]:
     summary: dict[str, object] = {
         "gain": float(solver.field.gain(solver.emitters_positions)),
         "emitters": int(solver.emitters_positions.shape[0]),
-        "iterations": int(solver.n_iteration),
-        "learning_rate": float(solver.epsilon),
+        "iterations": solver.settings.iteration_count,
+        "learning_rate": solver.settings.learning_rate,
         "seed": solver.seed,
         "map_scale": list(solver.map_scale),
         "grid_size": list(solver.grid_size),
@@ -144,9 +144,9 @@ def main(arguments: list[str] | None = None) -> int:
 def window_configuration(arguments: argparse.Namespace) -> GuiConfig:
     options = MapOptions.from_arguments(arguments)
     return GuiConfig(
-        n_iteration=int(arguments.iterations),
-        learning_step=options.learning_rate,
-        n_emitters=options.emitters,
+        iteration_count=int(arguments.iterations),
+        learning_rate=options.learning_rate,
+        emitter_count=options.emitters,
         map_scale=options.map_scale,
         grid_size=options.grid_size,
         density_map=options.density,

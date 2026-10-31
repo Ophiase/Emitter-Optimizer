@@ -10,6 +10,7 @@ from emitter_optimizer.engine.geometry import (
     make_grid,
     visibility,
 )
+from emitter_optimizer.engine.solver import Problem, SolverSettings
 
 GRID_SHAPE = (2, 4)
 WORLD_SHAPE = (8.0, 4.0)
@@ -41,19 +42,23 @@ def make_solver(
     *,
     density_map: DensityMap | None = None,
     collision_map: CollisionMap | None = None,
-    n_iteration: int = 15,
+    iteration_count: int = 15,
 ) -> Solver:
     return Solver(
-        n_emitters=3,
-        density_map=density_map,
-        collision_map=collision_map,
-        map_scale=MAP_SCALE,
-        grid_size=SOLVER_GRID,
+        problem=Problem(
+            density_map=density_map,
+            collision_map=collision_map,
+            map_scale=MAP_SCALE,
+            grid_size=SOLVER_GRID,
+        ),
+        settings=SolverSettings(
+            emitter_count=3,
+            iteration_count=iteration_count,
+            learning_rate=0.1,
+            seed=0,
+        ),
         emitter_law=EMITTER_LAW,
         sensor_law=SENSOR_LAW,
-        n_iteration=n_iteration,
-        epsilon=0.1,
-        seed=0,
     )
 
 
@@ -117,10 +122,10 @@ def test_training_maximizes_the_gain() -> None:
     solver = make_solver()
     before = solver.field.gain(solver.emitters_positions)
 
-    positions, history = solver.train()
+    result = solver.train()
 
-    assert solver.field.gain(positions) > before
-    assert len(history) == solver.n_iteration
+    assert solver.field.gain(result.positions) > before
+    assert len(result.history) == solver.settings.iteration_count
 
 
 def test_a_density_map_weights_the_grid() -> None:
@@ -153,7 +158,7 @@ def test_a_wall_lowers_the_gain() -> None:
 
 
 def test_solving_updates_the_positions_and_the_history() -> None:
-    solver = make_solver(n_iteration=3)
+    solver = make_solver(iteration_count=3)
 
     solver.solve()
 

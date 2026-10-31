@@ -23,19 +23,19 @@ class ProcessWindow:
             with dpg.group(horizontal=False, width=PARAMETERS_WIDTH):
                 dpg.add_input_int(
                     label="Number of iterations",
-                    default_value=self.config.n_iteration,
+                    default_value=self.config.iteration_count,
                     callback=self._set_iterations,
                 )
                 dpg.add_input_float(
-                    label="Learning step",
-                    default_value=self.config.learning_step,
-                    callback=self._set_learning_step,
+                    label="Learning rate",
+                    default_value=self.config.learning_rate,
+                    callback=self._set_learning_rate,
                 )
             with dpg.group(horizontal=False, width=RATE_WIDTH):
                 dpg.add_input_int(
-                    label="Update Rate",
-                    default_value=self.config.update_rate,
-                    callback=self._set_update_rate,
+                    label="Report every",
+                    default_value=self.config.report_every,
+                    callback=self._set_report_every,
                 )
                 dpg.add_button(
                     label="Show loss",
@@ -104,10 +104,10 @@ class ProcessWindow:
     ) -> None:
         if self._refuse():
             return
-        self.config.n_iteration = value
-        self.config.solver.n_iteration = value
+        self.config.iteration_count = value
+        self.config.solver.set_iteration_count(value)
 
-    def _set_learning_step(
+    def _set_learning_rate(
         self,
         _sender: object,
         value: float,
@@ -115,10 +115,10 @@ class ProcessWindow:
     ) -> None:
         if self._refuse():
             return
-        self.config.learning_step = value
-        self.config.solver.epsilon = value
+        self.config.learning_rate = value
+        self.config.solver.set_learning_rate(value)
 
-    def _set_update_rate(
+    def _set_report_every(
         self,
         _sender: object,
         value: int,
@@ -126,8 +126,8 @@ class ProcessWindow:
     ) -> None:
         if self._refuse():
             return
-        self.config.update_rate = value
-        self.config.solver.update_rate = value
+        self.config.report_every = value
+        self.config.solver.set_report_every(value)
 
     def _refuse(self) -> bool:
         if not self.config.solver.is_working:

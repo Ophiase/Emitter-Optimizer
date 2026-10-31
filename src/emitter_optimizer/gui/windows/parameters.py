@@ -67,7 +67,7 @@ class ParametersWindow:
             dpg.add_text("Number of emitters")
             dpg.add_input_int(
                 min_value=1,
-                default_value=self.config.n_emitters,
+                default_value=self.config.emitter_count,
                 width=EMITTERS_WIDTH,
                 callback=self._set_emitter_count,
             )
@@ -102,4 +102,4 @@ class ParametersWindow:
         value: int,
         _user_data: object,
     ) -> None:
-        self.config.n_emitters = value
+        self.config.emitter_count = value

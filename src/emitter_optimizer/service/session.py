@@ -8,7 +8,7 @@ import numpy as np
 from emitter_optimizer.engine.geometry import generate_points
 from emitter_optimizer.engine.laws import load_law_file
 from emitter_optimizer.engine.maps import CollisionMap, DensityMap
-from emitter_optimizer.engine.solver import Solver
+from emitter_optimizer.engine.solver import Problem, Solver, SolverSettings
 from emitter_optimizer.paths import (
     DEFAULT_EMITTER_FUNCTION,
     DEFAULT_SENSOR_FUNCTION,
@@ -29,7 +29,7 @@ class Session:
     density: DensityMap | None = None
     collisions: CollisionMap | None = None
     emitters: int = 15
-    epsilon: float = 1.0
+    learning_rate: float = 1.0
     seed: int = 0
     emitter_law: Path = DEFAULT_EMITTER_FUNCTION
     sensor_law: Path = DEFAULT_SENSOR_FUNCTION
@@ -82,13 +82,13 @@ class Session:
     def run(self, request: RunRequest) -> State:
         with self._lock:
             solver = self.solver()
-            solver.n_iteration = request.iterations
+            solver.set_iteration_count(request.iterations)
             if request.seed is not None:
                 self.seed = request.seed
                 solver.emitters_positions = generate_points(
                     solver.density,
                     solver.map_scale,
-                    solver.n_emitters,
+                    solver.settings.emitter_count,
                     np.random.default_rng(self.seed),
                 )
             solver.solve()
@@ -111,14 +111,18 @@ class Session:
 
     def _build(self) -> Solver:
         return Solver(
-            n_emitters=self.emitters,
-            density_map=self.density,
-            collision_map=self.collisions,
-            map_scale=self.map_scale,
-            grid_size=self.grid_size,
+            problem=Problem(
+                density_map=self.density,
+                collision_map=self.collisions,
+                map_scale=self.map_scale,
+                grid_size=self.grid_size,
+            ),
+            settings=SolverSettings(
+                emitter_count=self.emitters,
+                iteration_count=DEFAULT_ITERATIONS,
+                learning_rate=self.learning_rate,
+                seed=self.seed,
+            ),
             emitter_law=load_law_file(self.emitter_law),
             sensor_law=load_law_file(self.sensor_law),
-            n_iteration=DEFAULT_ITERATIONS,
-            epsilon=self.epsilon,
-            seed=self.seed,
         )

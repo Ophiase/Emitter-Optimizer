@@ -9,7 +9,7 @@ from emitter_optimizer.engine.maps import (
     load_collisions,
     load_density,
 )
-from emitter_optimizer.engine.solver import Solver
+from emitter_optimizer.engine.solver import Problem, Solver, SolverSettings
 from emitter_optimizer.service.session import Session
 
 DEFAULT_MAP_SCALE = (100.0, 100.0)
@@ -54,16 +54,20 @@ class MapOptions:
 
     def solver(self, iterations: int) -> Solver:
         return Solver(
-            n_emitters=self.emitters,
-            density_map=self.density,
-            collision_map=self.collisions,
-            map_scale=self.map_scale,
-            grid_size=self.grid_size,
+            problem=Problem(
+                density_map=self.density,
+                collision_map=self.collisions,
+                map_scale=self.map_scale,
+                grid_size=self.grid_size,
+            ),
+            settings=SolverSettings(
+                emitter_count=self.emitters,
+                iteration_count=iterations,
+                learning_rate=self.learning_rate,
+                seed=self.seed,
+            ),
             emitter_law=load_law_file(self.emitter_law),
             sensor_law=load_law_file(self.sensor_law),
-            n_iteration=iterations,
-            epsilon=self.learning_rate,
-            seed=self.seed,
         )
 
     def session(self) -> Session:
@@ -73,7 +77,7 @@ class MapOptions:
             density=self.density,
             collisions=self.collisions,
             emitters=self.emitters,
-            epsilon=self.learning_rate,
+            learning_rate=self.learning_rate,
             seed=self.seed,
             emitter_law=self.emitter_law,
             sensor_law=self.sensor_law,

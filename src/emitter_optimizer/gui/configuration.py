@@ -4,7 +4,12 @@ from typing import ClassVar
 
 from emitter_optimizer.engine.laws import Law, load_law_file
 from emitter_optimizer.engine.maps import CollisionMap, DensityMap
-from emitter_optimizer.engine.solver import Solver, UpdateCallback
+from emitter_optimizer.engine.solver import (
+    Problem,
+    Solver,
+    SolverSettings,
+    UpdateCallback,
+)
 from emitter_optimizer.paths import (
     DEFAULT_EMITTER_FUNCTION,
     DEFAULT_SAVE_PATH,
@@ -12,11 +17,11 @@ from emitter_optimizer.paths import (
 )
 
 DEFAULT_ITERATIONS = 200
-DEFAULT_LEARNING_STEP = 1.0
+DEFAULT_LEARNING_RATE = 1.0
 DEFAULT_EMITTERS = 15
 DEFAULT_MAP_SCALE = (100.0, 100.0)
 DEFAULT_GRID_SIZE = (32, 32)
-DEFAULT_UPDATE_RATE = 5
+DEFAULT_REPORT_EVERY = 5
 ITEMS_TO_HIDE = (
     "user_defined_density",
     "user_defined_collisions",
@@ -36,12 +41,12 @@ def _default_sensor_law() -> Law:
 
 @dataclass
 class GuiConfig:
-    n_iteration: int = DEFAULT_ITERATIONS
-    learning_step: float = DEFAULT_LEARNING_STEP
-    n_emitters: int = DEFAULT_EMITTERS
+    iteration_count: int = DEFAULT_ITERATIONS
+    learning_rate: float = DEFAULT_LEARNING_RATE
+    emitter_count: int = DEFAULT_EMITTERS
     map_scale: tuple[float, float] = DEFAULT_MAP_SCALE
     grid_size: tuple[int, int] = DEFAULT_GRID_SIZE
-    update_rate: int = DEFAULT_UPDATE_RATE
+    report_every: int = DEFAULT_REPORT_EVERY
     density_map: DensityMap | None = None
     collision_map: CollisionMap | None = None
     emitter_law: Law = field(default_factory=_default_emitter_law)
@@ -59,17 +64,22 @@ class GuiConfig:
 
     def to_solver(self) -> Solver:
         return Solver(
-            n_emitters=self.n_emitters,
-            density_map=self.density_map,
-            collision_map=self.collision_map,
-            map_scale=self.map_scale,
-            grid_size=self.grid_size,
+            problem=Problem(
+                density_map=self.density_map,
+                collision_map=self.collision_map,
+                map_scale=self.map_scale,
+                grid_size=self.grid_size,
+            ),
+            settings=SolverSettings(
+                emitter_count=self.emitter_count,
+                iteration_count=self.iteration_count,
+                learning_rate=self.learning_rate,
+                report_every=self.report_every,
+                seed=0,
+            ),
             emitter_law=self.emitter_law,
             sensor_law=self.sensor_law,
-            n_iteration=self.n_iteration,
-            epsilon=self.learning_step,
             update_callback=self.update_callback,
-            update_rate=self.update_rate,
         )
 
     def update_solver(self) -> None:

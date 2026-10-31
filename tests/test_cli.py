@@ -45,5 +45,5 @@ def test_the_window_can_be_prepared_without_opening_it() -> None:
 
     configuration = cli.prepare_window(arguments)
 
-    assert configuration.n_emitters == 2
+    assert configuration.emitter_count == 2
     assert configuration.solver.history

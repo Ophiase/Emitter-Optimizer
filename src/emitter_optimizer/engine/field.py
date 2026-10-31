@@ -1,3 +1,4 @@
+from collections.abc import Iterator
 from dataclasses import dataclass
 
 import numpy as np
@@ -9,10 +10,16 @@ CELLS_PER_CHUNK = 4096
 MINIMUM_DISTANCE = 1e-12
 
 
+@dataclass(frozen=True)
+class Signal:
+    offsets: FloatArray
+    distances: FloatArray
+    visible: FloatArray
+    received: FloatArray
+
+
 @dataclass(eq=False)
 class Field:
-    """The cells, the measure, the obstacles and the two laws of one map."""
-
     grid: FloatArray
     map_scale: tuple[float, float]
     grid_size: tuple[int, int]
@@ -32,45 +39,55 @@ class Field:
         return self.density
 
     def value_map(self, emitters: Positions) -> FloatArray:
-        return (self._values(self.cells, emitters) * self.measure).reshape(
-            self.grid_size
-        )
+        values = np.empty(len(self.cells))
+        for start, cells, _measure in self._chunks():
+            values[start : start + len(cells)] = self.sensor_law.value(
+                self._signals(cells, emitters).received
+            )
+        weighted = values * self.measure
+        return weighted.reshape(self.grid_size)
 
     def gain(self, emitters: Positions) -> float:
-        return float((self._values(self.cells, emitters) * self.measure).mean())
+        total = 0.0
+        for _start, cells, measure in self._chunks():
+            received = self._signals(cells, emitters).received
+            total += float(np.sum(self.sensor_law.value(received) * measure))
+        return total / len(self.cells)
 
     def gradient(self, emitters: Positions) -> Positions:
         return self.gain_and_gradient(emitters)[1]
 
     def gain_and_gradient(self, emitters: Positions) -> tuple[float, Positions]:
-        """The gain and its exact gradient in the emitter positions."""
-        cells = self.cells
-        measure = self.measure
-        gradient = np.zeros_like(emitters)
         total = 0.0
-        for start in range(0, len(cells), CELLS_PER_CHUNK):
-            chunk = cells[start : start + CELLS_PER_CHUNK]
-            weight = measure[start : start + CELLS_PER_CHUNK]
-            delta = chunk[:, None, :] - emitters[None, :, :]
-            distance = np.linalg.norm(delta, axis=-1)
-            visible = visibility(chunk, emitters, self.obstacles)
-            received = np.sum(self.emitter_law.value(distance) * visible, axis=1)
-            total += float(np.sum(self.sensor_law.value(received) * weight))
-            shared = weight * self.sensor_law.slope(received)
-            slope = self.emitter_law.slope(distance)
-            direction = (
-                delta / np.where(distance > MINIMUM_DISTANCE, distance, 1.0)[..., None]
-            )
-            contribution = (shared[:, None] * visible * slope)[..., None] * direction
-            gradient -= np.sum(contribution, axis=0)
-        return total / len(cells), gradient / len(cells)
+        gradient = np.zeros_like(emitters)
+        for _start, cells, measure in self._chunks():
+            signal = self._signals(cells, emitters)
+            total += float(np.sum(self.sensor_law.value(signal.received) * measure))
+            gradient -= self._pull(signal, measure)
+        return total / len(self.cells), gradient / len(self.cells)
 
-    def _values(self, cells: FloatArray, emitters: Positions) -> FloatArray:
-        values = np.empty(len(cells))
-        for start in range(0, len(cells), CELLS_PER_CHUNK):
-            chunk = cells[start : start + CELLS_PER_CHUNK]
-            distance = np.linalg.norm(chunk[:, None, :] - emitters[None, :, :], axis=-1)
-            visible = visibility(chunk, emitters, self.obstacles)
-            received = np.sum(self.emitter_law.value(distance) * visible, axis=1)
-            values[start : start + CELLS_PER_CHUNK] = self.sensor_law.value(received)
-        return values
+    def _chunks(self) -> Iterator[tuple[int, FloatArray, FloatArray]]:
+        for start in range(0, len(self.cells), CELLS_PER_CHUNK):
+            stop = start + CELLS_PER_CHUNK
+            yield start, self.cells[start:stop], self.measure[start:stop]
+
+    def _signals(self, cells: FloatArray, emitters: Positions) -> Signal:
+        offsets = cells[:, None, :] - emitters[None, :, :]
+        distances = np.linalg.norm(offsets, axis=-1)
+        visible = visibility(cells, emitters, self.obstacles)
+        received = np.sum(self.emitter_law.value(distances) * visible, axis=1)
+        return Signal(offsets, distances, visible, received)
+
+    def _pull(self, signal: Signal, measure: FloatArray) -> Positions:
+        sensor_weight = measure * self.sensor_law.slope(signal.received)
+        emitter_slope = self.emitter_law.slope(signal.distances)
+        safe_distance = np.where(
+            signal.distances > MINIMUM_DISTANCE,
+            signal.distances,
+            1.0,
+        )
+        unit_direction = signal.offsets / safe_distance[..., None]
+        contribution = (sensor_weight[:, None] * signal.visible * emitter_slope)[
+            ..., None
+        ] * unit_direction
+        return np.sum(contribution, axis=0)

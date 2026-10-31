@@ -40,7 +40,7 @@ test:
 [group("dev")]
 [doc("Run the published benchmark into docs/benchmark/results.md")]
 bench:
-    uv run python scripts/bench.py
+    uv run python -m scripts.bench
 
 [group("dev")]
 [doc("Recompute the README figures into docs/figures: before, after, gain and the descent")]
