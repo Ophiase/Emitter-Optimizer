@@ -1,3 +1,4 @@
+from emitter_optimizer.kernel.coverage import coverage, gain, value_map
 from emitter_optimizer.kernel.descent import (
     OPTIMIZERS,
     Descent,
@@ -5,13 +6,11 @@ from emitter_optimizer.kernel.descent import (
     Step,
     descend,
 )
-from emitter_optimizer.kernel.gain import coverage, gain, value_map
 from emitter_optimizer.kernel.laws import Law, Physics
 from emitter_optimizer.kernel.occlusion import (
     HardOcclusion,
     Occlusion,
     SoftOcclusion,
-    visibility,
 )
 from emitter_optimizer.kernel.scene import Scene
 from emitter_optimizer.kernel.shapes import Extent, GridShape
@@ -33,5 +32,4 @@ __all__ = [
     "descend",
     "gain",
     "value_map",
-    "visibility",
 ]

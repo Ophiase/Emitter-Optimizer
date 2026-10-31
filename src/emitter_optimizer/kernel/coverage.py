@@ -5,8 +5,10 @@ import jax.numpy as jnp
 from jax import Array
 
 from emitter_optimizer.kernel.laws import Physics
-from emitter_optimizer.kernel.occlusion import Occlusion, length, visibility
+from emitter_optimizer.kernel.occlusion import Occlusion
 from emitter_optimizer.kernel.scene import Scene
+
+LENGTH_FLOOR = 1e-12
 
 
 def coverage(
@@ -15,9 +17,9 @@ def coverage(
     occlusion: Occlusion,
     physics: Physics,
 ) -> Array:
-    """`(cells,)`: the sensor's score at each cell, weighted by its measure."""
-    distances = length(scene.cells[:, None, :] - positions[None, :, :])
-    visible = visibility(occlusion, scene.cells, positions, scene.walls)
+    offsets = scene.cells[:, None, :] - positions[None, :, :]
+    distances = jnp.sqrt(jnp.sum(offsets**2, axis=-1) + LENGTH_FLOOR)
+    visible = scene.visibility(occlusion, positions)
     received = jnp.sum(physics.emitter(distances) * visible, axis=1)
     return physics.sensor(received) * scene.measure
 

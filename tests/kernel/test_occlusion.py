@@ -10,7 +10,6 @@ from emitter_optimizer.kernel import (
     Scene,
     SoftOcclusion,
     gain,
-    visibility,
 )
 
 jax.config.update("jax_enable_x64", True)
@@ -24,10 +23,11 @@ WALL = jnp.array([[[50.0, 0.0], [50.0, 100.0]]])
 
 
 def test_a_hard_wall_blocks_the_sight_line() -> None:
-    cells = jnp.array([[10.0, 50.0], [60.0, 50.0]])
+    scene = Scene.of(EXTENT, GridShape(4, 4), walls=WALL)
     emitter = jnp.array([[90.0, 50.0]])
-    visible = visibility(HardOcclusion(), cells, emitter, WALL)
-    assert visible.tolist() == [[0.0], [1.0]]
+    visible = scene.visibility(HardOcclusion(), emitter)
+    assert not bool(visible[0, 0])
+    assert bool(visible[-1, 0])
 
 
 def test_the_soft_gradient_sees_the_wall_the_hard_one_ignores() -> None:
