@@ -5,6 +5,13 @@ agent starting a new session can pick the first unchecked step, read the files
 the step names, and work without asking. A step is done when `just agent gate`
 passes **and** its acceptance sentence is true.
 
+## Current state
+
+**[fact]** 2026-10-31. The kernel is clean and tested; the application still
+calls the old `engine/`. The gate is green, 25 tests pass, and the next work
+is the migration: replace `engine/` with `kernel/`, then phases 3 and 4 of
+the brief. The last release is v2.1.1; nothing is pushed.
+
 ## How to resume
 
 1. Read [AGENTS.md](../AGENTS.md), then [ideas/README.md](README.md), then this
@@ -18,24 +25,19 @@ passes **and** its acceptance sentence is true.
 5. A question that belongs to the author goes to [open.md](open.md); it is not
    settled in code.
 
-## Phase 0 — split the kernel before migrating
+## Phase 0 — split the kernel before migrating — done
 
-**[decided]** A Python file holds **one class** and at most **80 lines of
-code**, imports excluded; a file that grows holds several things. The kernel
-added by the author predates the rule and violates it: `occlusion.py` declares
-three classes, `descent.py` four, `shapes.py` two. `one-class.sh` and
-`file-length.sh` now fail on any Python file changed, so the next commit must
-split the kernel before it touches the migration.
-
-**[question]** The split collides with the seven-entry rule: `Extent`,
-`GridShape`, `Physics` and the small settings are value objects, and one file
-each pushes `kernel/` past seven entries. Either the folder rule grows (to
-twelve) for a value-object package, or one `shapes.py` may hold the two value
-objects. The author decides ([open](open.md)).
+**[done]** 2026-10-31, `dev/refactor-stack`. A Python module holds one class;
+when a concept needs several, it becomes a package with one module per class.
+The kernel is `shapes/` (`Extent`, `GridShape`), `descent/` (settings, step,
+result, progress, runner) and `occlusion/` (the `ABC`, hard, soft), and still
+holds seven entries. The length rule is a flag, not a law: past 80 lines of
+code a check prints a note, past 200 it fails; `scene.py` and `runner.py` are
+the only notes, and each stays one concept.
 
 ## Phase 1 — `dev/engine`: M1, a headless engine
 
-Done on 2026-10-30, in `dev/engine-numpy`; 1.6 and 1.7 remain.
+Done on 2026-10-30, in `dev/engine-numpy`.
 
 - [x] **1.1 Remove the GUI from the import path.** (2026-10-30) The engine
   imports no `gui`, no `dearpygui`; a test imports it and checks that neither

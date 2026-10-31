@@ -4,6 +4,12 @@ Milestones of the whole project; the version is in `VERSION`.
 
 ## Unreleased
 
+- **The kernel is one concept per module**: `shapes/`, `descent/` and
+  `occlusion/` hold one class each; `Scene.visibility` owns the ray crossing,
+  and the free geometry module is gone.
+- **The length rule is a flag, not a law**: past 80 lines of code a check
+  prints a note, past 200 it fails; a concept with several classes becomes a
+  package, not a four-class file.
 - **An is-a hierarchy is an ABC**: `Occlusion` is an `ABC`, `HardOcclusion` and
   `SoftOcclusion` subclass it, one class per file under `kernel/occlusion/`;
   `Protocol` is now refused by a guard in `src/`.

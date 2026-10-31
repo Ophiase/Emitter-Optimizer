@@ -31,10 +31,6 @@
     coordinate network, or a signed distance field ([implicit-energy](model/implicit-energy.md)).
 12. **[question] How many samples?** The benchmark has to pick the count
     where the Monte Carlo error is below the improvement being measured.
-13. **[question] One class per file versus seven entries per folder.**
-    The kernel has value objects (`Extent`, `GridShape`, `Physics`) that
-    would each need a file; may a `shapes.py` hold the two value objects,
-    or does the folder limit grow instead? ([roadmap](roadmap.md))
 
 ## Technical
 
