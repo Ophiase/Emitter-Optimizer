@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 # Usage: file-length.sh <file>...
-# Reports each Python file longer than 80 lines of code, imports, blanks and
-# comments left out: past that it holds several things (rules/python.md).
+# Past 80 lines of code (imports, blanks and comments left out) a Python file
+# is flagged as a question; past 200 it fails. Short is the default, not a law.
 set -uo pipefail
 
-limit=80
+flag=80
+limit=200
 status=0
 
 for file in "$@"; do
@@ -25,8 +26,10 @@ for file in "$@"; do
     END { print lines + 0 }
   ' "$file")
   if ((count > limit)); then
-    printf '%s has %d lines of code, more than %d: split it by concept.\n' "$file" "$count" "$limit"
+    printf '%s has %d lines of code, more than %d: it is two concepts, split it.\n' "$file" "$count" "$limit"
     status=1
+  elif ((count > flag)); then
+    printf 'note: %s has %d lines of code; is it still one concept?\n' "$file" "$count"
   fi
 done
 

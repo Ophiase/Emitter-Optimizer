@@ -7,11 +7,17 @@ three:
 - **No module docstring.** The file name says what the module is; a sentence
   beside it is a header. A docstring is for a signature a reader cannot decode
   on its own, and it stays on the function or the class it documents.
-- **One class per file.** A file is one concept; two classes in it are two
-  concepts, and the reader cannot tell which one the file is about.
-- **Eighty lines of code at most, imports excluded; fifty is the target.** A
-  file that grows past that holds several things: split it. Blank lines and
-  comments do not count, imports do not count, everything else does.
+- **One class per module, grouped in a package.** A class is a concept; a
+  settings/result pair is one concept and becomes a package with one module per
+  class, not a file holding four.
+- **Short by default; 200 lines of code is the ceiling.** Past 80 lines a
+  check flags the file as a question, not a fault; past 200 it fails. Imports,
+  blank lines and comments do not count. A long file is rare, and it is a
+  decision, not a habit.
+- **An abstraction owns its operations.** A class that acts on something owns
+  the methods that act on it, exposed by autocomplete: `Segments.visibility`,
+  `Absorption.from_segments`, `Scene.of`. No module of free helpers that a
+  reader has to discover by grep.
 - **An is-a hierarchy is an ABC, not a Protocol.** `Occlusion` is the contract
   and `HardOcclusion` / `SoftOcclusion` its implementations: `occlusion/base.py`
   is an `ABC`, each implementation a subclass in its own file. A `Protocol` is
