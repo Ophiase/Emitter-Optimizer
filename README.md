@@ -1,4 +1,4 @@
-# Emitter Optimizer — where the emitters should go
+# Emitter Optimizer — where the "emitters" should go
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-green.svg)](LICENSE)
 [![Python 3.14+](https://img.shields.io/badge/Python-3.14%2B-yellow.svg)](https://www.python.org/)
@@ -51,13 +51,52 @@ emitter in front of it, whatever the distance.*
 
 ## Five situations, one engine
 
-<p align="center">
-  <img src="docs/figures/cases.png" alt="Five situations: uniform, farm, building, shop, wide" width="95%">
-</p>
+<table>
+  <thead>
+    <tr><th>Case</th><th>Simulation</th><th>Layers</th><th>What it shows</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>uniform</strong></td>
+      <td><img src="docs/figures/case_uniform.gif" alt="uniform" width="260"></td>
+      <td><img src="docs/figures/case_uniform.png" alt="demand, walls, score" width="480"></td>
+      <td>No density, no walls: the emitters spread out. The three layers are demand, walls and score, in that order.</td>
+    </tr>
+    <tr>
+      <td><strong>farm</strong></td>
+      <td><img src="docs/figures/case_farm.gif" alt="farm" width="260"></td>
+      <td><img src="docs/figures/case_farm.png" alt="demand, walls, score" width="480"></td>
+      <td>Crop rows and a hedge with a gate: the wall makes the gate decisive.</td>
+    </tr>
+    <tr>
+      <td><strong>building</strong></td>
+      <td><img src="docs/figures/case_building.gif" alt="building" width="260"></td>
+      <td><img src="docs/figures/case_building.png" alt="demand, walls, score" width="480"></td>
+      <td>Two rooms and a corridor: the signal crosses a doorway, not a wall.</td>
+    </tr>
+    <tr>
+      <td><strong>shop</strong></td>
+      <td><img src="docs/figures/case_shop.gif" alt="shop" width="260"></td>
+      <td><img src="docs/figures/case_shop.png" alt="demand, walls, score" width="480"></td>
+      <td>Three demand peaks without walls: the emitters choose between them.</td>
+    </tr>
+    <tr>
+      <td><strong>wide</strong></td>
+      <td><img src="docs/figures/case_wide.gif" alt="wide" width="260"></td>
+      <td><img src="docs/figures/case_wide.png" alt="demand, walls, score" width="480"></td>
+      <td>A map twice as wide as tall: the geometry changes, the model does not.</td>
+    </tr>
+    <tr>
+      <td><strong>incoming</strong></td>
+      <td colspan="3">Varieties, 3D volumes and crystal lattices reuse the same signal → score → mean chain; only the representation of the space changes.</td>
+    </tr>
+  </tbody>
+</table>
 
-*The same engine on a farm, a building, a shop and a wide map, each with its
-own demand and walls; the number is the gain from the random start. `just
-bench` writes the table and one figure per case.*
+The emitter and sensor laws are the same in every row (`settings/emitter.py`
+and `settings/sensor.py`); the demand, the walls and the grid are the only
+things that change. Each GIF is the first twenty iterations; the layer strip
+reads demand, walls, score, with the emitters in crimson.
 
 ## How the emitters move
 
@@ -65,9 +104,9 @@ bench` writes the table and one figure per case.*
   <img src="docs/figures/paths.png" alt="The path of each emitter over the score" width="70%">
 </p>
 
-*Every emitter leaves a dot and climbs, step after step, toward the demand
-it serves. The pull is the exact gradient of the score; it vanishes through a
-wall, so no emitter crosses one.*
+*The grey circle is where an emitter starts, the crimson dot where it ends,
+and the white line is its trajectory over the score. The pull is the exact
+gradient of the score; it vanishes through a wall, so no emitter crosses one.*
 
 1. **The map becomes a grid.** Rows, columns, and a scale in map units; a
    density image is resized to it, a collision mask becomes segments.
@@ -83,6 +122,23 @@ JAX compiles the gain; the kernel stays a handful of files and takes its
 gradient by autodiff.
 
 ## The model
+
+The whole model is four assignments:
+
+```text
+s(e, x) = phi(||e - x||) * pass_C(x, e)
+r(x)    = sum_e s(e, x)
+score(x) = psi(r(x)) * mu(x)
+gain     = mean_x score(x)
+```
+
+`phi` is the emitter law, `psi` the sensor law, `mu` the density, and
+`pass_C(x, e)` the share of the sight line from `x` to `e` that no wall blocks.
+The grid is one representation; a voxel grid, a manifold or a 3D lattice can
+replace it as long as distance, visibility and measure are defined. That is
+the whole extension point.
+
+### The formal version
 
 The score is the **gain** $\mathcal G_P$, maximized over the emitter positions
 $U$. The parameters are $P := (E, \mu, C)$:

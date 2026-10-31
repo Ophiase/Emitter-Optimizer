@@ -15,6 +15,7 @@ WALL_WIDTH = 2
 WALL = "#1a1a1a"
 EMITTER = "crimson"
 PATH = "white"
+START = "#6b7280"
 
 
 def _palette(name: str) -> np.ndarray:
@@ -51,6 +52,12 @@ class MapImage:
         )
         return self._png(values, positions, None, GREYS)
 
+    def walls_png(self, positions: Array | np.ndarray) -> bytes:
+        values = np.zeros(
+            (self.scene.grid.rows, self.scene.grid.columns), dtype=np.float64
+        )
+        return self._png(values, positions, None, GREYS)
+
     def _png(
         self,
         values: np.ndarray,
@@ -58,15 +65,17 @@ class MapImage:
         trajectories: Sequence[Array | np.ndarray] | None,
         palette: np.ndarray,
     ) -> bytes:
-        top = float(values.max()) if values.size else 0.0
-        normalised = values / top if top > 0 else np.zeros_like(values)
+        low = float(values.min()) if values.size else 0.0
+        high = float(values.max()) if values.size else 0.0
+        span = high - low
+        normalised = (values - low) / span if span > 0 else np.zeros_like(values)
         height = max(
             1,
             round(
                 self.width * float(self.scene.bounds[1]) / float(self.scene.bounds[0])
             ),
         )
-        indices = (normalised * 255.0).astype(np.uint8)
+        indices = np.clip(normalised * 255.0, 0.0, 255.0).astype(np.uint8)
         image = Image.fromarray(palette[indices], mode="RGB").resize(
             (self.width, height), Image.Resampling.NEAREST
         )
@@ -80,6 +89,10 @@ class MapImage:
                 fill=WALL,
                 width=WALL_WIDTH,
             )
+        if trajectories:
+            starts = np.asarray(trajectories[0])[:, :2] * scale
+            for x, y in starts:
+                draw.ellipse((x - 4, y - 4, x + 4, y + 4), outline=START, width=2)
         for path in trajectories or ():
             points = np.asarray(path)[:, :2] * scale
             draw.line([tuple(point) for point in points], fill=PATH, width=3)

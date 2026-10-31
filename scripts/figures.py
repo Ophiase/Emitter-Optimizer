@@ -21,6 +21,7 @@ from emitter_optimizer.service.paths import (
     DEFAULT_SENSOR_FUNCTION,
     PROJECT_ROOT,
 )
+from scripts.situation import Situation
 from scripts.situations import PHYSICS, measure, situations
 
 FIGURES = PROJECT_ROOT / "docs" / "figures"
@@ -44,6 +45,48 @@ def _gif(start: np.ndarray, steps: list[np.ndarray], scene: Scene) -> bytes:
         loop=0,
     )
     return buffer.getvalue()
+
+
+def _case_gif(image: MapImage, start: np.ndarray, steps: list[np.ndarray]) -> bytes:
+    frames = [Image.open(BytesIO(image.png(start)))]
+    frames.extend(Image.open(BytesIO(image.png(step))) for step in steps)
+    buffer = BytesIO()
+    frames[0].save(
+        buffer,
+        format="GIF",
+        save_all=True,
+        append_images=frames[1:],
+        duration=80,
+        loop=0,
+    )
+    return buffer.getvalue()
+
+
+def _case(situation: Situation) -> tuple[bytes, bytes, bytes, float]:
+    steps: list[np.ndarray] = []
+
+    def capture(step: Step) -> None:
+        steps.append(np.asarray(step.positions))
+
+    result = measure(
+        situation,
+        iterations=20,
+        report_every=5,
+        on_step=capture,
+    )
+    coverage = Coverage(situation.scene, HardOcclusion(), PHYSICS)
+    image = MapImage(situation.scene, coverage, width=300)
+    layers = ContactSheet(columns=3).png([
+        (image.demand_png(result.positions), "demand"),
+        (image.walls_png(result.positions), "walls"),
+        (image.png(result.positions), "score"),
+    ])
+    return (
+        layers,
+        _case_gif(image, result.start, steps),
+        image.png(result.positions),
+        result.improvement,
+    )
 
 
 def main() -> None:
@@ -87,15 +130,10 @@ def main() -> None:
     (FIGURES / "descent.gif").write_bytes(_gif(start, trajectories, scene))
     cases: list[tuple[bytes, str]] = []
     for situation in situations():
-        case = measure(situation, iterations=20)
-        cases.append((
-            MapImage(
-                situation.scene,
-                Coverage(situation.scene, HardOcclusion(), PHYSICS),
-                width=300,
-            ).png(case.positions),
-            f"{situation.name}  {case.improvement:+.3f}",
-        ))
+        layers, animation, overview, improvement = _case(situation)
+        (FIGURES / f"case_{situation.name}.png").write_bytes(layers)
+        (FIGURES / f"case_{situation.name}.gif").write_bytes(animation)
+        cases.append((overview, f"{situation.name}  {improvement:+.3f}"))
     (FIGURES / "cases.png").write_bytes(ContactSheet(columns=3).png(cases))
 
 

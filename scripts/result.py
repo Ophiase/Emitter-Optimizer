@@ -9,6 +9,7 @@ from scripts.situation import Situation
 class Result:
     situation: Situation
     positions: np.ndarray
+    start: np.ndarray
     initial_gain: float
     gain: float
     history: tuple[float, ...]

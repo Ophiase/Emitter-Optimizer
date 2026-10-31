@@ -38,6 +38,8 @@ def measure(
     iterations: int = ITERATIONS,
     emitters: int = EMITTERS,
     seed: int = SEED,
+    report_every: int = 50,
+    on_step: Descender.StepCallback | None = None,
 ) -> Result:
     scene = situation.scene
     coverage = Coverage(scene, HardOcclusion(), PHYSICS)
@@ -47,14 +49,16 @@ def measure(
         emitters=emitters,
         steps=iterations,
         step_size=STEP_SIZE,
+        report_every=report_every,
         seed=seed,
     )
     started = time.perf_counter()
-    result = Descender(scene, PHYSICS, settings).run()
+    result = Descender(scene, PHYSICS, settings, on_step=on_step).run()
     seconds = time.perf_counter() - started
     return Result(
         situation,
         np.asarray(result.positions),
+        np.asarray(start),
         initial,
         float(result.gain),
         result.history,
