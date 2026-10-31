@@ -4,6 +4,16 @@ Milestones of the whole project; the version is in `VERSION`.
 
 ## Unreleased
 
+## 2.1.1 — 2026-10-31
+
+- **A README built on generated figures**: the problem, five use cases, the
+  path of each emitter and the benchmark chart, each computed by
+  `just figures` from a seeded run. The page keeps the equations and drops
+  the prose the figures carry.
+- **A crossover is sketched**: place fiducial markers so that a pose is
+  observable from every viewpoint, using the point-cloud project as the
+  evaluator ([ideas/crossover.md](ideas/crossover.md)).
+
 ## 2.1.0 — 2026-10-31
 
 - **Five named use cases** replace the four anonymous benchmark rows: a
