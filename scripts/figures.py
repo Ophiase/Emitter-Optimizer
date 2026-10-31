@@ -7,14 +7,17 @@ from PIL import Image
 
 from emitter_optimizer.engine.laws import load_law_file
 from emitter_optimizer.engine.maps import load_collisions, load_density
+from emitter_optimizer.engine.situations import measure, situations
 from emitter_optimizer.engine.solver import Solver
 from emitter_optimizer.paths import (
     DEFAULT_EMITTER_FUNCTION,
     DEFAULT_SENSOR_FUNCTION,
     PROJECT_ROOT,
 )
+from scripts import plots
 
 OUTPUT = PROJECT_ROOT / "docs" / "figures"
+BENCHMARK = PROJECT_ROOT / "docs" / "benchmark"
 RESOURCES = PROJECT_ROOT / "resources" / "map"
 ITERATIONS = 200
 EMITTERS = 15
@@ -63,18 +66,27 @@ def frame_image(figure: Figure) -> Image.Image:
 
 def main() -> int:
     OUTPUT.mkdir(parents=True, exist_ok=True)
+    BENCHMARK.mkdir(parents=True, exist_ok=True)
+
     solver = build_solver()
     start = np.array(solver.emitters_positions, copy=True)
     frames: list[Image.Image] = []
+    trajectories: list[np.ndarray] = []
 
     def capture(emitters: np.ndarray | None, _history: list[float] | None) -> None:
         if emitters is None:
             return
-        frames.append(frame_image(solver.make_fig(emitters)))
+        positions = np.array(emitters, copy=True)
+        trajectories.append(positions)
+        frames.append(frame_image(solver.make_fig(positions)))
 
     solver.update_callback = capture
     solver.solve()
 
+    plots.comparison_figure(solver.field, solver.emitters_positions).savefig(
+        OUTPUT / "problem.svg"
+    )
+    plots.paths_figure(solver.field, trajectories).savefig(OUTPUT / "paths.svg")
     solver.make_fig(start).savefig(OUTPUT / "before.png")
     solver.make_fig().savefig(OUTPUT / "after.png")
     history_figure(solver.history).savefig(OUTPUT / "gain.png")
@@ -85,7 +97,11 @@ def main() -> int:
         duration=GIF_DURATION,
         loop=0,
     )
-    print(f"{OUTPUT} · {len(frames)} frames")
+
+    results = tuple(measure(situation) for situation in situations())
+    plots.cases_figure(results).savefig(OUTPUT / "cases.svg")
+    plots.benchmark_figure(results).savefig(BENCHMARK / "benchmark.svg")
+    print(f"{OUTPUT} · {len(frames)} frames · {len(results)} cases")
     return 0
 
 
