@@ -4,7 +4,6 @@ from pathlib import Path
 import numpy as np
 
 import emitter_optimizer.__main__ as cli
-from emitter_optimizer.service import DEFAULT_HOST, DEFAULT_PORT
 
 
 def test_the_command_writes_a_full_result(tmp_path: Path) -> None:
@@ -29,8 +28,14 @@ def test_the_command_writes_a_full_result(tmp_path: Path) -> None:
     assert summary["emitters"] == 3
 
 
-def test_the_window_carries_the_service_address() -> None:
-    arguments = cli.build_parser().parse_args(["window"])
+def test_the_window_takes_the_same_map_options() -> None:
+    arguments = cli.build_parser().parse_args([
+        "window",
+        "--emitters",
+        "3",
+        "--iterations",
+        "2",
+    ])
 
-    assert arguments.host == str(DEFAULT_HOST)
-    assert arguments.port == DEFAULT_PORT
+    assert arguments.emitters == 3
+    assert arguments.iterations == 2

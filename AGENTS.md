@@ -33,7 +33,7 @@ in [.agents/portable/rules/python.md](.agents/portable/rules/python.md).
 
 - Python 3.14, managed by `uv`; the environment comes from `pyproject.toml`
   and `uv.lock`. Never `pip install` into the environment.
-- `just install` syncs it; `just run` serves the local page and opens it;
+- `just install` syncs it; `just run` opens the desktop window;
   `just test` runs pytest.
 - `just lint` is `ruff check`, `ruff format --check` and `ty check`.
   `just precommit` fixes what it can.
@@ -51,7 +51,10 @@ seven entries per folder, two hundred lines per file
   descent. No GUI, no printing.
 - `maps/` — Pillow and scikit-image load a density and a wall mask.
 - `render/` — Pillow draws the map; plotly draws the gain.
-- `service/` — FastAPI, pydantic models, the session and the local page.
+- `gui/` — DearPyGui: the render window, the process controls, the parameters
+  and the law editors.
+- `service/` — FastAPI, pydantic models, the session and the local page for an
+  agent.
 - `settings/` at the root holds the default emitter and sensor functions the
   user edits.
 

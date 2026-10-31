@@ -45,8 +45,8 @@ from a seeded run.</em></p>
 </p>
 
 *Left: the demand in grey, the walls in black, the emitters in red. Right: the
-score the engine maximizes — bright places are well served, dark places are
-not. The walls cut the signal: a place behind a wall receives nothing from an
+score the engine maximizes — the deeper the blue, the better served; the pale
+places are not. The walls cut the signal: a place behind a wall receives nothing from an
 emitter in front of it, whatever the distance.*
 
 ## Five situations, one engine
@@ -65,7 +65,7 @@ bench` writes the table and one figure per case.*
   <img src="docs/figures/paths.png" alt="The path of each emitter over the score" width="70%">
 </p>
 
-*Every emitter leaves a grey dot and climbs, step after step, toward the demand
+*Every emitter leaves a dot and climbs, step after step, toward the demand
 it serves. The pull is the exact gradient of the score; it vanishes through a
 wall, so no emitter crosses one.*
 
@@ -137,7 +137,7 @@ against ([ideas/model](ideas/model/README.md)).
 ```sh
 just install   # uv sync: Python 3.14 and the dependencies
 just demo      # optimize the demo map into out/demo/
-just run       # serve the local page and open it
+just run       # open the DearPyGui window
 ```
 
 `just demo` writes four files into `out/demo/`:
@@ -149,14 +149,14 @@ just run       # serve the local page and open it
 | `figure.png` | the value map and the emitters |
 | `summary.json` | the final gain, the seed, the parameters |
 
-The command takes anything the page takes, and a seed:
+The `run` command takes the same options as the window, and a seed:
 
 ```sh
 uv run emitter-optimizer run --density my-field.png --collisions walls.png \
     --emitters 50 --iterations 200 --seed 0 --out out/my-plan
 ```
 
-`emitter-optimizer window --density my-field.png --solve` opens the local page
+`emitter-optimizer window --density my-field.png --solve` opens the window
 on the optimized result instead of a random start.
 
 ## For agents
@@ -180,9 +180,9 @@ the machine. The routes, the request shapes and the skill are in
 | --- | --- | --- |
 | Emitter law $\varphi$ | `settings/emitter.py` | `eval(distance)`, optional `derivative` |
 | Sensor law $\psi$ | `settings/sensor.py` | `eval(signal)`, optional `derivative` |
-| Density $\mu$ | `--density`, or the page | a grayscale image, one weight per cell |
-| Obstacles $C$ | `--collisions`, or the page | a mask, or a CSV of segments |
-| Number of emitters | `--emitters`, or the page | fixed today; chosen automatically later |
+| Density $\mu$ | `--density`, or the window | a grayscale image, one weight per cell |
+| Obstacles $C$ | `--collisions`, or the window | a mask, or a CSV of segments |
+| Number of emitters | `--emitters`, or the window | fixed today; chosen automatically later |
 | The map | `--map-scale`, `--grid-size` | width and height, rows and columns |
 | The descent | `--iterations`, `--step-size`, `--seed` | the same seed gives the same answer |
 
@@ -221,7 +221,8 @@ The questions still open are in [ideas/open.md](ideas/open.md).
 | --- | --- |
 | [ideas/](ideas/README.md) | Every concept, one per file, with its status: start here |
 | [src/emitter_optimizer/kernel/](src/emitter_optimizer/kernel/) | The JAX kernel: shapes, scene, occlusion, coverage and descent |
-| [src/emitter_optimizer/service/](src/emitter_optimizer/service/) | FastAPI, pydantic models, the session and the local page |
+| [src/emitter_optimizer/gui/](src/emitter_optimizer/gui/) | The DearPyGui window: render, process, parameters and the law editors |
+| [src/emitter_optimizer/service/](src/emitter_optimizer/service/) | FastAPI, pydantic models, the session and the local page for an agent |
 | [src/emitter_optimizer/maps/](src/emitter_optimizer/maps/) | Pillow and scikit-image load a density and a wall mask |
 | [src/emitter_optimizer/render/](src/emitter_optimizer/render/) | Pillow draws the map; plotly draws the gain |
 | [scripts/](scripts/) | The benchmark and the figures of this page |
@@ -239,7 +240,7 @@ Agents working on this code read [AGENTS.md](AGENTS.md).
 | M1 | A headless JAX kernel, a command line, a benchmark | `dev/engine` | Done |
 | M2 | A local service an agent can drive | `dev/agent` | Done |
 | M3 | A model worth publishing: objectives, count, baselines | `dev/model` | Next |
-| M4 | The local page: FastAPI and plotly, no window | `dev/modernize` | Done |
+| M4 | The local page served to agents, beside the DearPyGui window | `dev/modernize` | Done |
 | M5 | 3D, manifolds, constrained emitters | `dev/manifold` | Planned |
 
 Every step, its acceptance sentence and how to resume it:

@@ -12,8 +12,11 @@ from emitter_optimizer.kernel import (
     HardOcclusion,
     Physics,
 )
-from emitter_optimizer.paths import DEFAULT_EMITTER_FUNCTION, DEFAULT_SENSOR_FUNCTION
 from emitter_optimizer.service.evaluated_law import EvaluatedLaw
+from emitter_optimizer.service.paths import (
+    DEFAULT_EMITTER_FUNCTION,
+    DEFAULT_SENSOR_FUNCTION,
+)
 from scripts.densities import collision_map, crop_rows, density_map, peaks, rooms
 from scripts.result import Result
 from scripts.situation import Situation

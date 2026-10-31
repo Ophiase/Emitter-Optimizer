@@ -10,7 +10,7 @@ override the 2.x pages that argued for NumPy and no framework.
 | **Matplotlib is out, permanently** | Pillow draws the map; plotly draws the gain; both local |
 | **OpenCV is out** | Pillow resizes; scikit-image finds the contours |
 | **Walls are an absorption field** | `Segments` stays the exact reference; `Absorption` is the engine |
-| **The local page replaces the window** | FastAPI serves the page; a Rust kernel stays open |
+| **The DearPyGui window is the human face** | FastAPI serves the local page to agents; the window stays |
 | **An is-a hierarchy is an ABC** | `Occlusion` is an `ABC`, `HardOcclusion` and `SoftOcclusion` subclass it |
 | **An abstraction owns its operations** | `classmethod` factories and methods on the class, never a module of free helpers |
 | **One class per module, grouped in a package** | `kernel/descent/` holds the loop, its settings, its step and its result |

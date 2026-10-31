@@ -1,13 +1,12 @@
 import argparse
 import json
-import threading
-import time
-import webbrowser
 from pathlib import Path
 
 import numpy as np
 
-from emitter_optimizer.paths import DEFAULT_EMITTER_FUNCTION, DEFAULT_SENSOR_FUNCTION
+from emitter_optimizer.gui.application import Application
+from emitter_optimizer.gui.configuration import GuiConfig
+from emitter_optimizer.maps import Density, Walls
 from emitter_optimizer.service import (
     DEFAULT_HOST,
     DEFAULT_PORT,
@@ -16,6 +15,7 @@ from emitter_optimizer.service import (
     Session,
     serve,
 )
+from emitter_optimizer.service.evaluated_law import EvaluatedLaw
 from emitter_optimizer.service.models import RunRequest, State
 from emitter_optimizer.service.options import (
     DEFAULT_EMITTERS,
@@ -24,6 +24,10 @@ from emitter_optimizer.service.options import (
     DEFAULT_RUN_ITERATIONS,
     DEFAULT_SEED,
     DEFAULT_STEP_SIZE,
+)
+from emitter_optimizer.service.paths import (
+    DEFAULT_EMITTER_FUNCTION,
+    DEFAULT_SENSOR_FUNCTION,
 )
 
 
@@ -70,17 +74,13 @@ def build_parser() -> argparse.ArgumentParser:
     service.add_argument("--host", default=str(DEFAULT_HOST))
     service.add_argument("--port", type=int, default=DEFAULT_PORT)
 
-    window = commands.add_parser(
-        "window", help="serve the local page and open it in a browser"
-    )
+    window = commands.add_parser("window", help="open the desktop window on a map")
     _add_map_arguments(window)
     window.add_argument("--iterations", type=int, default=DEFAULT_RUN_ITERATIONS)
-    window.add_argument("--host", default=str(DEFAULT_HOST))
-    window.add_argument("--port", type=int, default=DEFAULT_PORT)
     window.add_argument(
         "--solve",
         action="store_true",
-        help="optimize before opening the page",
+        help="optimize before opening the window",
     )
     return parser
 
@@ -132,20 +132,24 @@ def write_result(directory: Path, session: Session, state: State) -> dict[str, o
 
 
 def open_window(arguments: argparse.Namespace) -> int:
-    settings = ServiceSettings(host=arguments.host, port=arguments.port)
-    session = MapOptions.from_arguments(arguments).session()
-    if arguments.solve:
-        session.run(RunRequest(iterations=int(arguments.iterations)))
-    thread = threading.Thread(target=serve, args=(session, settings), daemon=True)
-    thread.start()
-    time.sleep(0.5)
-    webbrowser.open(  # hardcoded-url: the browser opens the local service
-        f"http://{settings.host}:{settings.port}/"
+    config = GuiConfig(
+        iteration_count=int(arguments.iterations),
+        learning_rate=float(arguments.step_size),
+        emitter_count=int(arguments.emitters),
+        map_scale=(float(arguments.map_scale[0]), float(arguments.map_scale[1])),
+        grid_size=(int(arguments.grid_size[0]), int(arguments.grid_size[1])),
+        density=(
+            None if arguments.density is None else Density.load(arguments.density)
+        ),
+        walls=(
+            None if arguments.collisions is None else Walls.load(arguments.collisions)
+        ),
+        emitter_law=EvaluatedLaw.from_file(arguments.emitter_law),
+        sensor_law=EvaluatedLaw.from_file(arguments.sensor_law),
     )
-    try:
-        thread.join()
-    except KeyboardInterrupt:
-        return 0
+    if arguments.solve:
+        config.solver.solve()
+    Application(config)()
     return 0
 
 

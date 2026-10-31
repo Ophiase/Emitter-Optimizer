@@ -61,15 +61,15 @@ Done on 2026-10-30, in `dev/engine-numpy`.
 - [x] **1.6 A headless command.** (2026-10-30) `emitter-optimizer run` takes a
   density, a collision map, the laws, a seed and the parameters, and writes
   `positions.csv`, `history.csv`, `figure.png` and `summary.json`; `just demo`
-  runs it on the demo map. `emitter-optimizer window` opens the local page.
+  runs it on the demo map. `emitter-optimizer window` opens the desktop window.
 - [x] **1.7 A benchmark.** (2026-10-30) `just bench` runs four situations
   (uniform, density, walls, a wide non-square grid) and writes
   `docs/benchmark/results.md`: initial and final gain, improvement, seconds.
   *Measured*: the wall situation costs twenty times the same map without
   walls; the obstacle test is the hot spot, which is what Phase 3.1 attacks.
-- [x] **1.8 DearPyGui calls the new engine.** (2026-10-30, superseded by the
-  local page) The window builds a `Law` from the edited files and passes it to
-  the solver; `just check` never imports `dearpygui`.
+- [x] **1.8 DearPyGui calls the new engine.** (2026-10-30, restored as the
+  human face; the local page is for agents) The window builds a `Law` from the
+  edited files and passes it to the solver; the rendering stays in `render/`.
 
 Dependencies: 1.2 before 1.3; 1.3 and 1.5 before 1.6; 1.6 before 1.7.
 

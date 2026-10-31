@@ -80,11 +80,13 @@ class Descender:
         physics: Physics,
         settings: DescentSettings,
         on_step: StepCallback | None = None,
+        start: Array | None = None,
     ) -> None:
         self.scene = scene
         self.physics = physics
         self.settings = settings
         self.on_step = on_step
+        self.start = start
         self._stop = threading.Event()
 
     def stop(self) -> None:
@@ -120,8 +122,11 @@ class Descender:
         ) -> tuple[Progress, Array]:
             return jax.lax.scan(partial(one, scene=scene), progress, sharpness)
 
-        key = jax.random.key(self.settings.seed)
-        start = self.scene.sample(key, self.settings.starts, self.settings.emitters)
+        if self.start is None:
+            key = jax.random.key(self.settings.seed)
+            start = self.scene.sample(key, self.settings.starts, self.settings.emitters)
+        else:
+            start = jnp.asarray(self.start)
         progress = Progress(start, transform.init(start))
         sharpness = _sharpness(self.scene, self.settings)
         history: list[float] = []

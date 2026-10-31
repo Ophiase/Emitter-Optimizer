@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from importlib.util import module_from_spec, spec_from_file_location
 from pathlib import Path
+from tempfile import NamedTemporaryFile
 from typing import cast
 
 from jax import Array
@@ -13,6 +14,19 @@ class EvaluatedLaw:
     """A user's `eval` function, run with JAX arrays so it can be traced."""
 
     function: Law
+
+    @classmethod
+    def from_source(cls, source: str, name: str = "user") -> EvaluatedLaw:
+        """Load the `eval` function the window's editor holds."""
+        with NamedTemporaryFile(
+            "w", suffix=".py", prefix=f"{name}_", delete=False, encoding="utf-8"
+        ) as file:
+            file.write(source)
+            path = Path(file.name)
+        try:
+            return cls.from_file(path)
+        finally:
+            path.unlink(missing_ok=True)
 
     @classmethod
     def from_file(cls, path: Path) -> EvaluatedLaw:

@@ -14,13 +14,13 @@ from emitter_optimizer.kernel import (
     Scene,
     Step,
 )
-from emitter_optimizer.paths import (
+from emitter_optimizer.render import ChartImage, MapImage, ProblemImage
+from emitter_optimizer.service.options import MapOptions
+from emitter_optimizer.service.paths import (
     DEFAULT_EMITTER_FUNCTION,
     DEFAULT_SENSOR_FUNCTION,
     PROJECT_ROOT,
 )
-from emitter_optimizer.render import ChartImage, MapImage
-from emitter_optimizer.service.options import MapOptions
 from scripts.situations import PHYSICS, measure, situations
 
 FIGURES = PROJECT_ROOT / "docs" / "figures"
@@ -88,7 +88,9 @@ def main() -> None:
     result = Descender(scene, PHYSICS, settings, on_step=on_step).run()
     before = MapImage(scene, coverage).png(start)
     (FIGURES / "before.png").write_bytes(before)
-    (FIGURES / "problem.png").write_bytes(before)
+    (FIGURES / "problem.png").write_bytes(
+        ProblemImage(scene, coverage, width=600).png(start)
+    )
     (FIGURES / "after.png").write_bytes(MapImage(scene, coverage).png(result.positions))
     (FIGURES / "paths.png").write_bytes(
         MapImage(scene, coverage).png(result.positions, trajectories)
@@ -102,7 +104,7 @@ def main() -> None:
             MapImage(
                 situation.scene,
                 Coverage(situation.scene, HardOcclusion(), PHYSICS),
-                size=(300, 200),
+                width=300,
             ).png(case.positions)
         )
     (FIGURES / "cases.png").write_bytes(_sheet(cases))

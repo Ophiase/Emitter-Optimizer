@@ -6,11 +6,11 @@ from emitter_optimizer.service.models import (
     Health,
     PlaceRequest,
     RunRequest,
+    ServiceSettings,
     State,
     StopResult,
 )
 from emitter_optimizer.service.session import Session
-from emitter_optimizer.service.settings import ServiceSettings
 
 PNG_MEDIA_TYPE = "image/png"
 HTML = """<!doctype html>

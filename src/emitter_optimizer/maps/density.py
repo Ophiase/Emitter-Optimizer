@@ -33,5 +33,5 @@ class Density:
         image = Image.fromarray(
             np.clip(self.values * OPAQUE, 0, OPAQUE).astype(np.uint8), mode="L"
         )
-        resized = image.resize((grid.columns, grid.rows), Image.Resampling.BILINEAR)
+        resized = image.resize((grid.columns, grid.rows), Image.Resampling.NEAREST)
         return Density(np.asarray(resized, dtype=np.float64) / OPAQUE)
