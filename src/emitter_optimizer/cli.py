@@ -4,7 +4,9 @@ from pathlib import Path
 
 import numpy as np
 
+from emitter_optimizer.engine.laws import load_law_file
 from emitter_optimizer.engine.solver import Solver
+from emitter_optimizer.gui.configuration import GuiConfig
 from emitter_optimizer.paths import DEFAULT_EMITTER_FUNCTION, DEFAULT_SENSOR_FUNCTION
 from emitter_optimizer.service import PORT, MapOptions, serve
 from emitter_optimizer.service.options import (
@@ -60,7 +62,17 @@ def build_parser() -> argparse.ArgumentParser:
     _add_map_arguments(service)
     service.add_argument("--port", type=int, default=PORT)
 
-    commands.add_parser("window", help="open the window")
+    window = commands.add_parser(
+        "window",
+        help="open the window, on an optimized map if asked",
+    )
+    _add_map_arguments(window)
+    window.add_argument("--iterations", type=int, default=DEFAULT_RUN_ITERATIONS)
+    window.add_argument(
+        "--solve",
+        action="store_true",
+        help="optimize before opening the window",
+    )
     return parser
 
 
@@ -117,12 +129,34 @@ def main(arguments: list[str] | None = None) -> int:
     if parsed.command == "serve":
         return run_service(parsed)
     if parsed.command == "window":
-        _open_window()
-        return 0
+        return open_window(parsed)
     return run_optimization(parsed)
 
 
-def _open_window() -> None:
+def window_configuration(arguments: argparse.Namespace) -> GuiConfig:
+    options = MapOptions.from_arguments(arguments)
+    return GuiConfig(
+        n_iteration=int(arguments.iterations),
+        learning_step=options.learning_rate,
+        n_emitters=options.emitters,
+        map_scale=options.map_scale,
+        grid_size=options.grid_size,
+        density_map=options.density,
+        collision_map=options.collisions,
+        emitter_law=load_law_file(options.emitter_law),
+        sensor_law=load_law_file(options.sensor_law),
+    )
+
+
+def prepare_window(arguments: argparse.Namespace) -> GuiConfig:
+    config = window_configuration(arguments)
+    if arguments.solve:
+        config.solver.solve()
+    return config
+
+
+def open_window(arguments: argparse.Namespace) -> int:
     from emitter_optimizer.gui.application import Application
 
-    Application()()
+    Application(prepare_window(arguments))()
+    return 0
