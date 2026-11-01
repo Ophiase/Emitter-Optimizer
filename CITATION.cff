@@ -3,9 +3,9 @@ message: If you use this software, cite it as below.
 title: Emitter Optimizer
 abstract: Optimize the positions of emitters over a weighted, obstructed map.
 authors:
-  - name: Ophiase
+  - alias: "Phorcys"
+    website: "https://github.com/Ophiase"
 repository-code: https://github.com/Ophiase/Emitter-Optimizer
 license: Apache-2.0
 version: 2.1.1
 date-released: 2026-10-31
-year-original: 2023

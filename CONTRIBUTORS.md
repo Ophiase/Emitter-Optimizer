@@ -1,10 +1,11 @@
 # Contributors
 
-## Ophiase — author
+## Phorcys — author
 
-Started the project in 2023, by hand, during a third year of mathematics: the
-model, the window, the first solver. The gain $\mathcal G$, the density, the
-obstacles and the two user laws are his.
+Phorcys, [Ophiase](https://github.com/Ophiase) on GitHub. Started the project
+in 2023, by hand, during a third year of mathematics: the model, the window,
+the first solver. The gain $\mathcal G$, the density, the obstacles and the two
+user laws are his.
 
 ## Eunomia — agent
 
