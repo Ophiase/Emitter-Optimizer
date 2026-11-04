@@ -4,9 +4,14 @@ Milestones of the whole project; the version is in `VERSION`.
 
 ## Unreleased
 
+## 2.4.0 — 2026-11-04
+
 - **A way out of local minima**: `--relocate` jumps one emitter at a time, then
   polishes. On garden, the descent alone ends 27% to 31% below the best known,
   and relocated within 0.9%; the gain ends 0.1% to 2.3% above greedy.
+- **The naive case**: water that feeds plants, in `just space plants`.
+- **Every application we can imagine**, one by one, simulated or not, in
+  `ideas/applications/README.md`.
 - **One page per case** in `docs/cases/`, with the decision, the laws, the
   result and the limits, linked from the README's summary.
 - **The search on its photograph**: animations over the aerial view, a mosaic,

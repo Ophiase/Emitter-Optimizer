@@ -34,7 +34,7 @@ graph TD
 - [vision.md](vision.md) · [origin.md](origin.md) ·
   [milestones.md](milestones.md) · [roadmap.md](roadmap.md) ·
   [open.md](open.md) · [prior-art.md](prior-art.md) ·
-  [crossover.md](crossover.md)
+  [crossover.md](crossover.md) · [applications](applications/README.md)
 - **architecture/**: [README](architecture/README.md) — the kernel, the stack,
   the layers, agent interop, zero telemetry, the faces, the language
 - **engine/**: [README](engine/README.md) — [gain](engine/gain.md) ·

@@ -25,6 +25,8 @@
    coordinate network, or a signed distance field ([implicit-energy](model/implicit-energy.md)).
 10. **[question] How many samples?** The benchmark has to pick the count
     where the Monte Carlo error is below the improvement being measured.
+11. **[question] Which application next?** [The catalogue](applications/README.md)
+    proposes an order; the choice is the author's.
 
 ## Technical
 
