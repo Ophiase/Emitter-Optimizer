@@ -3,9 +3,9 @@ from dataclasses import dataclass
 import jax.numpy as jnp
 from jax import Array
 
+from emitter_optimizer.kernel.domain.scene import Scene
 from emitter_optimizer.kernel.laws import Physics
 from emitter_optimizer.kernel.occlusion import Occlusion
-from emitter_optimizer.kernel.domain.scene import Scene
 
 LENGTH_FLOOR = 1e-12
 

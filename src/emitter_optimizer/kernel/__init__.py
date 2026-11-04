@@ -11,6 +11,7 @@ from emitter_optimizer.kernel.descent import (
     Optimizer,
     Step,
 )
+from emitter_optimizer.kernel.domain import Extent, GridShape, Scene
 from emitter_optimizer.kernel.laws import Law, Physics
 from emitter_optimizer.kernel.occlusion import (
     HardOcclusion,
@@ -18,7 +19,6 @@ from emitter_optimizer.kernel.occlusion import (
     SoftOcclusion,
 )
 from emitter_optimizer.kernel.placement import Greedy
-from emitter_optimizer.kernel.domain import Extent, GridShape, Scene
 
 __all__ = [
     "SGD",

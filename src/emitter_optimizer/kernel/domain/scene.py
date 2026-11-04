@@ -5,9 +5,9 @@ import jax
 import jax.numpy as jnp
 from jax import Array
 
-from emitter_optimizer.kernel.occlusion import Occlusion
 from emitter_optimizer.kernel.domain.extent import Extent
 from emitter_optimizer.kernel.domain.grid_shape import GridShape
+from emitter_optimizer.kernel.occlusion import Occlusion
 
 
 @jax.tree_util.register_dataclass

@@ -14,10 +14,9 @@ from emitter_optimizer.kernel.descent.progress import Progress
 from emitter_optimizer.kernel.descent.result import DescentResult
 from emitter_optimizer.kernel.descent.settings import DescentSettings
 from emitter_optimizer.kernel.descent.step import Step
+from emitter_optimizer.kernel.domain.scene import Scene
 from emitter_optimizer.kernel.laws import Physics
 from emitter_optimizer.kernel.occlusion import HardOcclusion, Occlusion, SoftOcclusion
-from emitter_optimizer.kernel.domain.scene import Scene
-
 
 FINAL_RATE_SHARE = 0.02
 
