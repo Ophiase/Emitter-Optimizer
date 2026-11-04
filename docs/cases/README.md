@@ -1,6 +1,7 @@
 # The cases
 
-Nine problems, one engine: only the map and the two laws change.
+Ten problems, one engine: only the map and the two laws change. They are ten of
+[the many we can imagine](../../ideas/applications/README.md).
 
 ```mermaid
 graph TD
@@ -18,6 +19,11 @@ graph TD
     class map,laws data
     class descent,jump,polish core
 ```
+
+## The naive one
+
+[Water that feeds plants](plants.md): five sources, seventy plants, no walls. It
+is the same sentence as every other case, in the simplest words.
 
 ## On a photograph
 

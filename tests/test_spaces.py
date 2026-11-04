@@ -1,12 +1,13 @@
 from collections import Counter
 from io import BytesIO
 
+import jax.numpy as jnp
 import numpy as np
 from PIL import Image
 
 from emitter_optimizer.kernel import Coverage, HardOcclusion
 from emitter_optimizer.render import AtomsImage, FloorsImage, GlobeImage
-from scripts.spaces import building, urea
+from scripts.spaces import building, plants, urea
 
 
 def test_the_urea_cell_holds_two_molecules() -> None:
@@ -54,3 +55,24 @@ def test_the_building_draws_one_panel_per_storey() -> None:
     )
 
     assert Image.open(BytesIO(png)).width == 3 * 100 + 2 * 8
+
+
+def test_the_plants_field_holds_its_plants() -> None:
+    scene = plants.field()
+
+    assert int(jnp.sum(scene.measure)) == plants.PLANTS
+
+
+def test_water_on_a_plant_grows_it_and_more_water_grows_it_more() -> None:
+    scene = plants.field()
+    far = jnp.array([[-100.0, -100.0], [-100.0, -100.0]])
+    planted = scene.points[scene.measure > 0][0]
+    near = jnp.stack([planted, far[0]])
+    both = jnp.stack([planted, planted])
+
+    dry, watered, drenched = (
+        plants.growth(scene, placed)[0] for placed in (far, near, both)
+    )
+
+    assert dry < 1e-6
+    assert 0.0 < watered < drenched < 1.0

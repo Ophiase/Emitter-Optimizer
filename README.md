@@ -4,7 +4,7 @@
 [![Python 3.14+](https://img.shields.io/badge/Python-3.14%2B-yellow.svg)](https://www.python.org/)
 [![uv](https://img.shields.io/badge/uv-available-brightgreen.svg)](https://astral.sh/uv)
 [![Justfile](https://img.shields.io/badge/just-available-brightgreen.svg)](https://just.systems/man/en/)
-[![Status: v2.3.0](https://img.shields.io/badge/status-v2.3.0-blue.svg)](ideas/roadmap.md)
+[![Status: v2.4.0](https://img.shields.io/badge/status-v2.4.0-blue.svg)](ideas/roadmap.md)
 [![Kanon](https://img.shields.io/badge/%3C%3E-Kanon-blueviolet.svg)](.agents/kanon.md)
 
 **Where do I put my emitters?** Antennas on a building, drippers on a farm,
@@ -12,6 +12,10 @@ shops that capture a neighbourhood, sensors in a room: anything that covers a
 map around itself and loses reach with distance. Give the tool a map, a weight
 per place, the walls, and the law of your emitter; it returns the positions
 that capture the most.
+
+**Far more things than you imagine can be thought of as an emitter.** This is a
+model of computation, a way of reasoning that holds many optimization problems
+in one form: [128 imagined, one by one](ideas/applications/README.md); 10 simulated.
 
 <p align="center">
   <img src="docs/figures/cases/mosaic.webp" alt="Eight problems solved by the same engine: sprinklers, lifeguards, Wi-Fi, lamps, sirens, stations on Earth, access points in a building, atoms in a crystal" width="100%">
@@ -30,17 +34,18 @@ the code stays the same. Every figure on this page is generated from a seeded ru
 | Know why a descent gets stuck, and how it gets out | [Local minima](docs/local-minima.md) |
 | Change the physics | [What you can change](#what-you-can-change) |
 | The numbers, case by case | [docs/benchmark/results.md](docs/benchmark/results.md) |
+| Every application we can imagine, one by one | [ideas/applications/README.md](ideas/applications/README.md) |
 | The status, the layout and the demo | [docs/project.md](docs/project.md) |
 | The plan and the open questions | [ideas/roadmap.md](ideas/roadmap.md) |
 | Dependencies | Python 3.14+, `just`; `uv` installs JAX, plotly, scikit-image and Pillow |
 
 ### The cases
 
-Each one has its own page: the decision, why it is hard, the laws, the result
-and its limits.
+Each one has its own page: the decision, why it is hard, the result, the limits.
 
 | Case | The question | What it proves |
 | --- | --- | --- |
+| [Plants](docs/cases/plants.md) | Where does the water go? | The naive one, and everything else is this |
 | [Garden](docs/cases/garden.md) | Where do 24 sprinklers go? | A short reach blinds the gradient |
 | [Beach](docs/cases/beach.md) | Who reaches the swimmer in time? | A few emitters, each one defensible |
 | [Marina](docs/cases/marina.md) | Where does Wi-Fi reach the old town? | A wall is a cliff in the gain |
@@ -177,9 +182,6 @@ the descent, orange lines the [jumps out of a local minimum](docs/local-minima.m
 - **Why it is here**: the honest case: a random placement already does most of the job.
 - **The result**: +5% above random, and every start agrees: little is left to find.
 
-Each case is [a folder](resources/cases/README.md): the photograph, the two
-layers, and its `emitter.py` and `sensor.py`.
-
 ## Beyond the plane
 
 The gain only asks a space for its points, its measure and its distance, so the
@@ -225,8 +227,6 @@ degree ([the page](docs/cases/sphere.md), [why the optimum is known](ideas/model
 | [**building**](docs/cases/building.md) | <img src="docs/figures/case_building.gif" alt="Six access points moving across three storeys" width="240"> | Six access points on three storeys; concrete absorbs the signal along each sight line.<br><br>$\varphi(d) = 1 / (1 + (d/4)^2)$, times $e^{-\int \alpha}$.<br><br>Gain 0.1173, against 0.1109 for greedy and 0.0664 at random. |
 | [**urea**](docs/cases/urea.md) | <img src="docs/figures/case_urea.gif" alt="The two urea molecules of the cell, found by the emitters" width="240"> | Emitters find the 16 atoms of a urea cell in a density computed from the published structure.<br><br>Heavy atoms within 0.03 Å, hydrogens within 0.03 Å, where a grid search stops at 0.39 Å.<br><br>The density is synthetic ([limits](ideas/model/urea.md)). |
 
-`just space thomson`, `globe`, `building` or `urea` regenerates each one.
-
 ## Try it
 
 ```sh
@@ -242,8 +242,7 @@ uv run python -m emitter_optimizer run --density my-field.png --collisions walls
     --emitters 50 --iterations 200 --seed 0 --out out/my-plan
 ```
 
-Add `--relocate` to jump out of the local minima the descent stops in, or
-`just case garden --relocate` for a named case.
+Add `--relocate` to jump out of a local minimum: `just case garden --relocate`.
 
 `emitter-optimizer window --density my-field.png --solve` opens the window
 on the optimized result instead of a random start.
