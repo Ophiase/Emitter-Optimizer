@@ -17,8 +17,8 @@ from emitter_optimizer.kernel.occlusion import (
     Occlusion,
     SoftOcclusion,
 )
-from emitter_optimizer.kernel.scene import Scene
-from emitter_optimizer.kernel.shapes import Extent, GridShape
+from emitter_optimizer.kernel.placement import Greedy
+from emitter_optimizer.kernel.domain import Extent, GridShape, Scene
 
 __all__ = [
     "SGD",
@@ -29,6 +29,7 @@ __all__ = [
     "DescentResult",
     "DescentSettings",
     "Extent",
+    "Greedy",
     "GridShape",
     "HardOcclusion",
     "Law",

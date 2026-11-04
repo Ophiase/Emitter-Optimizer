@@ -15,8 +15,11 @@ from emitter_optimizer.kernel.descent.result import DescentResult
 from emitter_optimizer.kernel.descent.settings import DescentSettings
 from emitter_optimizer.kernel.descent.step import Step
 from emitter_optimizer.kernel.laws import Physics
-from emitter_optimizer.kernel.occlusion import Occlusion, SoftOcclusion
-from emitter_optimizer.kernel.scene import Scene
+from emitter_optimizer.kernel.occlusion import HardOcclusion, Occlusion, SoftOcclusion
+from emitter_optimizer.kernel.domain.scene import Scene
+
+
+FINAL_RATE_SHARE = 0.02
 
 
 def _negative_gain(
@@ -35,29 +38,14 @@ def _sharpness(scene: Scene, settings: DescentSettings) -> Array:
     return 1.0 / widths
 
 
-def _sharp(scene: Scene) -> Occlusion:
-    side = jnp.max(scene.bounds)
-    return SoftOcclusion(1.0 / (side * 0.001))
-
-
-def _settle(
-    progress: Progress, scene: Scene, physics: Physics, history: list[float]
-) -> DescentResult:
-    def objective(positions: Array) -> Array:
-        return Coverage(scene, _sharp(scene), physics).gain(positions)
-
-    gains = jax.vmap(objective)(progress.positions)
-    best = int(jnp.argmax(gains))
-    return DescentResult(
-        progress.positions[best],
-        float(gains[best]),
-        tuple(history),
-        tuple(gains.tolist()),
-    )
+def _rate(scene: Scene, settings: DescentSettings) -> optax.Schedule:
+    """Wide early steps to travel, then small ones so the end settles."""
+    rate = settings.step_size * float(jnp.max(scene.bounds))
+    return optax.cosine_decay_schedule(rate, settings.steps, alpha=FINAL_RATE_SHARE)
 
 
 class Descender:
-    """Run `settings.starts` descents side by side; keep the best, sharp walls."""
+    """Run `settings.starts` descents side by side; keep the best seen, sharp walls."""
 
     class StepCallback(Protocol):
         def __call__(self, step: Step, /) -> None: ...
@@ -81,8 +69,7 @@ class Descender:
         self._stop.set()
 
     def run(self) -> DescentResult:
-        rate = self.settings.step_size * float(jnp.max(self.scene.bounds))
-        transform = self.settings.optimizer.to_optax(rate)
+        transform = self.settings.optimizer.to_optax(_rate(self.scene, self.settings))
         objective = jax.vmap(
             jax.value_and_grad(partial(_negative_gain, physics=self.physics)),
             in_axes=(0, None, None),
@@ -116,6 +103,14 @@ class Descender:
         else:
             start = jnp.asarray(self.start)
         progress = Progress(start, transform.init(start))
+        physics = self.physics
+
+        @jax.jit
+        def sharp_gains(positions: Array, scene: Scene) -> Array:
+            return jax.vmap(Coverage(scene, HardOcclusion(), physics).gain)(positions)
+
+        best_positions = start
+        best_gains = sharp_gains(start, self.scene)
         sharpness = _sharpness(self.scene, self.settings)
         history: list[float] = []
         for first in range(0, self.settings.steps, self.settings.report_every):
@@ -125,9 +120,21 @@ class Descender:
                 self.scene,
             )
             history.extend(jnp.max(gains, axis=1).tolist())
+            reached = sharp_gains(progress.positions, self.scene)
+            improved = reached > best_gains
+            best_gains = jnp.where(improved, reached, best_gains)
+            best_positions = jnp.where(
+                improved[:, None, None], progress.positions, best_positions
+            )
             if self.on_step is not None:
                 best = int(jnp.argmax(gains[-1]))
                 self.on_step(Step(len(history), history[-1], progress.positions[best]))
             if self._stop.is_set():
                 break
-        return _settle(progress, self.scene, self.physics, history)
+        best = int(jnp.argmax(best_gains))
+        return DescentResult(
+            best_positions[best],
+            float(best_gains[best]),
+            tuple(history),
+            tuple(best_gains.tolist()),
+        )
