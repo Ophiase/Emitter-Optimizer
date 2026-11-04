@@ -4,14 +4,19 @@ Milestones of the whole project; the version is in `VERSION`.
 
 ## Unreleased
 
-- **The legacy engine and the window are gone**: the CLI, the service and the
-  page all run on the JAX kernel; `engine/` and `gui/` are deleted, not kept
-  as shims.
+## 2.2.0 — 2026-11-04
+
+- **The legacy engine is gone**: the CLI, the service and the window all run
+  on the JAX kernel; the old `engine/` is deleted, not kept as a shim.
+- **The DearPyGui window is back as the human face**, rebuilt on the kernel;
+  the FastAPI service and its local page stay for agents.
 - **The stack is modern**: plotly draws the interactive gain, scikit-image
-  finds the wall contours, Pillow renders the maps; matplotlib, OpenCV and
-  DearPyGui left the dependencies.
-- **The face is a local page**: FastAPI serves it, `just run` opens it, and the
-  page drives the same routes as an agent.
+  finds the wall contours, Pillow renders the maps; matplotlib and OpenCV left
+  the dependencies.
+- **Five cases from aerial photographs**: garden, beach, marina, harbor and
+  ramparts, each with its painted layers and its own laws.
+- **The optimizer is a type**: Adam, AdamW, Nadam, Lion and SGD are named
+  classes, not strings.
 - **The kernel is one concept per module**: `shapes/`, `descent/` and
   `occlusion/` hold one class each; `Scene.visibility` owns the ray crossing,
   and the free geometry module is gone.
@@ -22,8 +27,7 @@ Milestones of the whole project; the version is in `VERSION`.
   `SoftOcclusion` subclass it, one class per file under `kernel/occlusion/`;
   `Protocol` is now refused by a guard in `src/`.
 - **The author's decisions are recorded**: JAX and optax are the engine, laws
-  are `jax.numpy` with `eval` only, matplotlib and OpenCV leave, walls become
-  an absorption field, the window and a Rust kernel stay open
+  are `jax.numpy` with `eval` only, and a Rust kernel stays open
   ([kernel](ideas/architecture/kernel.md)).
 - **The service is FastAPI.** The standard-library handler, the hand-written
   router and the error mapping are gone: FastAPI serves the routes, pydantic
