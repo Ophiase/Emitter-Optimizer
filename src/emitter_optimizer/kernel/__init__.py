@@ -18,6 +18,7 @@ from emitter_optimizer.kernel.domain import (
     Scene,
     Sphere,
     Torus,
+    Volume,
 )
 from emitter_optimizer.kernel.laws import Law, Physics
 from emitter_optimizer.kernel.occlusion import (
@@ -51,4 +52,5 @@ __all__ = [
     "Sphere",
     "Step",
     "Torus",
+    "Volume",
 ]
