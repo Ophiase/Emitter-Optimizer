@@ -4,7 +4,7 @@
 [![Python 3.14+](https://img.shields.io/badge/Python-3.14%2B-yellow.svg)](https://www.python.org/)
 [![uv](https://img.shields.io/badge/uv-available-brightgreen.svg)](https://astral.sh/uv)
 [![Justfile](https://img.shields.io/badge/just-available-brightgreen.svg)](https://just.systems/man/en/)
-[![Status: v2.2.0](https://img.shields.io/badge/status-v2.2.0-blue.svg)](ideas/roadmap.md)
+[![Status: v2.3.0](https://img.shields.io/badge/status-v2.3.0-blue.svg)](ideas/roadmap.md)
 [![Kanon](https://img.shields.io/badge/%3C%3E-Kanon-blueviolet.svg)](.agents/kanon.md)
 
 **Where do I put my emitters?** Antennas on a building, drippers on a farm,

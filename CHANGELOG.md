@@ -4,6 +4,8 @@ Milestones of the whole project; the version is in `VERSION`.
 
 ## Unreleased
 
+## 2.3.0 — 2026-11-04
+
 - **A descent never ends below its start**: on `garden`, 300 iterations used to
   finish under the random placement. It now keeps the best it has seen.
 - **A greedy baseline and an honest benchmark**: on the five cases, the descent

@@ -6,7 +6,7 @@ done when `just agent gate` passes **and** its acceptance sentence is true.
 
 ## Current state
 
-**[fact]** 2026-11-04, v2.2.0. The CLI, the local service and the DearPyGui
+**[fact]** 2026-11-04, v2.3.0. The CLI, the local service and the DearPyGui
 window run on the JAX kernel; five cases come from aerial photographs. The
 kernel works on a plane, a sphere, a torus and a volume through one `Domain`.
 

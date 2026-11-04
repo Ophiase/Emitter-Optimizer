@@ -1,6 +1,6 @@
 [project]
 name = "emitter-optimizer"
-version = "2.2.0"
+version = "2.3.0"
 description = "Optimize the positions of emitters over a weighted, obstructed map."
 readme = "README.md"
 license = "Apache-2.0"
