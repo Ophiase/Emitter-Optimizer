@@ -10,6 +10,8 @@ class MethodRow:
     random: float
     greedy: float
     descent: float
+    free: tuple[float, ...] = ()
+    relocated: tuple[float, ...] = ()
 
     def above_random(self, gain: float) -> float:
         return 100.0 * (gain - self.random) / abs(self.random)

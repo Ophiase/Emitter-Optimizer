@@ -60,7 +60,7 @@ bench:
     uv run python -m scripts.bench
 
 [group("dev")]
-[doc("Recompute the README figures into docs/figures: before, after, gain and the descent")]
+[doc("Recompute the README figures into docs/figures: the demo, the cases and the mosaic")]
 figures:
     uv run python -m scripts.figures
 

@@ -76,6 +76,11 @@ def build_parser() -> CommandLineParser:
     _add_map_arguments(optimize)
     _add_iterations_argument(optimize)
     optimize.add_argument("--out", type=Path, default=Path("out"))
+    optimize.add_argument(
+        "--relocate",
+        action="store_true",
+        help="after the descent, jump the emitters a gradient cannot move",
+    )
 
     service = commands.add_parser(
         "serve", help="serve the engine on 127.0.0.1 for an agent"
@@ -119,7 +124,9 @@ def _session(arguments: argparse.Namespace) -> Session:
 
 def run_optimization(arguments: argparse.Namespace) -> int:
     session = _session(arguments)
-    state = session.run(RunRequest(iterations=int(arguments.iterations)))
+    state = session.run(
+        RunRequest(iterations=int(arguments.iterations), relocate=arguments.relocate)
+    )
     summary = write_result(arguments.out, session, state)
     print(json.dumps(summary, indent=2))
     return 0

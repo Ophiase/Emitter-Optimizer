@@ -26,7 +26,7 @@ from emitter_optimizer.kernel.occlusion import (
     Occlusion,
     SoftOcclusion,
 )
-from emitter_optimizer.kernel.placement import Greedy
+from emitter_optimizer.kernel.placement import Greedy, Relocation
 
 __all__ = [
     "SGD",
@@ -47,6 +47,7 @@ __all__ = [
     "Occlusion",
     "Optimizer",
     "Physics",
+    "Relocation",
     "Scene",
     "SoftOcclusion",
     "Sphere",

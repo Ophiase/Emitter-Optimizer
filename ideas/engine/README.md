@@ -12,6 +12,7 @@ obstacles, an emitter law and a sensor law, where should the emitters go?
 - [optimizer.md](optimizer.md) — how the descent runs, and its bounds.
 - [autodiff.md](autodiff.md) — JAX computes the gradient,
   and the seam a framework would plug into.
+- [local-minima.md](local-minima.md) — why a descent stops, and the jump out.
 
 ## The invariant
 

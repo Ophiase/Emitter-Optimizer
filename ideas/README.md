@@ -37,11 +37,11 @@ graph TD
   [crossover.md](crossover.md)
 - **architecture/**: [README](architecture/README.md) — the kernel, the stack,
   the layers, agent interop, zero telemetry, the faces, the language
-- **engine/**: [README](engine/README.md) —
-  [gain](engine/gain.md) · [occlusion](engine/occlusion.md) ·
-  [map](engine/map.md) · [distance](engine/distance.md) ·
-  [functions](engine/functions.md) · [optimizer](engine/optimizer.md) ·
-  [autodiff](engine/autodiff.md)
+- **engine/**: [README](engine/README.md) — [gain](engine/gain.md) ·
+  [occlusion](engine/occlusion.md) · [map](engine/map.md) ·
+  [distance](engine/distance.md) · [functions](engine/functions.md) ·
+  [optimizer](engine/optimizer.md) · [autodiff](engine/autodiff.md)
+- **Local minima**: [why a descent stops](engine/local-minima.md), and the way out
 - **model/**: [README](model/README.md) — objectives, baselines, physics, the
   third dimension, manifolds, the sphere, crystals, constraints
 
