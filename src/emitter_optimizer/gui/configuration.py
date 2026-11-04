@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import ClassVar
+from typing import ClassVar, Self
 
 import jax.numpy as jnp
 from jax import Array
@@ -16,6 +16,7 @@ from emitter_optimizer.kernel import (
 )
 from emitter_optimizer.maps import Density, Walls
 from emitter_optimizer.service.evaluated_law import EvaluatedLaw
+from emitter_optimizer.service.options import MapOptions
 from emitter_optimizer.service.paths import (
     DEFAULT_EMITTER_FUNCTION,
     DEFAULT_SAVE_PATH,
@@ -57,16 +58,33 @@ class GuiConfig:
     walls: Walls | None = None
     emitter_law: Law = field(default_factory=_default_emitter_law)
     sensor_law: Law = field(default_factory=_default_sensor_law)
+    emitter_source: Path = DEFAULT_EMITTER_FUNCTION
+    sensor_source: Path = DEFAULT_SENSOR_FUNCTION
     update_callback: UpdateCallback | None = None
     solver: Solver = field(init=False)
 
-    DEFAULT_EMITTER_FUNCTION: ClassVar[Path] = DEFAULT_EMITTER_FUNCTION
-    DEFAULT_SENSOR_FUNCTION: ClassVar[Path] = DEFAULT_SENSOR_FUNCTION
     SAVE_PATH: ClassVar[Path] = DEFAULT_SAVE_PATH
     ITEMS_TO_HIDE: ClassVar[tuple[str, ...]] = ITEMS_TO_HIDE
 
     def __post_init__(self) -> None:
         self.solver = self.to_solver()
+
+    @classmethod
+    def of(cls, options: MapOptions, iterations: int) -> Self:
+        physics = options.physics()
+        return cls(
+            iteration_count=iterations,
+            learning_rate=options.step_size,
+            emitter_count=options.emitters,
+            map_scale=(options.extent.width, options.extent.height),
+            grid_size=(options.grid.rows, options.grid.columns),
+            density=options.density(),
+            walls=options.walls(),
+            emitter_law=physics.emitter,
+            sensor_law=physics.sensor,
+            emitter_source=options.emitter_law,
+            sensor_source=options.sensor_law,
+        )
 
     def scene(self) -> Scene:
         extent = Extent(*self.map_scale)

@@ -125,13 +125,13 @@ class Application:
             "window_user_defined_emitter": FunctionWindow(
                 self.config,
                 "emitter",
-                self.config.DEFAULT_EMITTER_FUNCTION,
+                self.config.emitter_source,
                 "emitter_law",
             ),
             "window_user_defined_sensor": FunctionWindow(
                 self.config,
                 "sensor",
-                self.config.DEFAULT_SENSOR_FUNCTION,
+                self.config.sensor_source,
                 "sensor_law",
             ),
         }

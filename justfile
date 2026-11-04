@@ -18,6 +18,11 @@ install:
 @demo:
     uv run python -m emitter_optimizer run --density resources/map/value_001.png --collisions resources/map/collide_001.png --emitters 15 --iterations 200 --seed 0 --out out/demo
 
+[group("user")]
+[doc("Optimize a case by name and write out/<name>: just case garden --iterations 50")]
+@case name *args:
+    uv run python -m emitter_optimizer run --case {{ name }} --out out/{{ name }} {{ args }}
+
 [group("dev")]
 [doc("Rewrite the code with ruff, then type-check it with ty")]
 precommit:

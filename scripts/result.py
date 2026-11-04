@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from scripts.situation import Situation
+from emitter_optimizer.maps.cases import Situation
 
 
 @dataclass(frozen=True, slots=True)
