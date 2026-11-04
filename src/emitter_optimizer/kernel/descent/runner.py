@@ -14,7 +14,7 @@ from emitter_optimizer.kernel.descent.progress import Progress
 from emitter_optimizer.kernel.descent.result import DescentResult
 from emitter_optimizer.kernel.descent.settings import DescentSettings
 from emitter_optimizer.kernel.descent.step import Step
-from emitter_optimizer.kernel.domain.scene import Scene
+from emitter_optimizer.kernel.domain import Domain
 from emitter_optimizer.kernel.laws import Physics
 from emitter_optimizer.kernel.occlusion import HardOcclusion, Occlusion, SoftOcclusion
 
@@ -23,23 +23,23 @@ FINAL_RATE_SHARE = 0.02
 
 def _negative_gain(
     positions: Array,
-    scene: Scene,
+    scene: Domain,
     occlusion: Occlusion,
     physics: Physics,
 ) -> Array:
     return -Coverage(scene, occlusion, physics).gain(positions)
 
 
-def _sharpness(scene: Scene, settings: DescentSettings) -> Array:
-    side = jnp.max(scene.bounds)
+def _sharpness(scene: Domain, settings: DescentSettings) -> Array:
+    side = scene.scale
     first, last = 0.05, 0.001
     widths = side * first * (last / first) ** jnp.linspace(0.0, 1.0, settings.steps)
     return 1.0 / widths
 
 
-def _rate(scene: Scene, settings: DescentSettings) -> optax.Schedule:
+def _rate(scene: Domain, settings: DescentSettings) -> optax.Schedule:
     """Wide early steps to travel, then small ones so the end settles."""
-    rate = settings.step_size * float(jnp.max(scene.bounds))
+    rate = settings.step_size * float(scene.scale)
     return optax.cosine_decay_schedule(rate, settings.steps, alpha=FINAL_RATE_SHARE)
 
 
@@ -51,7 +51,7 @@ class Descender:
 
     def __init__(
         self,
-        scene: Scene,
+        scene: Domain,
         physics: Physics,
         settings: DescentSettings,
         on_step: Descender.StepCallback | None = None,
@@ -75,7 +75,7 @@ class Descender:
         )
 
         def one(
-            progress: Progress, sharpness: Array, scene: Scene
+            progress: Progress, sharpness: Array, scene: Domain
         ) -> tuple[Progress, Array]:
             loss, gradient = objective(
                 progress.positions, scene, SoftOcclusion(sharpness)
@@ -83,16 +83,14 @@ class Descender:
             updates, state = transform.update(
                 gradient, progress.state, progress.positions
             )
-            moved = jnp.clip(
-                jnp.asarray(optax.apply_updates(progress.positions, updates)),
-                0.0,
-                scene.bounds,
+            moved = scene.project(
+                jnp.asarray(optax.apply_updates(progress.positions, updates))
             )
             return Progress(moved, state), -loss
 
         @jax.jit
         def chunk(
-            progress: Progress, sharpness: Array, scene: Scene
+            progress: Progress, sharpness: Array, scene: Domain
         ) -> tuple[Progress, Array]:
             return jax.lax.scan(partial(one, scene=scene), progress, sharpness)
 
@@ -105,7 +103,7 @@ class Descender:
         physics = self.physics
 
         @jax.jit
-        def sharp_gains(positions: Array, scene: Scene) -> Array:
+        def sharp_gains(positions: Array, scene: Domain) -> Array:
             return jax.vmap(Coverage(scene, HardOcclusion(), physics).gain)(positions)
 
         best_positions = start

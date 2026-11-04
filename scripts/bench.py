@@ -55,21 +55,35 @@ def _descent(situation: Situation, greedy: Array) -> tuple[float, Array]:
     return best.gain, best.positions
 
 
+def _page(rows: list[MethodRow], table: list[str]) -> str:
+    added = max(100.0 * (row.descent - row.greedy) / row.greedy for row in rows)
+    return f"""# Benchmark
+
+Every gain comes from the same scene, with sharp walls.
+
+- **Random**: the mean of {RANDOM_DRAWS} placements drawn from the demand.
+- **Greedy**: emitters added one by one on the grid.
+- **Descent**: the better of {STARTS} free starts and of a polish of greedy.
+
+What it says:
+
+- **Greedy reaches most of the gain**; the descent adds at most {added:.1f}%.
+- **The descent earns its place elsewhere**: it needs no grid, and greedy costs
+  too much past a few thousand candidates.
+- A dot hides another when they tie.
+
+`just bench` writes this page.
+
+![The gain of each method above a random placement](methods.png)
+
+| case | emitters | random | greedy | descent | above random | seconds |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+{chr(10).join(table)}
+"""
+
+
 def main() -> None:
-    lines = [
-        "# Benchmark",
-        "",
-        "Every gain comes from the same scene, with sharp walls. *Random* is the",
-        f"mean of {RANDOM_DRAWS} placements drawn from the demand; *greedy* adds",
-        "emitters one by one on the grid; *descent* is the better of"
-        f" {STARTS} free starts",
-        "and of a polish of the greedy answer. `just bench` writes this page.",
-        "",
-        "![The gain of each method above a random placement](methods.png)",
-        "",
-        "| case | emitters | random | greedy | descent | above random | seconds |",
-        "| --- | ---: | ---: | ---: | ---: | ---: | ---: |",
-    ]
+    table = []
     rows = []
     for situation in situations():
         started = time.perf_counter()
@@ -83,15 +97,15 @@ def main() -> None:
             situation.name, situation.emitters, _random(situation), greedy, descent
         )
         rows.append(row)
-        lines.append(
+        table.append(
             f"| {row.case} | {row.emitters} | {row.random:.4f} | {row.greedy:.4f} | "
             f"{row.descent:.4f} | {row.above_random(row.descent):+.1f}% | "
             f"{seconds:.1f} |"
         )
         image = MapImage(scene, coverage, width=640).png(positions)
         (FIGURES / f"{situation.name}.png").write_bytes(image)
-        print(lines[-1], flush=True)
-    OUTPUT.write_text("\n".join(lines) + "\n", encoding="utf-8")
+        print(table[-1], flush=True)
+    OUTPUT.write_text(_page(rows, table), encoding="utf-8")
     (FIGURES / "methods.png").write_bytes(MethodImage(rows).png())
 
 

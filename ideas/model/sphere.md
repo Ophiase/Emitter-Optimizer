@@ -22,13 +22,14 @@ $$
 $$
 
 - $\int \varphi_y$ does not depend on $y$, by symmetry.
-- So maximizing $\mathcal G$ minimizes $\sum_{y \neq y'} f(\langle y, y' \rangle)$,
-  where $f$ is the integral of the product of two laws.
+- So maximizing $\mathcal G$ minimizes
+  $\sum_{y \neq y'} f(\langle y, y' \rangle)$, where $f$ is the integral of
+  the product of two laws.
 - With $t = \langle y, y' \rangle$, a product of two such laws is again the same
-  law, with $\kappa \lVert y + y' \rVert = \kappa \sqrt{2 + 2 t}$. Up to constants,
+  law, of concentration $\kappa \sqrt{2 + 2 t}$. Up to constants:
 
 $$
-f(t) \propto \frac{\sinh\bigl(\kappa \sqrt{2 + 2 t}\bigr)}{\kappa \sqrt{2 + 2 t}} ,
+f(t) \propto \frac{\sinh u}{u}, \quad u = \kappa \sqrt{2 + 2 t} ,
 $$
 
 a power series in $2 + 2t$ with positive coefficients.

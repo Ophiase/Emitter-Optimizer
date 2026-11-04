@@ -4,6 +4,17 @@ Milestones of the whole project; the version is in `VERSION`.
 
 ## Unreleased
 
+- **A descent never ends below its start**: on `garden`, 300 iterations used to
+  finish under the random placement. It now keeps the best it has seen.
+- **A greedy baseline and an honest benchmark**: on the five cases, the descent
+  beats a random placement by 5% to 57%, and adds at most 1.6% to greedy.
+- **The kernel no longer knows the plane**: `Domain` has `Scene`, `Sphere` and
+  `Torus`. On a sphere, the tetrahedron, the octahedron and the icosahedron
+  appear by themselves.
+- **A case by name**: `--case garden` on `run`, `serve` and `window`, and
+  `just case <name>`.
+- **Bad input is one line**: a bad argument exits 2 without a traceback.
+- **The window's law editors show the laws in use.**
 - **CI exists and stays off**: GitHub and GitLab pipelines run by hand only.
 - **`just audit`** checks the lock, the known vulnerabilities and the licences.
 - **Markdown has a rule**: a smell check, and Mermaid instead of ASCII drawings.

@@ -1,5 +1,6 @@
-from emitter_optimizer.kernel.domain.extent import Extent
-from emitter_optimizer.kernel.domain.grid_shape import GridShape
-from emitter_optimizer.kernel.domain.scene import Scene
+from emitter_optimizer.kernel.domain.domain import Domain
+from emitter_optimizer.kernel.domain.plane import Extent, GridShape, Scene
+from emitter_optimizer.kernel.domain.sphere import Sphere
+from emitter_optimizer.kernel.domain.torus import Torus
 
-__all__ = ["Extent", "GridShape", "Scene"]
+__all__ = ["Domain", "Extent", "GridShape", "Scene", "Sphere", "Torus"]

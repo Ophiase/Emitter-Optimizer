@@ -11,7 +11,14 @@ from emitter_optimizer.kernel.descent import (
     Optimizer,
     Step,
 )
-from emitter_optimizer.kernel.domain import Extent, GridShape, Scene
+from emitter_optimizer.kernel.domain import (
+    Domain,
+    Extent,
+    GridShape,
+    Scene,
+    Sphere,
+    Torus,
+)
 from emitter_optimizer.kernel.laws import Law, Physics
 from emitter_optimizer.kernel.occlusion import (
     HardOcclusion,
@@ -28,6 +35,7 @@ __all__ = [
     "Descender",
     "DescentResult",
     "DescentSettings",
+    "Domain",
     "Extent",
     "Greedy",
     "GridShape",
@@ -40,5 +48,7 @@ __all__ = [
     "Physics",
     "Scene",
     "SoftOcclusion",
+    "Sphere",
     "Step",
+    "Torus",
 ]
