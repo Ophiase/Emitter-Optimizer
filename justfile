@@ -38,6 +38,13 @@ test:
     uv run pytest
 
 [group("dev")]
+[doc("Check the lock, the known vulnerabilities and the licences; asks the network, so it stays out of the gate")]
+audit:
+    uv lock --check
+    uv audit
+    uv run --with pip-licenses pip-licenses --partial-match --fail-on "GPL;AGPL;SSPL"
+
+[group("dev")]
 [doc("Run the published benchmark into docs/benchmark/results.md")]
 bench:
     uv run python -m scripts.bench
@@ -62,7 +69,7 @@ rumdl-fmt:
 [script("bash")]
 guards:
     status=0
-    for check in markdown french comment-slop no-suppression no-module-docstring one-class no-protocol callable-alias hardcoded-url portable folder-size yaml-extension config-format file-length version; do
+    for check in markdown markdown-smell french comment-slop no-suppression no-module-docstring one-class no-protocol callable-alias hardcoded-url portable folder-size yaml-extension config-format file-length version; do
         just _guard "$check" || status=1
     done
     exit $status

@@ -10,7 +10,7 @@ obstacles, an emitter law and a sensor law, where should the emitters go?
 - [distance.md](distance.md) — Euclidean today; a strategy later.
 - [functions.md](functions.md) — the contract for the user's two laws.
 - [optimizer.md](optimizer.md) — how the descent runs, and its bounds.
-- [autodiff.md](autodiff.md) — the analytic gradient, the finite differences,
+- [autodiff.md](autodiff.md) — JAX computes the gradient,
   and the seam a framework would plug into.
 
 ## The invariant

@@ -4,6 +4,12 @@ Milestones of the whole project; the version is in `VERSION`.
 
 ## Unreleased
 
+- **CI exists and stays off**: GitHub and GitLab pipelines run by hand only.
+- **`just audit`** checks the lock, the known vulnerabilities and the licences.
+- **Markdown has a rule**: a smell check, and Mermaid instead of ASCII drawings.
+- **The roadmap is reordered**: solved cases, a `Domain` kernel, manifolds, a
+  molecule, then a 3D view ([faces](ideas/architecture/faces.md)).
+
 ## 2.2.0 — 2026-11-04
 
 - **The legacy engine is gone**: the CLI, the service and the window all run

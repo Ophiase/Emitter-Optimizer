@@ -1,0 +1,6 @@
+*/.venv/*
+*/CHANGELOG.md
+*/.agents/*
+*/.claude/*
+*/AGENTS.md
+*/CLAUDE.md

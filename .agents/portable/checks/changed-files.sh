@@ -9,5 +9,6 @@ cd "$(git -C "$(dirname "${BASH_SOURCE[0]}")" rev-parse --show-toplevel)" || exi
 
 {
   git diff --name-only --diff-filter=d HEAD
+  git diff --cached --name-only --diff-filter=d
   git ls-files --others --exclude-standard
 } 2>/dev/null | sort -u

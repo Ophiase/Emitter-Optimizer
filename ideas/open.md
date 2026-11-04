@@ -2,36 +2,29 @@
 
 ## For the author
 
-1. **[question] Which face?** A local web page (agent-friendly, no build, no
-   CDN) or a reduced DearPyGui window (native, already there).
-2. **[question] Which renderer?** `matplotlib` draws the figure a person
-   looks at today; the author would reach for `plotly` for the charts, and a
-   hand-written SVG would remove 30 MB of dependencies. The window still
-   needs DearPyGui drawings.
-3. **[question] Keep `opencv-python`?** It is used for one Canny plus one
-   contour extraction; a marching-squares in NumPy or `scikit-image` would
-   remove 60 MB.
-4. **[question] How are user functions loaded?** Today `exec` on a Python file
+1. **[question] When does the window give way to one page?** The direction and
+   the criteria are in [faces](architecture/faces.md).
+2. **[question] How are user functions loaded?** Today `exec` on a Python file
    ([functions](engine/functions.md)); a plugin contract, or a restricted
    expression language, or both.
-5. **[question] Which baselines deserve the benchmark?** k-center, k-median,
+3. **[question] Which baselines deserve the benchmark?** k-center, k-median,
    greedy maximum coverage, or a facility-location solver from `scipy`.
-6. **[question] Is a paper the goal, or a tool?** It changes how much of
+4. **[question] Is a paper the goal, or a tool?** It changes how much of
    [model/](model/README.md) is measured versus shipped.
-7. **[question] Is the 3D, manifold and constraint path worth it?** It is
+5. **[question] Is the 3D, manifold and constraint path worth it?** It is
    the only direction that makes the project different from a coverage demo
    ([manifolds](model/manifolds.md), [constraints](model/constraints.md)); it
    is also the most expensive.
-8. **[question] What is maximized in the crystal case?** A diffraction
+6. **[question] What is maximized in the crystal case?** A diffraction
    signal, a stability, a defect arrangement? Without a physical quantity the
    case stays a toy ([crystals](model/crystals.md)).
-9. **[question] Is the circuit case the same project?** A pairwise term and
+7. **[question] Is the circuit case the same project?** A pairwise term and
    complex phases make a different model ([circuits](model/circuits.md)).
-10. **[question] Python or a Rust kernel?** The arguments and the triggers
-    are in [language](architecture/language.md); none is true today.
-11. **[question] Which implicit field first?** A Gaussian mixture, a
-    coordinate network, or a signed distance field ([implicit-energy](model/implicit-energy.md)).
-12. **[question] How many samples?** The benchmark has to pick the count
+8. **[question] Python or a Rust kernel?** The arguments and the triggers
+   are in [language](architecture/language.md); none is true today.
+9. **[question] Which implicit field first?** A Gaussian mixture, a
+   coordinate network, or a signed distance field ([implicit-energy](model/implicit-energy.md)).
+10. **[question] How many samples?** The benchmark has to pick the count
     where the Monte Carlo error is below the improvement being measured.
 
 ## Technical

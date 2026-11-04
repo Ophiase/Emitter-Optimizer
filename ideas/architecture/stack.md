@@ -17,8 +17,8 @@ someone else, and the core keeps two: `jax` and `optax`.
 | --- | --- |
 | Command line | `argparse`, JSON out, CSV and PNG beside it |
 | Local service | FastAPI and uvicorn; pydantic at the boundary; pydantic-settings for the host and the port |
-| Window | Dear PyGui, a thin client of the session; a local page is the alternative (phase 5) |
-| Figures | a renderer of our own: PNG with Pillow, SVG by hand (phase 3) |
+| Window | Dear PyGui today; the direction is in [faces](faces.md) |
+| Figures | Pillow for the maps and the GIFs, plotly for the gain |
 
 ## Around the code
 

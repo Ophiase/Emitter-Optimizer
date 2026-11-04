@@ -19,22 +19,14 @@ drive** as easily as a person.
 
 ## The path
 
-```text
-  origin.md ── the 2021 demo, what survives and what goes
-      │
-  vision.md ── for whom, what it promises, what it is not
-      │
-  architecture/ ── engine, service, ui; Python and NumPy as the stack
-      │
-  engine/ ──── the gain, the occlusion, the maps, the optimizer
-      │
-  model/ ───── the objective, the emitter count, the baselines
-      │
-  milestones.md ── M1 engine, M2 agent, M3 model, M4 ui
-      │
-  roadmap.md ───── the ordered steps, one branch each
-      │
-  open.md ──── the questions still open
+```mermaid
+graph TD
+    origin[origin: the 2021 demo] --> vision[vision: for whom]
+    vision --> architecture[architecture: kernel, faces]
+    architecture --> engine[engine: gain, occlusion, maps]
+    engine --> model[model: objectives, manifolds]
+    model --> roadmap[roadmap: ordered steps]
+    roadmap --> open[open: questions left]
 ```
 
 ## Files
@@ -43,12 +35,8 @@ drive** as easily as a person.
   [milestones.md](milestones.md) · [roadmap.md](roadmap.md) ·
   [open.md](open.md) · [prior-art.md](prior-art.md) ·
   [crossover.md](crossover.md)
-- **architecture/**: [README](architecture/README.md) —
-  [kernel](architecture/kernel.md) · [stack](architecture/stack.md) ·
-  [layers](architecture/layers.md) ·
-  [agent-interop](architecture/agent-interop.md) ·
-  [zero-telemetry](architecture/zero-telemetry.md) ·
-  [language](architecture/language.md)
+- **architecture/**: [README](architecture/README.md) — the kernel, the stack,
+  the layers, agent interop, zero telemetry, the faces, the language
 - **engine/**: [README](engine/README.md) —
   [gain](engine/gain.md) · [occlusion](engine/occlusion.md) ·
   [map](engine/map.md) · [distance](engine/distance.md) ·
@@ -67,11 +55,9 @@ drive** as easily as a person.
   [circuits](model/circuits.md) ·
   [implicit-energy](model/implicit-energy.md)
 
-## Where the code stands (v2.1, 2026-10-31)
+## Where the code stands (v2.2, 2026-11-04)
 
-**[defined]** v2.1 is the modernization: NumPy with an exact gradient, a
-projected Adam descent, a command line, a local service an agent drives, five
-named use cases, generated figures and a benchmark. The window is one client
-of the engine, not its only face. What remains is Phase 3 of the roadmap: a
-richer objective, the emitter count, the baselines, then the 3D and the
-manifolds.
+- **[defined]** One JAX kernel behind a CLI, a local service and a DearPyGui
+  window, with five cases from aerial photographs.
+- **[sketch]** Next, in the [roadmap](roadmap.md): cases proved against a
+  baseline, a kernel that does not know the plane, manifolds and a molecule.

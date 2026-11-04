@@ -1,0 +1,24 @@
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web"
+
+default:
+  image: docker.io/library/python:3.14-slim-bookworm
+  before_script:
+    - apt-get update -qq && apt-get install -qqy --no-install-recommends git libgl1
+    - pip install --quiet uv rust-just rumdl
+
+check:
+  when: manual
+  variables:
+    GIT_DEPTH: "2"
+  script:
+    - uv sync
+    - just check
+    - git reset --soft HEAD~1
+    - just guards
+
+audit:
+  when: manual
+  script:
+    - just audit

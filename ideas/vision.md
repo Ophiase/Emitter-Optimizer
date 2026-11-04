@@ -22,9 +22,8 @@ and open enough for an agent to drive.
    distance are the user's; the engine only optimizes ([functions](engine/functions.md)).
 2. **Measured, not claimed**: every result comes with its gain, its seed and
    a figure, and every method is compared to a baseline ([baselines](model/baselines.md)).
-3. **Differentiable where it can be, finite differences where it cannot**: the
-   gradient is exact for the built-in laws and approximated for arbitrary
-   Python callables ([optimizer](engine/optimizer.md)).
+3. **Differentiable, exactly**: a law is a `jax.numpy` function, and its gradient
+   is computed, never approximated ([autodiff](engine/autodiff.md)).
 4. **Local-first**: no network call the person did not ask for, no telemetry,
    no fetched font or script ([zero-telemetry](architecture/zero-telemetry.md)).
 5. **Agent-native**: the engine is headless and speaks JSON; the window is one

@@ -1,0 +1,28 @@
+name: check
+on: workflow_dispatch
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 2
+      - uses: astral-sh/setup-uv@v7
+      - uses: extractions/setup-just@v4
+      - run: uv tool install rumdl
+      - run: uv sync
+      - run: just check
+      - name: Show the last commit to the guards as uncommitted changes
+        run: git reset --soft HEAD~1
+      - run: just guards
+
+  audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+      - uses: extractions/setup-just@v4
+      - run: just audit

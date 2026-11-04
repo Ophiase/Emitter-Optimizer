@@ -11,7 +11,3 @@ exactly, once, with no finite difference and no analytic formula to maintain.
 - A law that `jax.grad` cannot trace is refused by the loader, with the file
   named in the message. There is no fallback: a silent finite difference hides
   the defect.
-
-The NumPy engine with its analytic gradient is the **2.x baseline**, kept in
-[the benchmark](../../docs/benchmark/results.md) as the reference the new
-engine is measured against. It is not a second implementation of the engine.

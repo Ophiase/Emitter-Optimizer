@@ -39,6 +39,9 @@ in [.agents/portable/rules/python.md](.agents/portable/rules/python.md).
   `just precommit` fixes what it can.
 - `just agent gate` is the one command to declare work done: `just check`
   (lint, tests, markdown) then `just guards`.
+- `just audit` checks the lock, the vulnerabilities and the licences. It asks
+  the network, so it stays out of the gate.
+- CI exists and runs by hand only; activating it is the author's consent.
 
 ## Layout
 
@@ -102,7 +105,8 @@ tells an agent when and how to use them.
 ## Done
 
 A topic is done when `just agent gate` passes. Commit then, on its branch,
-without being asked; never push.
+without being asked; never push. `main` is always valid: merge each finished
+step into it, so that any stopping point can be judged from `main`.
 
 ## Branches
 
