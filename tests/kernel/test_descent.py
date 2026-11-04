@@ -33,3 +33,15 @@ def test_a_descent_improves_on_its_start() -> None:
     result = Descender(scene, PHYSICS, settings).run()
     assert result.gain > before
     assert len(result.history) == settings.steps
+
+
+def test_a_long_descent_never_ends_below_its_start() -> None:
+    scene = Scene.of(EXTENT, GridShape(16, 16), walls=WALL)
+    start = scene.sample(jax.random.key(0), 1, 4)
+    coverage = Coverage(scene, HardOcclusion(), PHYSICS)
+    settings = DescentSettings(emitters=4, steps=40, step_size=0.2, report_every=10)
+
+    result = Descender(scene, PHYSICS, settings, start=start).run()
+
+    assert result.gain >= float(coverage.gain(start[0]))
+    assert abs(result.gain - float(coverage.gain(result.positions))) < 1e-6

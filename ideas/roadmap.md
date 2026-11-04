@@ -8,7 +8,7 @@ done when `just agent gate` passes **and** its acceptance sentence is true.
 
 **[fact]** 2026-11-04, v2.2.0. The CLI, the local service and the DearPyGui
 window run on the JAX kernel; five cases come from aerial photographs. The
-kernel is two-dimensional in `Scene` only.
+kernel works on a plane, a sphere and a torus through one `Domain`.
 
 ## How to resume
 
@@ -49,19 +49,19 @@ it. The science comes before the packaging.
 
 ## Step 2 — the cases are solved, and it shows
 
-- [ ] **2.1 Convergence.** Each case descends until it stops improving.
+- [x] **2.1 Convergence.** Each case descends until it stops improving.
   *Accepts*: a measured curve per case, and the emitters visibly travel.
-- [ ] **2.2 A baseline per case** ([baselines](model/baselines.md)).
+- [x] **2.2 A baseline per case** ([baselines](model/baselines.md)).
   *Accepts*: a table of our gain against a greedy and a random placement.
-- [ ] **2.3 A case by name** in the CLI, the service and the window, with the
+- [x] **2.3 A case by name** in the CLI, the service and the window, with the
   right extent. *Accepts*: `emitter-optimizer run --case garden` works.
-- [ ] **2.4 Bad input is a message**, not a traceback. *Accepts*: a test per
+- [x] **2.4 Bad input is a message**, not a traceback. *Accepts*: a test per
   missing file, zero emitter and zero iteration.
-- [ ] **2.5 The published benchmark** lists the five cases.
+- [x] **2.5 The published benchmark** lists the five cases.
 
 ## Step 3 — a kernel that does not know the plane
 
-- [ ] **3.1 A `Domain` `ABC`.** Points, measure, distance, projection; `Plane` is
+- [x] **3.1 A `Domain` `ABC`.** Points, measure, distance, projection; `Plane` is
   the first ([manifolds](model/manifolds.md)).
   *Accepts*: the plane gives the same gains as before.
 - [ ] **3.2 A volume.** A voxel density and an absorption field, in 3D
@@ -70,7 +70,7 @@ it. The science comes before the packaging.
 
 ## Step 4 — manifolds
 
-- [ ] **4.1 The sphere.** Geodesic distance and projection.
+- [x] **4.1 The sphere.** Geodesic distance and projection.
   *Accepts*: Thomson's known optima are recovered: a tetrahedron for 4, an
   octahedron for 6, an icosahedron for 12.
 - [ ] **4.2 The torus.** A periodic cell and a lattice sum

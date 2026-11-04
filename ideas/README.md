@@ -42,18 +42,8 @@ graph TD
   [map](engine/map.md) · [distance](engine/distance.md) ·
   [functions](engine/functions.md) · [optimizer](engine/optimizer.md) ·
   [autodiff](engine/autodiff.md)
-- **model/**: [README](model/README.md) —
-  [objective](model/objective.md) ·
-  [emitter-count](model/emitter-count.md) ·
-  [baselines](model/baselines.md) ·
-  [piecewise-linear](model/piecewise-linear.md) ·
-  [physics](model/physics.md) ·
-  [three-dimensional](model/three-dimensional.md) ·
-  [manifolds](model/manifolds.md) ·
-  [constraints](model/constraints.md) ·
-  [crystals](model/crystals.md) ·
-  [circuits](model/circuits.md) ·
-  [implicit-energy](model/implicit-energy.md)
+- **model/**: [README](model/README.md) — objectives, baselines, physics, the
+  third dimension, manifolds, the sphere, crystals, constraints
 
 ## Where the code stands (v2.2, 2026-11-04)
 

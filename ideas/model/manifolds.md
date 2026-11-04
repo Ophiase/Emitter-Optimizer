@@ -31,20 +31,12 @@ $$
   ([constraints](constraints.md)); the Euclidean formula is a special case,
   which is why the current code can stay flat.
 
-## [sketch] How to keep one engine
+## How one engine stays one
 
-Two strategies, behind one interface:
-
-```python
-class Domain(Protocol):
-    def points(self) -> Points: ...  # where the gain is evaluated
-    def measure(self) -> Weights: ...  # mu, the density
-    def distance(self, a: Points, b: Points) -> Distances: ...
-    def project(self, y: Points) -> Points: ...  # back onto the domain
-```
-
-- `Plane`, `Mesh`, `Torus(lattice)`: each one answers the four calls.
-- The sum, the laws and the optimizer do not know which one they use.
+- **[done]** `Domain` is an `ABC`: points, a measure, a signal, a projection.
+- **[done]** `Scene`, `Sphere` and `Torus` subclass it; the gain, the descent and
+  the greedy baseline call nothing else.
+- The first case is the [sphere](sphere.md), where the answer is known.
 
 ## [caution]
 

@@ -5,8 +5,8 @@ from jax import Array
 
 @dataclass(frozen=True, slots=True)
 class DescentResult:
-    """`gain` is measured with the sharp walls; `history` is the best blurred
-    objective at each step."""
+    """`gain` and `start_gains` are the best seen with the sharp walls;
+    `history` is the best blurred objective at each step."""
 
     positions: Array
     gain: float

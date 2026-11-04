@@ -13,6 +13,7 @@ baselines to prove the result is good.
 - [physics.md](physics.md) — anisotropy, path loss, noise floor, surfaces.
 - [three-dimensional.md](three-dimensional.md) — a volume, a surface, a mesh.
 - [manifolds.md](manifolds.md) — a metric, a periodic cell, a quotient.
+- [sphere.md](sphere.md) — the first manifold, with a known answer.
 - [constraints.md](constraints.md) — rigid bodies, torsions, lattice sites.
 - [crystals.md](crystals.md) — a periodic cell, atoms as emitters.
 - [circuits.md](circuits.md) — pairs, interference, layouts.

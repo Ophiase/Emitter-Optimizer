@@ -10,5 +10,5 @@ class SGD(Optimizer):
     momentum: float = 0.9
     nesterov: bool = True
 
-    def to_optax(self, rate: float) -> optax.GradientTransformation:
+    def to_optax(self, rate: optax.ScalarOrSchedule) -> optax.GradientTransformation:
         return optax.sgd(rate, momentum=self.momentum, nesterov=self.nesterov)
