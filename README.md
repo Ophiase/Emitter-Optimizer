@@ -49,6 +49,56 @@ score the engine maximizes — bright places are well served, dark places are
 not. The walls cut the signal: a place behind a wall receives nothing from an
 emitter in front of it, whatever the distance.*
 
+## The model
+
+The score is the **gain** $\mathcal G_P$, maximized over the emitter positions
+$U$. The parameters are $P := (E, \mu, C)$:
+
+- $E$ — the map.
+- $\mu$ — a density measure over $E$: a non-negative weight per place.
+- $C$ — the segments that block the signal.
+- $U$ — the positions of the emitters.
+
+Two laws are the user's:
+
+- $\varphi : \mathbb{R}^+ \to \mathbb{R}$ — the signal received from one
+  emitter at a given distance.
+- $\psi : \mathbb{R} \to \mathbb{R}$ — the score of a sensor that receives a
+  sum of signals.
+
+The path through the obstacles and the distance are
+
+$$
+pass_C : (x, y) \mapsto 1 - \prod_{s \in C} \left(1 - \mathbb{1}_{[x; y] \cap s}\right),
+\qquad
+dist : (x, y) \mapsto \lVert x - y \rVert_2 .
+$$
+
+The received signal at a place, and the gain over the map:
+
+$$
+r_{U, C}(x) = \sum_{y \in U} \varphi\bigl(dist(x, y)\bigr) \cdot pass_C(x, y),
+\qquad
+\mathcal G_P(U) = \int_E \psi \circ r_{U, C}(x) \, d\mu(x).
+$$
+
+The integral is a mean over the cells of the grid; with a normalized density it
+is the expected score of a random place. $\mathcal G_P$ is differentiable in
+$U$ everywhere except across a wall, and the kernel computes the gradient with JAX
+autodiff:
+
+$$
+\frac{\partial \mathcal G_P}{\partial y}
+= -\frac{1}{\lvert E \rvert} \sum_{x \in E}
+  \psi'\bigl(r_{U, C}(x)\bigr) \,
+  \varphi'\bigl(dist(x, y)\bigr) \,
+  \frac{x - y}{\lVert x - y \rVert_2} \,
+  pass_C(x, y) \, \mu(x).
+$$
+
+This is the 2023 baseline, kept as the reference every newer model is compared
+against ([ideas/model](ideas/model/README.md)).
+
 ## Multiple situations, one engine
 
 Each case starts from a vertical aerial photograph. Two layers are painted
@@ -118,56 +168,6 @@ degree ([why the optimum is known](ideas/model/sphere.md)).
 | **urea** | <img src="docs/figures/case_urea.gif" alt="The two urea molecules of the cell, found by the emitters" width="240"> | Emitters find the 16 atoms of a urea cell in a density computed from the published structure.<br><br>Heavy atoms within 0.03 Å, hydrogens within 0.03 Å, where a grid search stops at 0.39 Å.<br><br>The density is synthetic ([limits](ideas/model/urea.md)). |
 
 `just space thomson`, `globe`, `building` or `urea` regenerates each one.
-
-## The model
-
-The score is the **gain** $\mathcal G_P$, maximized over the emitter positions
-$U$. The parameters are $P := (E, \mu, C)$:
-
-- $E$ — the map.
-- $\mu$ — a density measure over $E$: a non-negative weight per place.
-- $C$ — the segments that block the signal.
-- $U$ — the positions of the emitters.
-
-Two laws are the user's:
-
-- $\varphi : \mathbb{R}^+ \to \mathbb{R}$ — the signal received from one
-  emitter at a given distance.
-- $\psi : \mathbb{R} \to \mathbb{R}$ — the score of a sensor that receives a
-  sum of signals.
-
-The path through the obstacles and the distance are
-
-$$
-pass_C : (x, y) \mapsto 1 - \prod_{s \in C} \left(1 - \mathbb{1}_{[x; y] \cap s}\right),
-\qquad
-dist : (x, y) \mapsto \lVert x - y \rVert_2 .
-$$
-
-The received signal at a place, and the gain over the map:
-
-$$
-r_{U, C}(x) = \sum_{y \in U} \varphi\bigl(dist(x, y)\bigr) \cdot pass_C(x, y),
-\qquad
-\mathcal G_P(U) = \int_E \psi \circ r_{U, C}(x) \, d\mu(x).
-$$
-
-The integral is a mean over the cells of the grid; with a normalized density it
-is the expected score of a random place. $\mathcal G_P$ is differentiable in
-$U$ everywhere except across a wall, and the kernel computes the gradient with JAX
-autodiff:
-
-$$
-\frac{\partial \mathcal G_P}{\partial y}
-= -\frac{1}{\lvert E \rvert} \sum_{x \in E}
-  \psi'\bigl(r_{U, C}(x)\bigr) \,
-  \varphi'\bigl(dist(x, y)\bigr) \,
-  \frac{x - y}{\lVert x - y \rVert_2} \,
-  pass_C(x, y) \, \mu(x).
-$$
-
-This is the 2023 baseline, kept as the reference every newer model is compared
-against ([ideas/model](ideas/model/README.md)).
 
 ## Try it
 
