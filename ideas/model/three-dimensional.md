@@ -35,8 +35,18 @@ A 3D value map cannot be shown as one image. A window shows slices, or an
 isosurface; a figure is a slice plus a projection. This is the cost of the
 case, and it is a UI cost, not a mathematical one.
 
+## [measured] The volume came first
+
+The absorption field was the author's decision, and a volume is what it needs.
+
+- `Volume` integrates the absorption along each sight line: a wall is a cost,
+  not a cut, so the gradient goes through it.
+- The building has 30 x 18 x 9 voxels, 3 storeys and 6 access points.
+- Gain: 0.0664 at random, 0.1109 greedy, 0.1173 with a descent from greedy.
+- A free descent from 3 starts reaches 0.0969: start from greedy in a volume.
+- A figure is a slice per storey, which `FloorsImage` draws.
+
 ## [question]
 
-Which one first: a surface (geodesic distance, no volume) or a volume (more
-cells, no geodesic)? The surface is the natural extension of the current
-code; the volume is the natural extension of the user's mental picture.
+A surface with a geodesic distance stays to do; the sphere covers the case with
+a closed form ([sphere](sphere.md)).

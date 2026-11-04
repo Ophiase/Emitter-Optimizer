@@ -50,7 +50,7 @@ The package is `src/emitter_optimizer/`, in a src layout: it is imported as
 seven entries per folder, two hundred lines per file
 ([layout](.agents/rules/layout.md)).
 
-- `kernel/` — the JAX kernel: shapes, laws, scene, occlusion, coverage and
+- `kernel/` — the JAX kernel: domains, laws, occlusion, coverage, placement and
   descent. No GUI, no printing.
 - `maps/` — Pillow and scikit-image load a density and a wall mask; `maps/cases/`
   names the five cases of `resources/cases/`.

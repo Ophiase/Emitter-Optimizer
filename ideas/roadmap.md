@@ -8,7 +8,7 @@ done when `just agent gate` passes **and** its acceptance sentence is true.
 
 **[fact]** 2026-11-04, v2.2.0. The CLI, the local service and the DearPyGui
 window run on the JAX kernel; five cases come from aerial photographs. The
-kernel works on a plane, a sphere and a torus through one `Domain`.
+kernel works on a plane, a sphere, a torus and a volume through one `Domain`.
 
 ## How to resume
 
@@ -64,7 +64,7 @@ it. The science comes before the packaging.
 - [x] **3.1 A `Domain` `ABC`.** Points, measure, distance, projection; `Plane` is
   the first ([manifolds](model/manifolds.md)).
   *Accepts*: the plane gives the same gains as before.
-- [ ] **3.2 A volume.** A voxel density and an absorption field, in 3D
+- [x] **3.2 A volume.** A voxel density and an absorption field, in 3D
   ([three-dimensional](model/three-dimensional.md)).
   *Accepts*: a building case runs, with its time.
 
@@ -73,14 +73,14 @@ it. The science comes before the packaging.
 - [x] **4.1 The sphere.** Geodesic distance and projection.
   *Accepts*: Thomson's known optima are recovered: a tetrahedron for 4, an
   octahedron for 6, an icosahedron for 12.
-- [ ] **4.2 The torus.** A periodic cell and a lattice sum
+- [x] **4.2 The torus.** A periodic cell and a lattice sum
   ([crystals](model/crystals.md)).
   *Accepts*: the truncated sum converges as the range grows.
-- [ ] **4.3 A case on a surface** a reader can picture, in the README.
+- [x] **4.3 A case on a surface** a reader can picture, in the README.
 
 ## Step 5 — a molecule
 
-- [ ] **5.1 A molecular case**, with what it maximizes stated first
+- [x] **5.1 A molecular case**, with what it maximizes stated first
   ([constraints](model/constraints.md)).
   *Accepts*: a figure and a table a chemist can read.
 

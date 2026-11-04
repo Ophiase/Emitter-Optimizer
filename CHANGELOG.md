@@ -11,6 +11,10 @@ Milestones of the whole project; the version is in `VERSION`.
 - **The kernel no longer knows the plane**: `Domain` has `Scene`, `Sphere` and
   `Torus`. On a sphere, the tetrahedron, the octahedron and the icosahedron
   appear by themselves.
+- **Three cases beyond the plane**: twelve stations on the globe, six access
+  points in a building, and the atoms of a urea cell recovered within 0.03
+  angstrom from a synthetic density.
+- **A `Volume`**: walls become an absorption field integrated along each ray.
 - **A case by name**: `--case garden` on `run`, `serve` and `window`, and
   `just case <name>`.
 - **Bad input is one line**: a bad argument exits 2 without a traceback.

@@ -1,3 +1,4 @@
+import itertools
 from dataclasses import dataclass
 
 import numpy as np
@@ -118,7 +119,7 @@ class GlobeImage:
         shares = np.linspace(0.0, 1.0, EDGE_STEPS)[:, None]
         arc = first * (1.0 - shares) + second * shares
         arc = arc / np.linalg.norm(arc, axis=1, keepdims=True)
-        for start, end in zip(arc[:-1], arc[1:], strict=True):
+        for start, end in itertools.pairwise(arc):
             if start @ centre > 0.0 and end @ centre > 0.0:
                 draw.line(
                     [

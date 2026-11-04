@@ -70,8 +70,54 @@ In the painted layers the attraction is yellow and the collision red. Each
 case is a folder in [resources/cases](resources/cases/README.md): the
 photograph, the two layers, and its `emitter.py` and `sensor.py`.
 `uv run python -m scripts.paint` repaints the layers; each GIF is the first
-twenty iterations. Varieties, 3D volumes and crystal lattices are the next
-representations of space ([ideas/roadmap.md](ideas/roadmap.md)).
+twenty iterations.
+
+## Beyond the plane
+
+The gain only asks a space for its points, its measure and its distance, so the
+same descent runs on a sphere, in a building and in a crystal.
+
+```mermaid
+graph TD
+    subgraph engine[One engine]
+        laws[Your two laws] --> gain[The gain]
+        gain --> search[Greedy and descent]
+    end
+    subgraph spaces[Any domain]
+        plane[Plane and walls]
+        sphere[Sphere]
+        volume[Volume and absorption]
+        torus[Periodic cell]
+    end
+    search --> plane
+    search --> sphere
+    search --> volume
+    search --> torus
+    classDef core fill:#2a6db5,stroke:#1d4d80,color:#ffffff
+    classDef space fill:#2e7d32,stroke:#1b5e20,color:#ffffff
+    class laws,gain,search core
+    class plane,sphere,volume,torus space
+```
+
+### A sphere that finds the regular solids
+
+Nothing in the code knows a polyhedron. On a uniform sphere, the emitters settle
+into the tetrahedron, the octahedron and the icosahedron, within a tenth of a
+degree ([why the optimum is known](ideas/model/sphere.md)).
+
+<p align="center">
+  <img src="docs/figures/sphere_polyhedra.png" alt="Four, six and twelve emitters on a sphere: a tetrahedron, an octahedron, an icosahedron" width="95%">
+</p>
+
+### Three more cases
+
+| Case | Result | What it shows |
+| --- | --- | --- |
+| **globe** | <img src="docs/figures/case_globe.gif" alt="Twelve stations on the rotating Earth" width="240"> | Twelve stations serving the 243 cities of Natural Earth, weighted by population.<br><br>$\varphi(\theta) = e^{30 (\cos \theta - 1)}$ over the geodesic angle.<br><br>Gain 0.0102, against 0.0075 at random. |
+| **building** | <img src="docs/figures/case_building.gif" alt="Six access points moving across three storeys" width="240"> | Six access points on three storeys; concrete absorbs the signal along each sight line.<br><br>$\varphi(d) = 1 / (1 + (d/4)^2)$, times $e^{-\int \alpha}$.<br><br>Gain 0.1173, against 0.1109 for greedy and 0.0664 at random. |
+| **urea** | <img src="docs/figures/case_urea.gif" alt="The two urea molecules of the cell, found by the emitters" width="240"> | Emitters find the 16 atoms of a urea cell in a density computed from the published structure.<br><br>Heavy atoms within 0.03 Å, hydrogens within 0.03 Å, where a grid search stops at 0.39 Å.<br><br>The density is synthetic ([limits](ideas/model/urea.md)). |
+
+`just space thomson`, `globe`, `building` or `urea` regenerates each one.
 
 ## The model
 
@@ -184,10 +230,13 @@ its slope by autodiff; there is no `derivative` to write
 ## Benchmark
 
 `just bench` regenerates [docs/benchmark/results.md](docs/benchmark/results.md)
-from five named cases — uniform, farm, building, shop, wide — with the initial
-and final gain, the improvement and the time; `just figures` draws the cases
-and the figures from the same runs. The building case gains the most; the farm pays
-for its size. The table is generated, never edited by hand.
+from the five photographed cases, against a random and a greedy placement. The
+descent beats random by 5% to 57%, and adds at most 1.6% to greedy on these
+maps; it pays off off the grid, as on urea. The table is generated, never edited.
+
+<p align="center">
+  <img src="docs/benchmark/methods.png" alt="The gain of greedy and of the descent above a random placement, case by case" width="80%">
+</p>
 
 ## Status
 
@@ -201,7 +250,9 @@ for its size. The table is generated, never edited by hand.
 | Local page: FastAPI, pydantic, plotly, no build | Done, tested |
 | Local service, `agent.just` and the skill | Done ([agent-interop](ideas/architecture/agent-interop.md)) |
 | Coverage, quantile, max-min objectives | Planned ([objective](ideas/model/objective.md)) |
-| 3D, manifolds, constrained emitters | Planned ([implicit energy](ideas/model/implicit-energy.md)) |
+| A `Domain`: plane, sphere, periodic cell, volume | Done, tested ([manifolds](ideas/model/manifolds.md)) |
+| Baselines: random and greedy | Done ([benchmark](docs/benchmark/results.md)) |
+| Surfaces, constrained emitters, an implicit energy | Planned ([implicit energy](ideas/model/implicit-energy.md)) |
 | A crossover with the point-cloud project | Sketched ([crossover](ideas/crossover.md)) |
 
 The questions still open are in [ideas/open.md](ideas/open.md).
@@ -211,12 +262,12 @@ The questions still open are in [ideas/open.md](ideas/open.md).
 | Folder | What it is |
 | --- | --- |
 | [ideas/](ideas/README.md) | Every concept, one per file, with its status: start here |
-| [src/emitter_optimizer/kernel/](src/emitter_optimizer/kernel/) | The JAX kernel: shapes, scene, occlusion, coverage and descent |
+| [src/emitter_optimizer/kernel/](src/emitter_optimizer/kernel/) | The JAX kernel: domains, occlusion, coverage, greedy and descent |
 | [src/emitter_optimizer/gui/](src/emitter_optimizer/gui/) | The DearPyGui window: render, process, parameters and the law editors |
 | [src/emitter_optimizer/service/](src/emitter_optimizer/service/) | FastAPI, pydantic models, the session and the local page for an agent |
 | [src/emitter_optimizer/maps/](src/emitter_optimizer/maps/) | Pillow and scikit-image load a density and a wall mask |
 | [src/emitter_optimizer/render/](src/emitter_optimizer/render/) | Pillow draws the map; plotly draws the gain |
-| [scripts/](scripts/) | The benchmark and the figures of this page |
+| [scripts/](scripts/) | The benchmark, the figures and the cases beyond the plane |
 | [settings/](settings/) | The two laws the person edits |
 | [tests/](tests/) | A property per guarantee: the gradient, the walls, the grid, the service |
 | [docs/benchmark/](docs/benchmark/results.md) | The published benchmark, generated by `just bench` |
@@ -231,9 +282,9 @@ Agents working on this code read [AGENTS.md](AGENTS.md).
 | M0 | The baseline, 2023 when I was a student | Done |
 | M1 | A headless JAX kernel, a command line, a benchmark | Done |
 | M2 | A local service an agent can drive |  Done |
-| M3 | A model worth publishing: objectives, count, baselines | Next |
+| M3 | A model worth publishing: baselines done; objectives, count | Next |
 | M4 | The local page served to agents, beside the DearPyGui window | Done |
-| M5 | 3D, manifolds, constrained emitters | Planned |
+| M5 | 3D and manifolds done; constrained emitters, real data | Next |
 
 Every step, its acceptance sentence and how to resume it:
 [ideas/roadmap.md](ideas/roadmap.md).

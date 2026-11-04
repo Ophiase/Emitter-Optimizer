@@ -24,7 +24,7 @@ install:
     uv run python -m emitter_optimizer run --case {{ name }} --out out/{{ name }} {{ args }}
 
 [group("user")]
-[doc("The cases beyond the plane: just space thomson, globe or urea")]
+[doc("The cases beyond the plane: just space thomson, globe, building or urea")]
 space name:
     uv run python -m scripts.spaces.{{ name }}
 

@@ -172,16 +172,12 @@ def main() -> None:
     heavy_error = errors(sites, heavy_atoms)
     light_error = errors(hydrogens, light_atoms)
     greedy_error = errors(np.asarray(greedy), heavy_atoms)
-    print(
-        f"gain random {random:.4f} greedy {float(coverage.gain(greedy)):.4f} descent {heavy.gain:.4f}"
-    )
-    print(
-        f"heavy worst {heavy_error.max():.3f} A; greedy worst {greedy_error.max():.3f} A"
-    )
-    print(
-        f"hydrogen worst {light_error.max():.3f} A, median {np.median(light_error):.3f} A"
-    )
-    print("electrons", np.round(electrons, 2).tolist(), f"{seconds:.0f}s")
+    print(f"gain random {random:.4f}, greedy {float(coverage.gain(greedy)):.4f}")
+    print(f"gain descent {heavy.gain:.4f}, in {seconds:.0f}s")
+    print(f"heavy worst {heavy_error.max():.3f} A")
+    print(f"greedy worst {greedy_error.max():.3f} A")
+    print(f"hydrogen worst {light_error.max():.3f} A")
+    print("electrons", np.round(electrons, 2).tolist())
     labels = [element_of(float(count)) for count in electrons] + ["H"] * LIGHT
     found = np.concatenate([sites, np.mod(hydrogens, np.array(CELL))])
     view = AtomsImage(labels, found, CELL)
