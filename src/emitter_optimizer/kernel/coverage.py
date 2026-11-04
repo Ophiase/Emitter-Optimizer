@@ -16,10 +16,13 @@ class Coverage:
     occlusion: Occlusion
     physics: Physics
 
-    def __call__(self, positions: Array) -> Array:
+    def sent(self, positions: Array) -> Array:
+        """`(points, emitters)`: what reaches each point from each emitter."""
         signal = self.domain.signal(self.physics.emitter, positions)
-        visible = self.domain.visibility(self.occlusion, positions)
-        received = jnp.sum(signal * visible, axis=1)
+        return signal * self.domain.visibility(self.occlusion, positions)
+
+    def __call__(self, positions: Array) -> Array:
+        received = jnp.sum(self.sent(positions), axis=1)
         return self.physics.sensor(received) * self.domain.measure
 
     def gain(self, positions: Array) -> Array:

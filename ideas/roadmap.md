@@ -90,6 +90,13 @@ it. The science comes before the packaging.
   *Accepts*: candidates compared on measured criteria. The window is not
   removed by an agent: that decision is the author's.
 
+## Step 7 — the visiting card
+
+- [x] **7.1 A way out of local minima** ([local-minima](engine/local-minima.md)).
+  *Accepts*: the spread between starts falls on all five cases.
+- [x] **7.2 One page per case**, linked from the README's summary.
+  *Accepts*: each has its decision, its laws, its numbers and its limits.
+
 ## Later
 
 - The wheel carries its default laws and cases; PyPI.

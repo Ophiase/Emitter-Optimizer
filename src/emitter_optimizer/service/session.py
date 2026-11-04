@@ -1,5 +1,5 @@
 import threading
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 import jax
 import jax.numpy as jnp
@@ -8,9 +8,11 @@ import numpy as np
 from emitter_optimizer.kernel import (
     Coverage,
     Descender,
+    DescentResult,
     DescentSettings,
     HardOcclusion,
     Physics,
+    Relocation,
     Scene,
 )
 from emitter_optimizer.render import GainChart, MapImage
@@ -20,6 +22,8 @@ from emitter_optimizer.service.models import (
     State,
     StopResult,
 )
+
+POLISH_SHARE = 0.3
 
 
 @dataclass
@@ -90,6 +94,8 @@ class Session:
             self._running = True
         try:
             result = descender.run()
+            if request.relocate and not descender.stopped:
+                result = self._relocated(result, settings)
         finally:
             with self._lock:
                 self._descender = None
@@ -98,6 +104,21 @@ class Session:
             self.positions = np.asarray(result.positions, dtype=np.float64)
             self.history = list(result.history)
         return self.state()
+
+    def _relocated(
+        self, reached: DescentResult, settings: DescentSettings
+    ) -> DescentResult:
+        moved = Relocation(self.scene, self.physics).improve(reached.positions)
+        polish = Descender(
+            self.scene,
+            self.physics,
+            replace(settings, step_size=settings.step_size * POLISH_SHARE),
+            start=moved[None],
+        )
+        with self._lock:
+            self._descender = polish
+        polished = polish.run()
+        return replace(polished, history=reached.history + polished.history)
 
     def stop(self) -> StopResult:
         descender = self._descender

@@ -92,7 +92,7 @@ never a crash.
 | Route | Effect |
 | --- | --- |
 | `GET /api/state` | map, emitters, gain, history, seed |
-| `POST /api/run` | `{"iterations": 200, "seed": 0}` |
+| `POST /api/run` | `{"iterations": 200, "seed": 0, "relocate": true}` |
 | `POST /api/place` | `{"positions": [[x, y], ...]}` or `{"emitters": 12, "seed": 0}` |
 | `POST /api/stop` | abort the running descent |
 | `GET /api/figure.png` | the current value map |

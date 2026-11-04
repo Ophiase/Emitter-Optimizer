@@ -67,6 +67,10 @@ class Descender:
     def stop(self) -> None:
         self._stop.set()
 
+    @property
+    def stopped(self) -> bool:
+        return self._stop.is_set()
+
     def run(self) -> DescentResult:
         transform = self.settings.optimizer.to_optax(_rate(self.scene, self.settings))
         objective = jax.vmap(
