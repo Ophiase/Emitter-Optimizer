@@ -16,6 +16,7 @@ baselines to prove the result is good.
 - [sphere.md](sphere.md) — the first manifold, with a known answer.
 - [constraints.md](constraints.md) — rigid bodies, torsions, lattice sites.
 - [crystals.md](crystals.md) — a periodic cell, atoms as emitters.
+- [urea.md](urea.md) — the atoms of a urea cell, found in their density.
 - [circuits.md](circuits.md) — pairs, interference, layouts.
 - [implicit-energy.md](implicit-energy.md) — a continuous field, sampled,
   instead of a voxel grid.

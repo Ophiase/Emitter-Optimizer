@@ -20,3 +20,11 @@ count and the laws, and any flag given overrides its value.
 
 The photographs are the Commons 1280-pixel renditions. The painted layers are
 derivatives: those of `garden` are shared under CC BY-SA 4.0, as its source is.
+
+## Beyond photographs
+
+- **globe**: `attraction.png` and `land.png` are rasterized from
+  [Natural Earth](https://www.naturalearthdata.com/), public domain, 110 m
+  populated places and land, by `scripts/spaces/globe.py`.
+- **urea**: `structure.csv` is the 12 K asymmetric unit of Swaminathan, Craven
+  and McMullan, Acta Cryst. B40, 300 (1984).

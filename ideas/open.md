@@ -15,9 +15,8 @@
    the only direction that makes the project different from a coverage demo
    ([manifolds](model/manifolds.md), [constraints](model/constraints.md)); it
    is also the most expensive.
-6. **[question] What is maximized in the crystal case?** A diffraction
-   signal, a stability, a defect arrangement? Without a physical quantity the
-   case stays a toy ([crystals](model/crystals.md)).
+6. **[question] What comes after the synthetic density?** [urea](model/urea.md)
+   maximizes the overlap with a density; a measured map is the honest next step.
 7. **[question] Is the circuit case the same project?** A pairwise term and
    complex phases make a different model ([circuits](model/circuits.md)).
 8. **[question] Python or a Rust kernel?** The arguments and the triggers

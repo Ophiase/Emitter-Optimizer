@@ -23,6 +23,11 @@ install:
 @case name *args:
     uv run python -m emitter_optimizer run --case {{ name }} --out out/{{ name }} {{ args }}
 
+[group("user")]
+[doc("The cases beyond the plane: just space thomson, globe or urea")]
+space name:
+    uv run python -m scripts.spaces.{{ name }}
+
 [group("dev")]
 [doc("Rewrite the code with ruff, then type-check it with ty")]
 precommit:
