@@ -35,7 +35,11 @@ class EvaluatedLaw:
             message = f"cannot load the law: {path}"
             raise ValueError(message)
         module = module_from_spec(spec)
-        spec.loader.exec_module(module)
+        try:
+            spec.loader.exec_module(module)
+        except Exception as error:
+            message = f"cannot load the law {path}: {error}"
+            raise ValueError(message) from error
         function = getattr(module, "eval", None)
         if not callable(function):
             message = f"{path} does not define a callable eval"

@@ -9,15 +9,12 @@ from emitter_optimizer.kernel import (
     DescentSettings,
     HardOcclusion,
 )
-from emitter_optimizer.service.paths import PROJECT_ROOT
+from emitter_optimizer.maps.cases import SITUATIONS, Situation
 from scripts.result import Result
-from scripts.situation import Situation
 
 ITERATIONS = 60
 SEED = 0
 STEP_SIZE = 0.01
-
-CASES = PROJECT_ROOT / "resources" / "cases"
 
 
 def measure(
@@ -57,14 +54,4 @@ def measure(
 
 
 def situations() -> tuple[Situation, ...]:
-    return (
-        Situation(CASES / "garden", "Sprinklers over allotment beds.", 120.0, 32, 24),
-        Situation(CASES / "beach", "Lifeguards over the bathing strip.", 150.0, 32, 5),
-        Situation(
-            CASES / "marina", "Wi-Fi over a marina and its old town.", 300.0, 32, 8
-        ),
-        Situation(
-            CASES / "harbor", "Lamps along the quays of a ferry port.", 400.0, 32, 14
-        ),
-        Situation(CASES / "ramparts", "Sirens inside a walled old town.", 350.0, 32, 4),
-    )
+    return SITUATIONS

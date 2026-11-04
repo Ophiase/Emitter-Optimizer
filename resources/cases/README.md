@@ -6,6 +6,10 @@ most demand) and `collision.png` (black is a wall); and the laws `emitter.py`
 ($\varphi$) and `sensor.py` ($\psi$). `uv run python -m scripts.paint`
 repaints the layers from the photographs.
 
+`just case garden` optimizes a case into `out/garden`. `run`, `serve` and
+`window` take `--case garden`: the case gives the extent, the grid, the emitter
+count and the laws, and any flag given overrides its value.
+
 | Case | Source | Author | License |
 | --- | --- | --- | --- |
 | garden | [Bamberg Kleingartenverein Sendelbach](https://commons.wikimedia.org/wiki/File:Bamberg_Kleingartenverein_Sendelbach_Luftbild-20240218-RM-103233.jpg) | Reinhold Möller | CC BY-SA 4.0 |

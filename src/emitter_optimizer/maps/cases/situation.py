@@ -1,12 +1,14 @@
 from dataclasses import dataclass
 from pathlib import Path
 
-import jax.numpy as jnp
 from PIL import Image
 
 from emitter_optimizer.kernel import Extent, GridShape, Physics, Scene
-from emitter_optimizer.maps import Density, Walls
-from emitter_optimizer.service.evaluated_law import EvaluatedLaw
+from emitter_optimizer.service.options import (
+    DEFAULT_SEED,
+    DEFAULT_STEP_SIZE,
+    MapOptions,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -40,19 +42,24 @@ class Situation:
         )
 
     @property
-    def physics(self) -> Physics:
-        return Physics(
-            emitter=EvaluatedLaw.from_file(self.folder / "emitter.py"),
-            sensor=EvaluatedLaw.from_file(self.folder / "sensor.py"),
+    def options(self) -> MapOptions:
+        return MapOptions(
+            extent=self.extent,
+            grid=self.grid,
+            emitters=self.emitters,
+            step_size=DEFAULT_STEP_SIZE,
+            seed=DEFAULT_SEED,
+            density_path=self.folder / "attraction.png",
+            collisions_path=self.folder / "collision.png",
+            emitter_law=self.folder / "emitter.py",
+            sensor_law=self.folder / "sensor.py",
+            walls_on_grid=True,
         )
 
     @property
+    def physics(self) -> Physics:
+        return self.options.physics()
+
+    @property
     def scene(self) -> Scene:
-        density = Density.load(self.folder / "attraction.png").resized(self.grid)
-        walls = Walls.load(self.folder / "collision.png", self.grid)
-        return Scene.of(
-            self.extent,
-            self.grid,
-            jnp.asarray(density.values),
-            jnp.asarray(walls.to_world(self.extent)),
-        )
+        return self.options.scene()

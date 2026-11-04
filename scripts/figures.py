@@ -15,6 +15,7 @@ from emitter_optimizer.kernel import (
     Scene,
     Step,
 )
+from emitter_optimizer.maps.cases import Situation
 from emitter_optimizer.render import ChartImage, MapImage, ProblemImage
 from emitter_optimizer.service.evaluated_law import EvaluatedLaw
 from emitter_optimizer.service.options import MapOptions
@@ -23,7 +24,6 @@ from emitter_optimizer.service.paths import (
     DEFAULT_SENSOR_FUNCTION,
     PROJECT_ROOT,
 )
-from scripts.situation import Situation
 from scripts.situations import measure, situations
 
 FIGURES = PROJECT_ROOT / "docs" / "figures"

@@ -4,7 +4,7 @@
 # or the sections of CHANGELOG.md. Runs whatever files it is given.
 set -uo pipefail
 
-root=$(git -C "$(dirname "${BASH_SOURCE[0]}")" rev-parse --show-toplevel)
+root=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 version=$(tr -d '[:space:]' <"$root/VERSION")
 status=0
 

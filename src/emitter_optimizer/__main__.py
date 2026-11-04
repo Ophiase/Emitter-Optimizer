@@ -1,12 +1,14 @@
 import argparse
 import json
+from collections.abc import Generator
+from contextlib import contextmanager
 from pathlib import Path
 
 import numpy as np
 
 from emitter_optimizer.gui.application import Application
 from emitter_optimizer.gui.configuration import GuiConfig
-from emitter_optimizer.maps import Density, Walls
+from emitter_optimizer.maps.cases import CASE_NAMES, situation_named
 from emitter_optimizer.service import (
     DEFAULT_HOST,
     DEFAULT_PORT,
@@ -15,48 +17,56 @@ from emitter_optimizer.service import (
     Session,
     serve,
 )
-from emitter_optimizer.service.evaluated_law import EvaluatedLaw
 from emitter_optimizer.service.models import RunRequest, State
 from emitter_optimizer.service.options import (
-    DEFAULT_EMITTERS,
-    DEFAULT_GRID_SIZE,
-    DEFAULT_MAP_SCALE,
     DEFAULT_RUN_ITERATIONS,
-    DEFAULT_SEED,
-    DEFAULT_STEP_SIZE,
-)
-from emitter_optimizer.service.paths import (
-    DEFAULT_EMITTER_FUNCTION,
-    DEFAULT_SENSOR_FUNCTION,
+    CommandLineParser,
 )
 
 
 def _add_map_arguments(command: argparse.ArgumentParser) -> None:
-    command.add_argument("--density", type=Path, help="grayscale image")
-    command.add_argument("--collisions", type=Path, help="mask or CSV of segments")
+    command.add_argument(
+        "--case",
+        choices=CASE_NAMES,
+        help="a case by name; any other flag given overrides its value",
+    )
+    command.add_argument(
+        "--density", type=CommandLineParser.existing_file, help="grayscale image"
+    )
+    command.add_argument(
+        "--collisions",
+        type=CommandLineParser.existing_file,
+        help="mask or CSV of segments",
+    )
     command.add_argument(
         "--map-scale",
         nargs=2,
-        type=float,
-        default=DEFAULT_MAP_SCALE,
+        type=CommandLineParser.positive_float,
         metavar=("WIDTH", "HEIGHT"),
     )
     command.add_argument(
         "--grid-size",
         nargs=2,
-        type=int,
-        default=DEFAULT_GRID_SIZE,
+        type=CommandLineParser.positive_int,
         metavar=("ROWS", "COLUMNS"),
     )
-    command.add_argument("--emitters", type=int, default=DEFAULT_EMITTERS)
-    command.add_argument("--step-size", type=float, default=DEFAULT_STEP_SIZE)
-    command.add_argument("--seed", type=int, default=DEFAULT_SEED)
-    command.add_argument("--emitter-law", type=Path, default=DEFAULT_EMITTER_FUNCTION)
-    command.add_argument("--sensor-law", type=Path, default=DEFAULT_SENSOR_FUNCTION)
+    command.add_argument("--emitters", type=CommandLineParser.positive_int)
+    command.add_argument("--step-size", type=CommandLineParser.positive_float)
+    command.add_argument("--seed", type=int)
+    command.add_argument("--emitter-law", type=CommandLineParser.existing_file)
+    command.add_argument("--sensor-law", type=CommandLineParser.existing_file)
 
 
-def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(
+def _add_iterations_argument(command: argparse.ArgumentParser) -> None:
+    command.add_argument(
+        "--iterations",
+        type=CommandLineParser.positive_int,
+        default=DEFAULT_RUN_ITERATIONS,
+    )
+
+
+def build_parser() -> CommandLineParser:
+    parser = CommandLineParser(
         prog="emitter-optimizer",
         description="Place emitters so the map they cover is maximized.",
     )
@@ -64,7 +74,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     optimize = commands.add_parser("run", help="optimize a map and write the result")
     _add_map_arguments(optimize)
-    optimize.add_argument("--iterations", type=int, default=DEFAULT_RUN_ITERATIONS)
+    _add_iterations_argument(optimize)
     optimize.add_argument("--out", type=Path, default=Path("out"))
 
     service = commands.add_parser(
@@ -76,7 +86,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     window = commands.add_parser("window", help="open the desktop window on a map")
     _add_map_arguments(window)
-    window.add_argument("--iterations", type=int, default=DEFAULT_RUN_ITERATIONS)
+    _add_iterations_argument(window)
     window.add_argument(
         "--solve",
         action="store_true",
@@ -85,8 +95,30 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+@contextmanager
+def _bad_input_is_a_message() -> Generator[None]:
+    try:
+        yield
+    except (OSError, ValueError) as error:
+        build_parser().error(str(error))
+
+
+def map_options(arguments: argparse.Namespace) -> MapOptions:
+    base = (
+        MapOptions.standard()
+        if arguments.case is None
+        else situation_named(arguments.case).options
+    )
+    return base.overridden_by(arguments)
+
+
+def _session(arguments: argparse.Namespace) -> Session:
+    with _bad_input_is_a_message():
+        return map_options(arguments).session()
+
+
 def run_optimization(arguments: argparse.Namespace) -> int:
-    session = MapOptions.from_arguments(arguments).session()
+    session = _session(arguments)
     state = session.run(RunRequest(iterations=int(arguments.iterations)))
     summary = write_result(arguments.out, session, state)
     print(json.dumps(summary, indent=2))
@@ -95,7 +127,7 @@ def run_optimization(arguments: argparse.Namespace) -> int:
 
 def run_service(arguments: argparse.Namespace) -> int:
     settings = ServiceSettings(host=arguments.host, port=arguments.port)
-    serve(MapOptions.from_arguments(arguments).session(), settings)
+    serve(_session(arguments), settings)
     return 0
 
 
@@ -131,22 +163,13 @@ def write_result(directory: Path, session: Session, state: State) -> dict[str, o
     return summary
 
 
+def window_config(arguments: argparse.Namespace) -> GuiConfig:
+    with _bad_input_is_a_message():
+        return GuiConfig.of(map_options(arguments), int(arguments.iterations))
+
+
 def open_window(arguments: argparse.Namespace) -> int:
-    config = GuiConfig(
-        iteration_count=int(arguments.iterations),
-        learning_rate=float(arguments.step_size),
-        emitter_count=int(arguments.emitters),
-        map_scale=(float(arguments.map_scale[0]), float(arguments.map_scale[1])),
-        grid_size=(int(arguments.grid_size[0]), int(arguments.grid_size[1])),
-        density=(
-            None if arguments.density is None else Density.load(arguments.density)
-        ),
-        walls=(
-            None if arguments.collisions is None else Walls.load(arguments.collisions)
-        ),
-        emitter_law=EvaluatedLaw.from_file(arguments.emitter_law),
-        sensor_law=EvaluatedLaw.from_file(arguments.sensor_law),
-    )
+    config = window_config(arguments)
     if arguments.solve:
         config.solver.solve()
     Application(config)()

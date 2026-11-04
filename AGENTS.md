@@ -52,7 +52,8 @@ seven entries per folder, two hundred lines per file
 
 - `kernel/` — the JAX kernel: shapes, laws, scene, occlusion, coverage and
   descent. No GUI, no printing.
-- `maps/` — Pillow and scikit-image load a density and a wall mask.
+- `maps/` — Pillow and scikit-image load a density and a wall mask; `maps/cases/`
+  names the five cases of `resources/cases/`.
 - `render/` — Pillow draws the map; plotly draws the gain.
 - `gui/` — DearPyGui: the render window, the process controls, the parameters
   and the law editors.
