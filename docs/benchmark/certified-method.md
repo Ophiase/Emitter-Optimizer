@@ -92,6 +92,7 @@ scores higher, so no search is needed. Each class matters:
 | No search passes a bound | Tested | The first two attacks |
 | Each candidate class is needed | Tested | The table above |
 | The upper bound under rounding | Numerical | HiGHS tolerances, integer weights |
+| The numbers repeat | Measured | Two full runs on one machine: every weight identical, on all 185 rows |
 | Useful to practitioners | **Inferred** | A gap in the tools we read; nobody was asked |
 
 ## The limits

@@ -135,10 +135,12 @@ the right. This covers domes, thresholds and tiers (`ConcaveEnvelope`, tested).
 - **It stops at the grid**: a placement off the grid may pass it.
 - **The bound is taken from greedy**, in single precision; four digits, no more.
 
-**[proved]** Without walls, a gain with Lipschitz laws extends it off the grid:
-$\mathcal G^\star \le \text{bound} + k \, L_\psi L_\varphi \, h / \sqrt 2$ on a
-grid of step $h$, for a normalized $\mu$. A sharp wall breaks it: the gain
-jumps.
+**[proved]** Without walls, a gain with Lipschitz laws extends it off the grid,
+for a normalized $\mu$ and a grid of step $h$:
+
+$\mathcal G^\star \le \text{bound} + k \, L_\psi L_\varphi \, h / \sqrt 2$.
+
+A sharp wall breaks it: the gain jumps.
 
 ## Outside these classes
 
