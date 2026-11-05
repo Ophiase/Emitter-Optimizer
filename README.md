@@ -68,6 +68,36 @@ score the engine maximizes — bright places are well served, dark places are
 not. The walls cut the signal: a place behind a wall receives nothing from an
 emitter in front of it, whatever the distance.*
 
+## How good is it, provably?
+
+For coverage by disks behind walls, the optimum can be proved, so the engine can be
+graded instead of compared to itself.
+
+<p align="center">
+  <img src="docs/benchmark/certified.png" alt="The same instance solved on its demand points and to its proved optimum" width="90%">
+</p>
+
+| Method, on 180 instances with a proved optimum | Mean gap | Worst |
+| --- | ---: | ---: |
+| Exact, sites restricted to the demand points | 6.00% | 16.62% |
+| Exact on a 32 by 32 grid | 2.45% | 11.30% |
+| **This engine: relocation and polish** | **1.80%** | **8.55%** |
+| Exact on a 64 by 64 grid | 1.21% | 6.38% |
+
+- **The discrete habit is costly**: fixing the sites in advance loses 6% on average.
+- **The engine is not the best tool here**: a fine grid beats it, and on these
+  sizes the proof is faster than the search (median 1 s against 7 s).
+- **On a published map as disks**, garden's relocation ends 17.7% below the optimum.
+
+```sh
+just certify    # regenerate the optima, the gaps and the page
+emitter-optimizer exact --points demand.csv --walls walls.csv --radius 12 \
+    --emitters 5 --map-scale 100 100 --plan my-plan.csv
+```
+
+[The method, its attacks and its limits](docs/benchmark/certified-method.md);
+[the report](report/certified-coverage.typ), compiled by `just report`.
+
 ## The model
 
 The score is the **gain** $\mathcal G_P$, maximized over the emitter positions
@@ -127,8 +157,7 @@ signal). The engine discretizes both onto its grid — the mean attraction of a
 cell, and a wall wherever a quarter of the cell is wall — then runs the same
 descent with the laws $\varphi$ and $\psi$ that fit the physics; distances are in metres.
 
-In the animations, blue demand is not served yet and yellow is. White lines are
-the descent, orange lines the [jumps out of a local minimum](docs/local-minima.md).
+Each case has [its page](docs/cases/README.md), with its animation and its limits.
 
 ### The same map, three laws
 
@@ -137,51 +166,6 @@ the descent, orange lines the [jumps out of a local minimum](docs/local-minima.m
 </p>
 
 *The same harbour and the same 14 emitters: **the law is the decision**.*
-
-### [Garden: water the beds, not the sheds](docs/cases/garden.md)
-
-<p align="center">
-  <img src="docs/figures/cases/garden.webp" alt="24 sprinklers, a 6 m throw, sheds that stop the jet." width="70%">
-</p>
-
-- **Why it is here**: the hardest case for a gradient: past its throw a sprinkler feels no dry bed at all.
-- **The result**: descent alone ends 27–31% below the best known; relocated, within 0.9%.
-
-### [Beach: who gets to the swimmer in time](docs/cases/beach.md)
-
-<p align="center">
-  <img src="docs/figures/cases/beach.webp" alt="5 lifeguards on a strip, with rocks hiding part of the water." width="70%">
-</p>
-
-- **Why it is here**: few emitters and a shallow optimum: each post is a decision someone signs.
-- **The result**: +21% above random; every relocated start ends within 0.1% of the best.
-
-### [Marina: Wi-Fi over yachts and an old town](docs/cases/marina.md)
-
-<p align="center">
-  <img src="docs/figures/cases/marina.webp" alt="8 access points, with the harbour front between boats and streets." width="70%">
-</p>
-
-- **Why it is here**: the law never reaches zero, yet a wall still traps an antenna on its side.
-- **The result**: +15% above random; every relocated start ends within 0.1% of the best.
-
-### [Harbor: a quay is lit or it is not](docs/cases/harbor.md)
-
-<p align="center">
-  <img src="docs/figures/cases/harbor.webp" alt="14 lamps along the quays, with the house fronts casting the shadow." width="70%">
-</p>
-
-- **Why it is here**: a threshold law is flat almost everywhere, so only the edge of the light pulls.
-- **The result**: +43% above random and +2.3% above greedy, the widest margin of the five.
-
-### [Ramparts: the sound stops at the wall](docs/cases/ramparts.md)
-
-<p align="center">
-  <img src="docs/figures/cases/ramparts.webp" alt="4 sirens inside a walled town, with one gate." width="70%">
-</p>
-
-- **Why it is here**: the honest case: a random placement already does most of the job.
-- **The result**: +5% above random, and every start agrees: little is left to find.
 
 ## Beyond the plane
 
@@ -294,46 +278,8 @@ that helps most ([measurements and limits](docs/local-minima.md)).
   when alone they end up to 5.9% apart.
 - **Garden is the extreme**: descent alone ends 27–31% below the best known.
 - **Limits**: on these laws, no proof of a global optimum, and only 4 starts per case.
-
-## Benchmark
-
-`just bench` generates [the table](docs/benchmark/results.md): a relocation
-beats random by 5% to 60% and greedy by 0.1% to 2.3%. Greedy alone reaches most
-of the gain; the descent earns its place off the grid, as on urea.
-
-<p align="center">
-  <img src="docs/benchmark/methods.png" alt="The gain of greedy and of the descent above a random placement, case by case" width="80%">
-</p>
-
-## How good is it, provably?
-
-For coverage by disks behind walls, the optimum can be proved, so the engine can be
-graded instead of compared to itself.
-
-<p align="center">
-  <img src="docs/benchmark/certified.png" alt="The same instance solved on its demand points and to its proved optimum" width="90%">
-</p>
-
-| Method, on 180 instances with a proved optimum | Mean gap | Worst |
-| --- | ---: | ---: |
-| Exact, sites restricted to the demand points | 6.00% | 16.62% |
-| Exact on a 32 by 32 grid | 2.45% | 11.30% |
-| **This engine: relocation and polish** | **1.80%** | **8.55%** |
-| Exact on a 64 by 64 grid | 1.21% | 6.38% |
-
-- **The discrete habit is costly**: fixing the sites in advance loses 6% on average.
-- **The engine is not the best tool here**: a fine grid beats it, and on these
-  sizes the proof is faster than the search (median 1 s against 7 s).
-- **On a published map as disks**, garden's relocation ends 17.7% below the optimum.
-
-```sh
-just certify    # regenerate the optima, the gaps and the page
-emitter-optimizer exact --points demand.csv --walls walls.csv --radius 12 \
-    --emitters 5 --map-scale 100 100 --plan my-plan.csv
-```
-
-[The method, its attacks and its limits](docs/benchmark/certified-method.md);
-[the report](report/certified-coverage.typ), compiled by `just report`.
+- **Against baselines**: `just bench` writes [the table](docs/benchmark/results.md); a
+  relocation beats random by 5% to 60% and greedy by 0.1% to 2.3%.
 
 ## Standing on
 
