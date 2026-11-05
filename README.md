@@ -7,9 +7,17 @@
 [![Status: v2.4.0](https://img.shields.io/badge/status-v2.4.0-blue.svg)](ideas/roadmap.md)
 [![Kanon](https://img.shields.io/badge/%3C%3E-Kanon-blueviolet.svg)](.agents/kanon.md)
 
-**Where do I put my emitters?** Give the tool a map, a weight per place, the walls
-and the law of your emitter; it returns the positions that capture the most, and
-for coverage by disks, **a proof of how far any placement is from the best one**.
+**Where do I put my emitters?** Antennas on a building, drippers on a farm,
+shops that capture a neighbourhood, sensors in a room: anything that covers a
+map around itself and loses reach with distance.
+
+Give the tool a map, a weight per place, the walls, and the law of your emitter;
+it returns the positions that capture the most, and for coverage by disks, **a
+proof of how far any placement is from the best one**.
+
+**Far more things than you imagine can be thought of as an emitter.** This is a
+model of computation, a way of reasoning that holds many optimization problems
+in one form: [128 imagined, one by one](ideas/applications/README.md); 10 simulated.
 
 | What it does | What it does not |
 | --- | --- |
@@ -35,7 +43,7 @@ the code stays the same. Every figure on this page is generated from a seeded ru
 | Change the physics | [What you can change](#what-you-can-change) |
 | How far from the proved optimum | [docs/benchmark/certified.md](docs/benchmark/certified.md) |
 | The numbers, case by case | [docs/benchmark/results.md](docs/benchmark/results.md) |
-| Every application we can imagine, unsimulated for the most part | [ideas/applications/README.md](ideas/applications/README.md) |
+| Every application we can imagine, one by one | [ideas/applications/README.md](ideas/applications/README.md) |
 | The status, the layout and the demo | [docs/project.md](docs/project.md) |
 | The plan and the open questions | [ideas/roadmap.md](ideas/roadmap.md) |
 | Dependencies | Python 3.14+, `just`; `uv` installs JAX, plotly, scikit-image and Pillow |
@@ -147,6 +155,12 @@ $$
 This is the 2023 baseline, kept as the reference every newer model is compared
 against ([ideas/model](ideas/model/README.md)).
 
+**Grouping the problems is what makes this a theory.** A family is a set of
+constraints on $\varphi$, $\psi$, the map, the shadows, the manifold and the scales,
+and each constraint gives a guarantee or explains a trap: a concave $\psi$ makes the
+gain submodular on any space; a quadratic one is a pair energy; a logarithm is a
+likelihood, with k-means in the limit ([the assumptions](ideas/model/assumptions/README.md)).
+
 ## Multiple situations, one engine
 
 Each case starts from a vertical aerial photograph. Two layers are painted
@@ -156,7 +170,8 @@ signal). The engine discretizes both onto its grid — the mean attraction of a
 cell, and a wall wherever a quarter of the cell is wall — then runs the same
 descent with the laws $\varphi$ and $\psi$ that fit the physics; distances are in metres.
 
-Each case has [its page](docs/cases/README.md), with its animation and its limits.
+In the animations, blue demand is not served yet and yellow is. White lines are
+the descent, orange lines the [jumps out of a local minimum](docs/local-minima.md).
 
 ### The same map, three laws
 
@@ -165,6 +180,16 @@ Each case has [its page](docs/cases/README.md), with its animation and its limit
 </p>
 
 *The same harbour and the same 14 emitters: **the law is the decision**.*
+
+### Five photographs
+
+| Case | The search | Why it is here | The result |
+| --- | --- | --- | --- |
+| [**Garden**: water the beds, not the sheds](docs/cases/garden.md) | <img src="docs/figures/cases/garden.webp" alt="24 sprinklers, a 6 m throw, sheds that stop the jet." width="280"> | The hardest case for a gradient: past its throw a sprinkler feels no dry bed at all. | Descent alone ends 27–31% below the best known; relocated, within 0.9%. |
+| [**Beach**: who gets to the swimmer in time](docs/cases/beach.md) | <img src="docs/figures/cases/beach.webp" alt="5 lifeguards on a strip, with rocks hiding part of the water." width="280"> | Few emitters and a shallow optimum: each post is a decision someone signs. | +21% above random; relocated starts agree within 0.1%. |
+| [**Marina**: Wi-Fi over yachts and an old town](docs/cases/marina.md) | <img src="docs/figures/cases/marina.webp" alt="8 access points, with the harbour front between boats and streets." width="280"> | The law never reaches zero, yet a wall still traps an antenna on its side. | +15% above random; relocated starts agree within 0.1%. |
+| [**Harbor**: a quay is lit or it is not](docs/cases/harbor.md) | <img src="docs/figures/cases/harbor.webp" alt="14 lamps along the quays, with the house fronts casting the shadow." width="280"> | A threshold law is flat almost everywhere, so only the edge of the light pulls. | +43% above random and +2.3% above greedy, the widest margin of the five. |
+| [**Ramparts**: the sound stops at the wall](docs/cases/ramparts.md) | <img src="docs/figures/cases/ramparts.webp" alt="4 sirens inside a walled town, with one gate." width="280"> | The honest case: a random placement already does most of the job. | +5% above random, and every start agrees: little is left to find. |
 
 ## Beyond the plane
 
@@ -277,8 +302,16 @@ that helps most ([measurements and limits](docs/local-minima.md)).
   when alone they end up to 5.9% apart.
 - **Garden is the extreme**: descent alone ends 27–31% below the best known.
 - **Limits**: on these laws, no proof of a global optimum, and only 4 starts per case.
-- **Against baselines**: `just bench` writes [the table](docs/benchmark/results.md); a
-  relocation beats random by 5% to 60% and greedy by 0.1% to 2.3%.
+
+## Benchmark
+
+`just bench` generates [the table](docs/benchmark/results.md): a relocation
+beats random by 5% to 60% and greedy by 0.1% to 2.3%. Greedy alone reaches most
+of the gain; the descent earns its place off the grid, as on urea.
+
+<p align="center">
+  <img src="docs/benchmark/methods.png" alt="The gain of greedy and of the descent above a random placement, case by case" width="80%">
+</p>
 
 ## Standing on
 

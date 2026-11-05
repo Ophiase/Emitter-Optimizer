@@ -17,8 +17,8 @@ exactly, and checks the answer against a separate scoring.** The numbers are in
 the circles, the walls, the map edges and the shadow edges, a crossing on a wall
 being taken once per side. Some optimal placement lies in `D`.
 
-**Proof.** Let `V(x)` be where an emitter covers point `x`: a closed disk minus the
-shadows of the walls, star-shaped around `x`.
+**Proof.** Let `V(x)` be where an emitter covers point `x`: a closed disk minus
+the shadows of the walls, star-shaped around `x`.
 
 1. Take an optimal emitter `y` and the set `S` of points it covers. Let `C` be the
    connected component of `y` in the intersection of `V(x)` over `S`.

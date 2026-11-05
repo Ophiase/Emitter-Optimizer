@@ -25,6 +25,10 @@ the place of the point is the decision. If those three hold, it belongs here.
 | [A space of ideas](no-map.md#a-space-of-ideas) | 114–123 | You choose distance; no walls | Many dimensions; must be real items |
 | [Games and art](no-map.md#games-and-art) | 124–128 | Taste decides; gain is a tool | Regular is boring; keep some dark |
 
+**[sketch]** Each family is also a set of mathematical constraints, and each
+constraint gives a guarantee or explains a trap:
+[the assumptions](../model/assumptions/README.md).
+
 ## Beyond the flat map
 
 Rows by the space they live in, whatever their family. **[guess]** except `Done`.
