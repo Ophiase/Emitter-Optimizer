@@ -34,6 +34,10 @@
     command, so a headless user installs a window toolkit.
 14. **[question] Does the agent manifesto stay beside the code?** It moved from
     the README to [CONTRIBUTORS](../CONTRIBUTORS.md); the badge and sign remain.
+15. **[question] Is "fading" the right name** for an emitter whose signal falls
+    with distance ([laws](model/assumptions/laws.md))?
+16. **[question] Should `plants` have a true reach?** Its water follows a Gaussian
+    and never stops; a finite reach would match the story, and move its figures.
 
 ## Technical
 

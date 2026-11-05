@@ -15,7 +15,7 @@ $$
 | Axis | What is constrained | What it decides | Page |
 | --- | --- | --- | --- |
 | $\psi$ | Shape of the sensor | Which guarantee exists | [laws](laws.md) |
-| $\varphi$ | Shape of the emitter | Whether a gradient sees anything | [laws](laws.md) |
+| $\varphi$ | Fading or not, and how far it reaches | What a gradient sees; whether the problem splits | [laws](laws.md) |
 | $\mu$ | The map: atoms, support, sign | Whether the problem splits, or is finite | [space](space.md) |
 | $C$ | Shadows: sharp, absorbing, closed rooms | Continuity of the gain | [space](space.md) |
 | $E, d$ | Manifold, symmetry, dimension | What becomes constant, what explodes | [space](space.md) |
@@ -23,8 +23,8 @@ $$
 
 ## What is true of each simulated case
 
-The shape of $\psi$ is tested on each photograph case in
-`tests/test_case_classes.py`; the other rows are read from the code.
+The shape of $\psi$, and that $\varphi$ is fading, are tested on each photograph
+case in `tests/test_case_classes.py`; the other rows are read from the code.
 
 | Case | $\varphi(d)$ | $\psi(s)$ | $\psi$ class | $C$ | $E$ |
 | --- | --- | --- | --- | --- | --- |
@@ -67,20 +67,21 @@ A person with a new problem can read their guarantee from this order.
 ```mermaid
 graph TD
     sum{A function of the sum of signals?}
-    negative{Any negative signal or weight?}
-    concave{Is the sensor concave?}
-    rising{Is it non-decreasing?}
-    disk{Disks and point demand?}
     other[Outside: no structure used here]
+    negative{Any negative signal or weight?}
     weak[Measure only]
-    dome[Submodular only: a pair energy if quadratic]
+    concave{Is the sensor concave?}
+    envelope[A bound through the concave envelope]
+    rising{Is it non-decreasing?}
+    dome[Submodular; a pair energy if quadratic; the envelope for a bound]
+    disk{Disks and point demand?}
     good[Greedy and an online bound]
     exact[A proved optimum]
     sum -->|no| other
     sum -->|yes| negative
     negative -->|yes| weak
     negative -->|no| concave
-    concave -->|no| weak
+    concave -->|no| envelope
     concave -->|yes| rising
     rising -->|no| dome
     rising -->|yes| disk

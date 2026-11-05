@@ -14,6 +14,7 @@ from emitter_optimizer.kernel import (
     Physics,
     Scene,
 )
+from emitter_optimizer.kernel.laws import ConcaveEnvelope, Law
 from emitter_optimizer.kernel.placement.online_bound import OnlineBound
 
 SIDE = 16
@@ -180,3 +181,83 @@ def test_two_rooms_that_cannot_see_each_other_add_up() -> None:
     apart = _gain(rooms, SATURATING, left) + _gain(rooms, SATURATING, right) - origin
 
     assert together == pytest.approx(apart, abs=1e-5)
+
+
+def _stairs(signal: Array) -> Array:
+    return jnp.floor(jnp.minimum(signal, 1.2) * 5.0) / 5.0
+
+
+@pytest.mark.parametrize(
+    "sensor", [_stairs, THRESHOLD.sensor, DOME.sensor], ids=["stairs", "s", "dome"]
+)
+def test_the_envelope_bounds_a_sensor_that_is_not_concave(sensor: Law) -> None:
+    emitters = 3
+    physics = Physics(GAUSSIAN, sensor)
+    envelope = ConcaveEnvelope.of(sensor, float(emitters))
+    signal = jnp.linspace(0.0, float(emitters), 2001)
+    curved = jnp.diff(envelope(signal), n=2)
+    candidates = jnp.asarray(_positions(7, 14), dtype=jnp.float32)
+    optimum = max(
+        _gain(SCENE, physics, candidates[np.array(chosen)])
+        for chosen in itertools.combinations(range(14), emitters)
+    )
+    start = jnp.asarray(_positions(9, emitters), dtype=jnp.float32)
+
+    bound = OnlineBound(SCENE, Physics(GAUSSIAN, envelope), candidates).of(start)
+
+    assert jnp.all(envelope(signal) >= sensor(signal) - 1e-5)
+    assert jnp.all(jnp.diff(envelope(signal)) >= -1e-5)
+    assert float(jnp.max(curved)) < 1e-4
+    assert bound >= optimum - 1e-5
+
+
+def test_a_finite_reach_cuts_all_interaction_past_twice_the_reach() -> None:
+    reach = 10.0
+    compact = Physics(
+        lambda distance: jnp.maximum(1.0 - (distance / reach) ** 2, 0.0) ** 2,
+        SATURATING.sensor,
+    )
+    first, second = np.array([[10.0, 10.0]]), np.array([[70.0, 70.0]])
+    together = _gain(FREE, compact, np.vstack((first, second)))
+    apart = _gain(FREE, compact, first) + _gain(FREE, compact, second)
+
+    tail = Physics(
+        lambda distance: 1.0 / (1.0 + (distance / reach) ** 2), SATURATING.sensor
+    )
+    tail_together = _gain(FREE, tail, np.vstack((first, second)))
+    tail_apart = _gain(FREE, tail, first) + _gain(FREE, tail, second)
+
+    assert together == pytest.approx(apart, abs=1e-6)
+    assert tail_apart - tail_together > 1e-3
+
+
+def test_a_fading_emitter_is_better_inside_the_hull_of_the_demand() -> None:
+    density = jnp.zeros((SIDE, SIDE)).at[6:10, 6:10].set(1.0)
+    scene = Scene.of(Extent(80.0, 80.0), GridShape(SIDE, SIDE), density)
+    outside = np.array([[75.0, 40.0]])
+    inside = np.array([[47.5, 40.0]])
+
+    assert _gain(scene, SATURATING, inside) > _gain(scene, SATURATING, outside)
+
+
+def test_a_ring_emitter_can_prefer_to_stand_outside_the_hull() -> None:
+    density = jnp.zeros((SIDE, SIDE)).at[6:10, 6:10].set(1.0)
+    scene = Scene.of(Extent(80.0, 80.0), GridShape(SIDE, SIDE), density)
+    ring = Physics(
+        lambda distance: jnp.exp(-(((distance - 30.0) / 4.0) ** 2)), SATURATING.sensor
+    )
+    outside = np.array([[70.0, 40.0]])
+    inside = np.array([[40.0, 40.0]])
+
+    assert _gain(scene, ring, outside) > _gain(scene, ring, inside)
+
+
+def test_a_fading_law_is_a_positive_mixture_of_disks() -> None:
+    radii = np.linspace(0.0, 200.0, 4001)
+    distance = np.array([0.0, 3.0, 11.0, 40.0])
+    law = np.exp(-((radii / 15.0) ** 2))
+    weights = -np.diff(law)
+    disks = distance[:, None] <= radii[1:][None, :]
+
+    assert np.all(weights >= 0.0)
+    assert disks @ weights == pytest.approx(np.exp(-((distance / 15.0) ** 2)), abs=3e-3)

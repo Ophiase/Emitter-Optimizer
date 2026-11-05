@@ -25,6 +25,6 @@ def test_each_case_sensor_has_the_published_shape(name: str) -> None:
 
     assert (np.all(slope >= -1e-6)) == (shape == "rising")
     assert (np.max(curvature) <= CURVATURE_TOLERANCE * np.ptp(scores)) == concave
-    assert np.all(
-        np.asarray(situation.physics.emitter(jnp.linspace(0.0, 500.0, 500))) >= 0.0
-    )
+    far = np.asarray(situation.physics.emitter(jnp.linspace(0.0, 500.0, 2001)))
+    assert np.all(far >= 0.0)
+    assert np.all(np.diff(far) <= 1e-6)
