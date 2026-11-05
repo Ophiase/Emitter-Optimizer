@@ -80,8 +80,9 @@ crossings, so this attack says nothing about them.
 - **Synthetic instances.** The reference set is random, not drawn from a survey.
 - **Touching walls.** The argument assumes disjoint walls. Masks produce touching
   ones; there the upper bound stays valid, and equal bounds are still checked.
-- **Scale.** The candidates grow quickly with points and radius. See the times in
-  [certified.md](certified.md); past the time limit the bound holds but may stay open.
+- **Scale.** The candidates grow quickly with points and radius; the times are in
+  [certified.md](certified.md). Past the program's time limit the bound holds but
+  may stay open, and the listing before the program has no limit at all.
 
 ## Use the reference set without our solver
 

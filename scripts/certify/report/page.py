@@ -25,6 +25,10 @@ CASES_NOTE = """\
 Each case of the [benchmark](results.md), with its law reduced to the disk one
 emitter serves alone. These are not the laws of that benchmark, so the two tables
 do not compare."""
+SCALE_NOTE = """\
+- **3200 points, 40 emitters, 12 walls** did not finish: stopped by hand after 22
+  minutes, before the integer program.
+- **The time limit binds the integer program only**, not the listing before it."""
 METHODS: tuple[tuple[str, Callable[[Scores], float]], ...] = (
     ("Random, 32 draws", lambda scores: scores.random),
     ("Exact on the demand points", lambda scores: scores.demand_sites),
@@ -117,7 +121,7 @@ def _sections(
         ("By number of emitters", split_table(reference, "emitters", "emitters")),
         ("By number of points", split_table(reference, "points", "points")),
         ("The published maps, as disks", f"{CASES_NOTE}\n\n{case_table(cases)}"),
-        ("How far it scales", scale_table(scale)),
+        ("How far it scales", f"{SCALE_NOTE}\n\n{scale_table(scale)}"),
     )
     return "\n\n".join(f"## {title}\n\n{body}" for title, body in sections)
 

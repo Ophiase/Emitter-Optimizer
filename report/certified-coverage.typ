@@ -119,11 +119,18 @@ Each map keeps its density and walls; its law is reduced to the disk one emitter
 serves alone. These are not the laws of the main benchmark, so the two do not
 compare.
 
-#data-table(data.cases, (1.3fr, 0.8fr, 0.8fr, 1fr, 1fr, 1fr, 1fr, 1fr))
+#[
+  #set text(size: 8.5pt)
+  #data-table(data.cases, (1.2fr, 0.9fr, 0.8fr, 1.1fr, 1fr, 1.2fr, 1fr, 1fr, 1fr, 1.2fr))
+]
 
 == Scale
 
 #data-table(data.scale, (1fr, 1fr, 1fr, 1.2fr, 1fr, 1.2fr, 1fr))
+
+A run at 3200 points, 40 emitters and 12 walls did not finish: it was stopped by
+hand after 22 minutes, before the integer program. The time limit binds the integer
+program only, not the listing before it.
 
 = What is trusted, and how much <sec-trust>
 
