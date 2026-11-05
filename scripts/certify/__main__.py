@@ -8,7 +8,6 @@ from emitter_optimizer.kernel.placement.exact import Instance
 from emitter_optimizer.service.paths import PROJECT_ROOT, RESOURCES_DIRECTORY
 from scripts.certify.family import Family
 from scripts.certify.measure import measure, measure_scale
-from scripts.certify.report.data import report_data
 from scripts.certify.report.figure import ComparisonFigure
 from scripts.certify.report.page import page
 from scripts.certify.runs.cases import RADII, case_instance
@@ -17,7 +16,6 @@ from scripts.certify.scores import Scores
 REFERENCE = RESOURCES_DIRECTORY / "reference" / "coverage-with-walls.json"
 PAGE = PROJECT_ROOT / "docs" / "benchmark" / "certified.md"
 FIGURE = PROJECT_ROOT / "docs" / "benchmark" / "certified.png"
-REPORT_DATA = PROJECT_ROOT / "report" / "data" / "certified.json"
 FIGURED = Family(400, 5, 12)
 SCALE = (Family(800, 10, 12), Family(1600, 20, 12))
 SIZES = (100, 200, 400)
@@ -57,8 +55,6 @@ def main() -> None:
     case_scores = [scores for scores, _ in cases]
     scale = [measure_scale(family.instance(0)) for family in SCALE]
     _write(PAGE, page(reference_scores, case_scores, scale))
-    data = report_data(reference_scores, case_scores, scale)
-    _write(REPORT_DATA, json.dumps(data, indent=1) + "\n")
     ComparisonFigure(FIGURED.instance(0)).image().save(FIGURE)
 
 

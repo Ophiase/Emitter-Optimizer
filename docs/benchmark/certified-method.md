@@ -13,18 +13,26 @@ exactly, and checks the answer against a separate scoring.** The numbers are in
 
 ## Why a finite set is enough
 
-1. The place an emitter must stand to cover one point is a region: a disk minus
-   the shadows of the walls. It is star-shaped around that point.
-2. Take any emitter and the points it covers. They share a region, the intersection
-   of their regions, with no hole, since each complement reaches infinity.
-3. Inside it, the emitter can slide to a corner, where two boundaries meet, and
-   still cover them all. With no corner, the region is a whole disk, and its
-   centre, a point of the problem, covers them.
-4. So the crossings of all boundaries, the wall ends and the points hold an optimal
-   placement. Without walls this is Church's circle intersection result.
+**Claim.** Let `D` hold the points, the wall ends, and every crossing between
+the circles, the walls, the map edges and the shadow edges, a crossing on a wall
+being taken once per side. Some optimal placement lies in `D`.
 
-A crossing that lies on a wall is taken twice, once per side, since an emitter
-does not see through the wall it stands against.
+**Proof.** Let `V(x)` be where an emitter covers point `x`: a closed disk minus the
+shadows of the walls, star-shaped around `x`.
+
+1. Take an optimal emitter `y` and the set `S` of points it covers. Let `C` be the
+   connected component of `y` in the intersection of `V(x)` over `S`.
+2. The complement of each `V(x)` is connected and unbounded, so `C` has no hole.
+3. If the boundary of `C` has a corner, it is a crossing or a curve end, so it lies
+   in `D`, and an emitter there still covers `S`.
+4. If it has none, it is one full circle, so `C` is a disk around a point of `S`,
+   and that point lies in `D` and covers `S`.
+5. Moving each emitter in turn never shrinks what is covered.
+
+A point on a wall is reached from one side only, hence the two copies. Without
+walls this is Church's circle intersection result.
+
+**Status: on paper, by the agent, unreviewed.** The attacks below test it.
 
 ## The steps
 
@@ -59,16 +67,32 @@ graph TD
 | Attack | What happens |
 | --- | --- |
 | A search over a 301 by 301 grid, on 24 small instances | Never passes the bound |
+| Every other method, on all 180 reference instances | Never passes the bound |
 | The published kernel's coverage, on random placements | Agrees within 0.1% of pairs |
 | All subsets of 12 candidates, against the integer program | Same answer |
 | By-hand cases: a circle's centre, a wall, a wall's end | The expected answer |
-| Removing the circle crossings from the set | The grid search catches it, 10 of 18 |
-| Removing circle and segment crossings | Caught, 1 of 18 |
-| Removing the shadows | Caught, 1 of 18 |
-| Removing segment crossings | **Not caught**, 0 of 18 |
+| Removing each class of candidates, on 200 small instances | See below |
 
-The last line is a real limit: on these small instances, no optimum needs those
-crossings, so this attack says nothing about them.
+Removing a class is caught when the bound falls below a placement that really
+scores higher, so no search is needed. Each class matters:
+
+| Class removed | Instances where the bound becomes false |
+| --- | ---: |
+| Shadows | 57 of 200 |
+| Segment crossings | 15 of 200 |
+| Circle crossings | 3 of 200 |
+| Circle and segment crossings | 3 of 200 |
+
+## How much to trust each claim
+
+| Claim | Trust | Evidence |
+| --- | --- | --- |
+| A finite set suffices | Paper, unreviewed | The proof above |
+| Equal bounds on the reference set | Measured | `just certify`, by comparison |
+| No search passes a bound | Tested | The first two attacks |
+| Each candidate class is needed | Tested | The table above |
+| The upper bound under rounding | Numerical | HiGHS tolerances, integer weights |
+| Useful to practitioners | **Inferred** | A gap in the tools we read; nobody was asked |
 
 ## The limits
 

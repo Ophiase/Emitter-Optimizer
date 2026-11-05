@@ -58,6 +58,8 @@ The sources are in [certified-coverage](certified-coverage.md).
 - **[fact]** spopt solves maximal covering over a finite set of facility sites.
 - **[fact]** The IJGIS 2023 line-of-sight work is a heuristic, per its abstract.
 - **[fact]** Sionna RT differentiates radio maps; a far richer physics than ours.
+- **[fact]** Art gallery work already uses range-limited guards and arrangements,
+  for other objectives: minimum sensors by heuristics, or dispersion on vertices.
 
 ## To read
 

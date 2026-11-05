@@ -22,10 +22,16 @@ far any placement is from the best one.
 | Line-of-sight coverage, IJGIS 2023 [3] | Continuous, with obstacles | A heuristic, per its abstract |
 | Wi-Fi planner by annealing [4] | Floor plan and walls | Its README reports no bound |
 | Commercial GIS location tools [5] | Widely used | Rarely reproducible, per the abstract |
+| Sensor placement in polygons [8] | Continuous, range-limited, with holes | Minimum sensors, by heuristics |
+| Dispersive art gallery [9] | Exact, with holes | Guards on vertices, another objective |
 
 **[caution]** The need is inferred, not reported. No practitioner was asked, and
 no source says "I need this". What is sourced is the gap: we found no tool that
 gives a proved optimum with walls in continuous space. We did not prove none exists.
+
+**[caution]** This is probably not new mathematics. It joins Church's set to the
+arrangements of visibility regions that the art gallery community already uses.
+The contribution to defend is an open, measured, checkable tool, not a theorem.
 
 ## For whom
 
@@ -50,8 +56,8 @@ Every criterion is a number a third party can regenerate with `just certify`:
 
 1. **Proof**: at least 90% of 180 reference instances end with the lower bound
    equal to the upper bound.
-2. **The bound holds**: no search in the tests passes it, and removing candidates
-   from the set makes that test fail.
+2. **The bound holds**: no search passes it, and removing any class of candidates
+   makes it false on an instance the tests name.
 3. **The file stands alone**: the reference set re-scores with `Instance` alone,
    and the test suite checks that the stored optima still solve to the same value.
 4. **The engine is measured**: its gap to the optimum is published as it is,
@@ -82,3 +88,5 @@ tests attack it, they do not prove it. The method page states the argument.
    <https://doi.org/10.1007/s10109-021-00350-w>
 6. Sionna RT: <https://arxiv.org/abs/2303.11103>
 7. Leskovec et al., 2007, online bounds: <https://www.cs.cmu.edu/~jure/pubs/detect-kdd07.pdf>
+8. Mikula and Kulich, omnidirectional sensor placement: <https://arxiv.org/abs/2410.08784>
+9. Fekete et al., 2025, guarding offices: <https://arxiv.org/abs/2506.21307>

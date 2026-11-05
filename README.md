@@ -95,8 +95,7 @@ emitter-optimizer exact --points demand.csv --walls walls.csv --radius 12 \
     --emitters 5 --map-scale 100 100 --plan my-plan.csv
 ```
 
-[The method, its attacks and its limits](docs/benchmark/certified-method.md);
-[the report](report/certified-coverage.typ), compiled by `just report`.
+[The proof, its attacks and its limits](docs/benchmark/certified-method.md).
 
 ## The model
 

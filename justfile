@@ -65,12 +65,6 @@ certify:
     uv run python -m scripts.certify
 
 [group("dev")]
-[doc("Compile the report on the proved optimum to report/build/; needs typst")]
-report:
-    mkdir -p report/build
-    typst compile --root . report/certified-coverage.typ report/build/certified-coverage.pdf
-
-[group("dev")]
 [doc("Recompute the README figures into docs/figures: the demo, the cases and the mosaic")]
 figures:
     uv run python -m scripts.figures

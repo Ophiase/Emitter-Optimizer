@@ -16,6 +16,7 @@ from emitter_optimizer.kernel.placement.exact import (
     ExactPlacement,
     Instance,
 )
+from emitter_optimizer.kernel.placement.exact.arrangement import Arrangement
 from scripts.certify.family import Family
 
 SMALL_FAMILIES = (
@@ -84,6 +85,30 @@ def test_nothing_found_by_a_dense_search_passes_the_bound(
     kept = CoverProgram.maximal_rows(coverage)
     searched = CoverProgram(coverage[kept], instance.weights, instance.emitters)
     assert searched.solve().weight <= certificate.upper
+
+
+@pytest.mark.parametrize(
+    ("candidates", "empty", "family", "seed"),
+    [
+        ("_shadows", np.zeros((0, 2, 2)), Family(30, 1, 12), 0),
+        ("_segment_crossings", np.zeros((0, 2)), Family(30, 1, 12), 9),
+        ("_circle_crossings", np.zeros((0, 2)), Family(60, 2, 12), 1),
+        ("_circle_segment_crossings", np.zeros((0, 2)), Family(60, 2, 12), 22),
+    ],
+)
+def test_without_a_class_of_candidates_the_bound_becomes_false(
+    monkeypatch: pytest.MonkeyPatch,
+    candidates: str,
+    empty: np.ndarray,
+    family: Family,
+    seed: int,
+) -> None:
+    instance = family.instance(seed)
+    scored = ExactPlacement(instance).solve().lower
+
+    monkeypatch.setattr(Arrangement, candidates, lambda *_: empty)
+
+    assert ExactPlacement(instance).solve().upper < scored
 
 
 def test_the_program_agrees_with_every_subset_on_a_small_choice() -> None:
