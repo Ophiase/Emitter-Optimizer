@@ -16,6 +16,7 @@ Where the code stands, how the repository is laid out, and the demo.
 | Coverage, quantile, max-min objectives | Planned ([objective](../ideas/model/objective.md)) |
 | A `Domain`: plane, sphere, periodic cell, volume | Done, tested ([manifolds](../ideas/model/manifolds.md)) |
 | Baselines: random and greedy | Done ([benchmark](benchmark/results.md)) |
+| A proved optimum for disks behind walls | Done, attacked by tests ([method](benchmark/certified-method.md)) |
 | Escaping local minima by relocation | Done, tested ([local minima](local-minima.md)) |
 | Surfaces, constrained emitters, an implicit energy | Planned ([implicit energy](../ideas/model/implicit-energy.md)) |
 | A crossover with the point-cloud project | Sketched ([crossover](../ideas/crossover.md)) |

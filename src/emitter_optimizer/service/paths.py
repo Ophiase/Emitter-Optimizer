@@ -1,8 +1,10 @@
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
-SETTINGS_DIRECTORY = PROJECT_ROOT / "settings"
-RESOURCES_DIRECTORY = PROJECT_ROOT / "resources"
+INSTALLED_DATA = Path(__file__).resolve().parents[1] / "data"
+DATA_ROOT = INSTALLED_DATA if INSTALLED_DATA.is_dir() else PROJECT_ROOT
+SETTINGS_DIRECTORY = DATA_ROOT / "settings"
+RESOURCES_DIRECTORY = DATA_ROOT / "resources"
 
 DEFAULT_EMITTER_FUNCTION = SETTINGS_DIRECTORY / "emitter.py"
 DEFAULT_SENSOR_FUNCTION = SETTINGS_DIRECTORY / "sensor.py"

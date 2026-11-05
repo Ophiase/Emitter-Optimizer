@@ -99,6 +99,7 @@ dependencies = [
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "scikit-image" },
+    { name = "scipy" },
     { name = "uvicorn" },
 ]
 
@@ -122,6 +123,7 @@ requires-dist = [
     { name = "pydantic", specifier = ">=2.13" },
     { name = "pydantic-settings", specifier = ">=2.13" },
     { name = "scikit-image", specifier = ">=0.26.0" },
+    { name = "scipy", specifier = ">=1.18" },
     { name = "uvicorn", specifier = ">=0.41" },
 ]
 

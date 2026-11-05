@@ -9,6 +9,7 @@
 # Saved emitter positions, written by the Save button or the command line
 /save/
 /out/
+/report/build/
 
 # Byte-compiled / optimized / DLL files
 

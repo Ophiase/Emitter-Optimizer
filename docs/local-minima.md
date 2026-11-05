@@ -59,7 +59,9 @@ graph TD
 *Four starts per case; "Descent" is the better of those starts and of a polish
 of greedy. [Full benchmark](benchmark/results.md).*
 
-- **The start stops mattering**: the spread falls on all five cases.
+- **The start stops mattering**: the spread ends at 0.9% or less on all five
+  cases. The spread alone [varies by machine](benchmark/results.md#reproducibility);
+  on a second one, beach starts at 0.1% and has nothing left to gain.
 - **Garden is the extreme**: alone, every start ends 27% to 31% below.
 - **The final gain moves little**, 0.1% to 2.3% above greedy, which is already
   a strong baseline. The gain here is reliability more than height.

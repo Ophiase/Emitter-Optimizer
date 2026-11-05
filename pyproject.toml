@@ -29,6 +29,7 @@ dependencies = [
   "pydantic>=2.13",
   "pydantic-settings>=2.13",
   "scikit-image>=0.26.0",
+  "scipy>=1.18",
   "uvicorn>=0.41",
 ]
 
@@ -41,6 +42,10 @@ requires = ["hatchling"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/emitter_optimizer"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"resources" = "emitter_optimizer/data/resources"
+"settings" = "emitter_optimizer/data/settings"
 
 [dependency-groups]
 dev = [

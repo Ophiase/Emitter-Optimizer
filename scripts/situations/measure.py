@@ -10,7 +10,7 @@ from emitter_optimizer.kernel import (
     HardOcclusion,
 )
 from emitter_optimizer.maps.cases import SITUATIONS, Situation
-from scripts.result import Result
+from scripts.situations.result import Result
 
 ITERATIONS = 60
 SEED = 0

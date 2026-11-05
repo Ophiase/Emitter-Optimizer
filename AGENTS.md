@@ -51,7 +51,7 @@ seven entries per folder, two hundred lines per file
 ([layout](.agents/rules/layout.md)).
 
 - `kernel/` — the JAX kernel: domains, laws, occlusion, coverage, placement and
-  descent. No GUI, no printing.
+  descent; `placement/exact/` proves optima with NumPy and HiGHS. No GUI, no printing.
 - `maps/` — Pillow and scikit-image load a density and a wall mask; `maps/cases/`
   names the five cases of `resources/cases/`.
 - `render/` — Pillow draws the map; plotly draws the gain.

@@ -97,9 +97,15 @@ it. The science comes before the packaging.
 - [x] **7.2 One page per case**, linked from the README's summary.
   *Accepts*: each has its decision, its laws, its numbers and its limits.
 
+## Step 8 — a proved optimum
+
+- [x] **8.1 Disks and walls, solved exactly**
+  ([certified-coverage](certified-coverage.md)).
+  *Accepts*: its five criteria, measured by `just certify`.
+
 ## Later
 
-- The wheel carries its default laws and cases; PyPI.
+- PyPI: the wheel carries its default laws and cases; publishing is the author's.
 - Soft occlusion by default, richer objectives, the emitter count, a physics
   of anisotropy and noise ([objective](model/objective.md),
   [emitter-count](model/emitter-count.md), [physics](model/physics.md)).

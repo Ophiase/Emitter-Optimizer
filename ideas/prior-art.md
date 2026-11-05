@@ -49,6 +49,16 @@ sensor law, a density, segments that block, an exact gradient where the laws
 allow it, and an agent protocol around the whole thing. The claim to defend
 is *one engine for many physics*, measured against the classical baselines.
 
+## Checked on 2026-11-05
+
+The sources are in [certified-coverage](certified-coverage.md).
+
+- **[fact]** Church's circle intersection points solve planar maximal covering
+  exactly, as cited by Blanco and Gázquez.
+- **[fact]** spopt solves maximal covering over a finite set of facility sites.
+- **[fact]** The IJGIS 2023 line-of-sight work is a heuristic, per its abstract.
+- **[fact]** Sionna RT differentiates radio maps; a far richer physics than ours.
+
 ## To read
 
 - **[to check]** The coverage formulations used in radio planning, and which

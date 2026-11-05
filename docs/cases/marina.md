@@ -70,8 +70,9 @@ graph TD
 | 8 | 0.2424 | 0.2752 | 0.2759 | **0.2781** | 2.5% | 0.1% |
 
 - **+15% above random, +1.1% above greedy.**
-- **The spread falls from 2.5% to 0.1%**, so the start no longer decides the
-  answer.
+- **The spread falls to 0.1%**, from 2.5% here and 4.3% on a second machine
+  ([reproducibility](../benchmark/results.md#reproducibility)), so the start no
+  longer decides the answer.
 
 ![The gain as emitters are added, with this case's count marked](../figures/cases/marina_count.png)
 
