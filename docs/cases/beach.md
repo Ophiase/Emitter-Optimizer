@@ -49,8 +49,8 @@ graph TD
     classDef trap fill:#c8553d,stroke:#8f3a28,color:#ffffff
 ```
 
-- **Few emitters, wide reach**: the optimum is shallow, and starts end up to
-  1.8% apart.
+- **Few emitters, wide reach**: the optimum is shallow, and starts end close:
+  1.8% apart on the machine that wrote this page, 0.1% on a second one.
 - **The rocks are small**: they cut only a little of the water, so most of the
   map rewards any close post.
 
@@ -69,8 +69,8 @@ graph TD
 | 5 | 0.1174 | 0.1423 | 0.1424 | **0.1425** | 1.8% | 0.0% |
 
 - **+21% above random, +0.1% above greedy**: a tiny gain on the best answer.
-- **The real change is the spread**: from 1.8% between starts to nothing
-  measurable.
+- **The relocated starts agree** within 0.1%, on both machines. The spread alone
+  [did not reproduce](../benchmark/results.md#reproducibility).
 - **Two lifeguards end on the same spot** in this start. The law says so, and a
   safety plan would refuse it: a sign that the law needs a term for it.
 

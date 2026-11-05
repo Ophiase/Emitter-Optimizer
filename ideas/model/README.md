@@ -20,6 +20,8 @@ baselines to prove the result is good.
 - [circuits.md](circuits.md) — pairs, interference, layouts.
 - [implicit-energy.md](implicit-energy.md) — a continuous field, sampled,
   instead of a voxel grid.
+- [assumptions](assumptions/README.md) — a family as constraints on the laws,
+  the map, the shadows, the manifold and the scales, and what each one gives.
 
 ## The order
 

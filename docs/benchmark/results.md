@@ -28,3 +28,11 @@ What it says:
 | marina | 8 | 0.2424 | 0.2752 | 0.2759 | 0.2781 | 2.5% | 0.1% | 26 |
 | harbor | 14 | 0.1572 | 0.2202 | 0.2237 | 0.2252 | 3.5% | 0.8% | 34 |
 | ramparts | 4 | 0.3403 | 0.3567 | 0.3573 | 0.3580 | 0.1% | 0.0% | 21 |
+
+## Reproducibility
+
+- **The gains of a relocation** reproduced to four decimals on a second machine.
+- **The spread of the free starts did not**: beach went from 1.8% to 0.1%, marina
+  from 2.5% to 4.3%, with the same seed. Read that column as an order of magnitude.
+- **Twice on one machine**, beach gave the same numbers, so a seed repeats there.
+- **The seconds** depend on the machine and on what else it runs.

@@ -116,6 +116,14 @@ What it says:
 {HEADER}
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 {chr(10).join(table)}
+
+## Reproducibility
+
+- **The gains of a relocation** reproduced to four decimals on a second machine.
+- **The spread of the free starts did not**: beach went from 1.8% to 0.1%, marina
+  from 2.5% to 4.3%, with the same seed. Read that column as an order of magnitude.
+- **Twice on one machine**, beach gave the same numbers, so a seed repeats there.
+- **The seconds** depend on the machine and on what else it runs.
 """
 
 

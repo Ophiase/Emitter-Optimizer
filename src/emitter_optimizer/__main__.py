@@ -8,7 +8,10 @@ import numpy as np
 
 from emitter_optimizer.gui.application import Application
 from emitter_optimizer.gui.configuration import GuiConfig
+from emitter_optimizer.kernel.placement.exact import ExactPlacement
 from emitter_optimizer.maps.cases import CASE_NAMES, situation_named
+from emitter_optimizer.maps.exact_report import ExactReport
+from emitter_optimizer.maps.exact_request import ExactRequest
 from emitter_optimizer.service import (
     DEFAULT_HOST,
     DEFAULT_PORT,
@@ -65,6 +68,42 @@ def _add_iterations_argument(command: argparse.ArgumentParser) -> None:
     )
 
 
+def _add_exact_command(commands: argparse._SubParsersAction) -> None:
+    exact = commands.add_parser(
+        "exact", help="solve disks and walls to a proved optimum, and judge a plan"
+    )
+    exact.add_argument(
+        "--points",
+        type=CommandLineParser.existing_file,
+        required=True,
+        help="CSV of x,y,weight",
+    )
+    exact.add_argument(
+        "--walls", type=CommandLineParser.existing_file, help="CSV of x1,y1,x2,y2"
+    )
+    exact.add_argument("--radius", type=CommandLineParser.positive_float, required=True)
+    exact.add_argument("--emitters", type=CommandLineParser.positive_int, required=True)
+    exact.add_argument(
+        "--map-scale",
+        nargs=2,
+        type=CommandLineParser.positive_float,
+        metavar=("WIDTH", "HEIGHT"),
+        required=True,
+    )
+    exact.add_argument(
+        "--plan",
+        type=CommandLineParser.existing_file,
+        help="CSV of x,y: how far below the optimum is this placement?",
+    )
+    exact.add_argument(
+        "--seconds",
+        type=CommandLineParser.positive_float,
+        default=600.0,
+        help="the solver stops here; the bound it reached still holds",
+    )
+    exact.add_argument("--out", type=Path, default=Path("out/exact"))
+
+
 def build_parser() -> CommandLineParser:
     parser = CommandLineParser(
         prog="emitter-optimizer",
@@ -97,6 +136,7 @@ def build_parser() -> CommandLineParser:
         action="store_true",
         help="optimize before opening the window",
     )
+    _add_exact_command(commands)
     return parser
 
 
@@ -128,6 +168,25 @@ def run_optimization(arguments: argparse.Namespace) -> int:
         RunRequest(iterations=int(arguments.iterations), relocate=arguments.relocate)
     )
     summary = write_result(arguments.out, session, state)
+    print(json.dumps(summary, indent=2))
+    return 0
+
+
+def run_exact(arguments: argparse.Namespace) -> int:
+    with _bad_input_is_a_message():
+        width, height = arguments.map_scale
+        instance = ExactRequest(
+            arguments.points,
+            arguments.walls,
+            arguments.radius,
+            arguments.emitters,
+            width,
+            height,
+        ).instance()
+        certificate = ExactPlacement(instance, arguments.seconds).solve()
+        summary = ExactReport(instance, certificate).write(
+            arguments.out, arguments.plan
+        )
     print(json.dumps(summary, indent=2))
     return 0
 
@@ -189,6 +248,8 @@ def main(arguments: list[str] | None = None) -> int:
         return run_service(parsed)
     if parsed.command == "window":
         return open_window(parsed)
+    if parsed.command == "exact":
+        return run_exact(parsed)
     return run_optimization(parsed)
 
 

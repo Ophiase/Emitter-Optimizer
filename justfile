@@ -60,6 +60,11 @@ bench:
     uv run python -m scripts.bench
 
 [group("dev")]
+[doc("Solve the reference set to its proved optima and measure the engine against them")]
+certify:
+    uv run python -m scripts.certify
+
+[group("dev")]
 [doc("Recompute the README figures into docs/figures: the demo, the cases and the mosaic")]
 figures:
     uv run python -m scripts.figures

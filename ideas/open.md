@@ -27,6 +27,17 @@
     where the Monte Carlo error is below the improvement being measured.
 11. **[question] Which application next?** [The catalogue](applications/README.md)
     proposes an order; the choice is the author's.
+12. **[question] Does certified coverage become the project's identity?** It is
+    narrower than "one engine, many physics", and the only part with a proof
+    ([certified-coverage](certified-coverage.md)).
+13. **[question] Is DearPyGui a required dependency?** It is imported on every
+    command, so a headless user installs a window toolkit.
+14. **[question] Does the agent manifesto stay beside the code?** It moved from
+    the README to [CONTRIBUTORS](../CONTRIBUTORS.md); the badge and sign remain.
+15. **[question] Is "fading" the right name** for an emitter whose signal falls
+    with distance ([laws](model/assumptions/laws.md))?
+16. **[question] Should `plants` have a true reach?** Its water follows a Gaussian
+    and never stops; a finite reach would match the story, and move its figures.
 
 ## Technical
 
