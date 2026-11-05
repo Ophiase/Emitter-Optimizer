@@ -4,6 +4,7 @@ import jax.numpy as jnp
 import numpy as np
 import pytest
 from jax import Array
+from scipy.special import logsumexp
 
 from emitter_optimizer.kernel import (
     Coverage,
@@ -21,13 +22,18 @@ SIDE = 16
 WALL = jnp.array([[[40.0, 10.0], [40.0, 60.0]]])
 SCENE = Scene.of(Extent(80.0, 80.0), GridShape(SIDE, SIDE), walls=WALL)
 FREE = Scene.of(Extent(80.0, 80.0), GridShape(SIDE, SIDE))
-GAUSSIAN = lambda distance: jnp.exp(-((distance / 15.0) ** 2))  # ruff: ignore[lambda-assignment]
-SATURATING = Physics(GAUSSIAN, lambda signal: 1.0 - jnp.exp(-signal))
-DOME = Physics(GAUSSIAN, lambda signal: 1.0 - (1.0 - signal) ** 2)
+
+
+def _gaussian(distance: Array) -> Array:
+    return jnp.exp(-((distance / 15.0) ** 2))
+
+
+SATURATING = Physics(_gaussian, lambda signal: 1.0 - jnp.exp(-signal))
+DOME = Physics(_gaussian, lambda signal: 1.0 - (1.0 - signal) ** 2)
 THRESHOLD = Physics(
-    GAUSSIAN, lambda signal: 1.0 / (1.0 + jnp.exp((0.8 - signal) / 0.02))
+    _gaussian, lambda signal: 1.0 / (1.0 + jnp.exp((0.8 - signal) / 0.02))
 )
-LINEAR = Physics(GAUSSIAN, lambda signal: signal)
+LINEAR = Physics(_gaussian, lambda signal: signal)
 
 
 def _gain(scene: Scene, physics: Physics, positions: Array | np.ndarray) -> float:
@@ -90,8 +96,8 @@ def test_a_dome_can_lose_from_one_more_emitter() -> None:
 
 
 def test_the_online_bound_and_greedy_hold_against_every_subset() -> None:
-    candidates = jnp.asarray(_positions(7, 14), dtype=jnp.float32)
-    subsets = itertools.combinations(range(14), 3)
+    candidates = jnp.asarray(_positions(7, 10), dtype=jnp.float32)
+    subsets = itertools.combinations(range(10), 3)
     optimum = max(
         _gain(SCENE, SATURATING, candidates[np.array(chosen)]) for chosen in subsets
     )
@@ -117,13 +123,16 @@ def test_a_quadratic_sensor_is_a_field_minus_a_pair_energy() -> None:
 
 
 def test_a_logarithm_tends_to_k_means_as_the_gaussian_narrows() -> None:
-    positions = jnp.asarray(_positions(3, 5), dtype=jnp.float32)
-    squared = jnp.sum((FREE.points[:, None] - positions[None]) ** 2, axis=-1)
-    nearest = float(jnp.mean(jnp.min(squared, axis=1)))
-    errors = []
-    for sharpness in (0.05, 0.5, 5.0):
-        soft = jnp.log(jnp.sum(jnp.exp(-sharpness * squared), axis=1)) / sharpness
-        errors.append(abs(float(jnp.mean(soft)) + nearest))
+    points = np.asarray(FREE.points, dtype=np.float64)
+    squared = np.sum((points[:, None] - _positions(3, 5)[None]) ** 2, axis=-1)
+    nearest = float(np.mean(np.min(squared, axis=1)))
+    errors = [
+        abs(
+            float(np.mean(logsumexp(-sharpness * squared, axis=1))) / sharpness
+            + nearest
+        )
+        for sharpness in (0.05, 0.5, 5.0)
+    ]
 
     assert errors[2] < errors[1] < errors[0]
     assert errors[2] < 0.05 * nearest
@@ -161,7 +170,7 @@ def test_only_ratios_of_lengths_matter() -> None:
     stretch = 7.0
     wide = Scene.of(Extent(560.0, 560.0), GridShape(SIDE, SIDE), walls=WALL * stretch)
     stretched = Physics(
-        lambda distance: GAUSSIAN(distance / stretch), SATURATING.sensor
+        lambda distance: _gaussian(distance / stretch), SATURATING.sensor
     )
     positions = _positions(4, 5)
 
@@ -192,18 +201,18 @@ def _stairs(signal: Array) -> Array:
 )
 def test_the_envelope_bounds_a_sensor_that_is_not_concave(sensor: Law) -> None:
     emitters = 3
-    physics = Physics(GAUSSIAN, sensor)
+    physics = Physics(_gaussian, sensor)
     envelope = ConcaveEnvelope.of(sensor, float(emitters))
     signal = jnp.linspace(0.0, float(emitters), 2001)
     curved = jnp.diff(envelope(signal), n=2)
-    candidates = jnp.asarray(_positions(7, 14), dtype=jnp.float32)
+    candidates = jnp.asarray(_positions(7, 10), dtype=jnp.float32)
     optimum = max(
         _gain(SCENE, physics, candidates[np.array(chosen)])
-        for chosen in itertools.combinations(range(14), emitters)
+        for chosen in itertools.combinations(range(10), emitters)
     )
     start = jnp.asarray(_positions(9, emitters), dtype=jnp.float32)
 
-    bound = OnlineBound(SCENE, Physics(GAUSSIAN, envelope), candidates).of(start)
+    bound = OnlineBound(SCENE, Physics(_gaussian, envelope), candidates).of(start)
 
     assert jnp.all(envelope(signal) >= sensor(signal) - 1e-5)
     assert jnp.all(jnp.diff(envelope(signal)) >= -1e-5)

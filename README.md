@@ -156,10 +156,15 @@ This is the 2023 baseline, kept as the reference every newer model is compared
 against ([ideas/model](ideas/model/README.md)).
 
 **Grouping the problems is what makes this a theory.** A family is a set of
-constraints on $\varphi$, $\psi$, the map, the shadows, the manifold and the scales,
-and each constraint gives a guarantee or explains a trap: a concave $\psi$ makes the
-gain submodular on any space; a quadratic one is a pair energy; a logarithm is a
-likelihood, with k-means in the limit ([the assumptions](ideas/model/assumptions/README.md)).
+constraints on $\varphi$, $\psi$, the map, the shadows, the manifold and the scales.
+Each constraint gives a guarantee or explains a trap:
+
+- **A concave $\psi$** makes the gain submodular on any space, with a bound.
+- **A quadratic $\psi$** is a pair energy; **a logarithm** is a likelihood, with
+  k-means in the limit.
+- **A fading emitter** stays in the hull of the demand, and is a mixture of disks.
+
+The whole of it: [the assumptions](ideas/model/assumptions/README.md).
 
 ## Multiple situations, one engine
 

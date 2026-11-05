@@ -24,7 +24,7 @@ $$
 ## What is true of each simulated case
 
 The shape of $\psi$, and that $\varphi$ is fading, are tested on each photograph
-case in `tests/test_case_classes.py`; the other rows are read from the code.
+case in `tests/cases/test_case_classes.py`; the other rows are read from the code.
 
 | Case | $\varphi(d)$ | $\psi(s)$ | $\psi$ class | $C$ | $E$ |
 | --- | --- | --- | --- | --- | --- |
